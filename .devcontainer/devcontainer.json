@@ -1,0 +1,4 @@
+{
+    "name": "C++",
+    "image": "mcr.microsoft.com/devcontainers/cpp:debian-13"
+}
