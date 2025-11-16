@@ -4,7 +4,7 @@
 
 class CanvasElement {
   public:
-	CanvasElement(std::string canvas_element, int width, int height);
+	explicit CanvasElement(std::string canvas_element, int width, int height);
 	explicit CanvasElement(const std::string &normal_string, char delimiter = '\n');
 
 	int get_width() const;

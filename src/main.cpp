@@ -3,17 +3,18 @@
 #include "api/ui/terminal_helper.hpp"
 #include <iostream>
 
-void print_banner_to_canvas(CanvasElement &canvas, Position banner_pos) {
+void print_banner_to_canvas(CanvasElement &canvas, const Position banner_pos) {
 	FileReader fileReader("assets/banner.txt");
 	std::string content;
 	fileReader.read_string_content(content);
 
-	CanvasElement banner(content);
+	const CanvasElement banner(content);
 
 	position_string_on_canvas(banner, banner_pos, canvas);
 }
 
 int main(int argc, char *argv[]) {
+
 	int width, height;
 	get_terminal_size(width, height);
 

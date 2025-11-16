@@ -1,17 +1,17 @@
 #include "canvas_element.hpp"
 #include "terminal_helper.hpp"
-#include <algorithm>
 #include <iostream>
 #include <string>
+#include <utility>
 
-CanvasElement::CanvasElement(std::string canvas_element, int width, int height)
+CanvasElement::CanvasElement(std::string canvas_element, const int width, const int height)
 {
-    m_canvas_element = canvas_element;
+    m_canvas_element = std::move(canvas_element);
     m_width = width;
     m_height = height;
 }
 
-CanvasElement::CanvasElement(const std::string& normal_string, char delimiter)
+CanvasElement::CanvasElement(const std::string& normal_string, const char delimiter)
 {
     m_canvas_element = transform_to_canvas_element(normal_string, delimiter, ' ', m_width, m_height);
 }
