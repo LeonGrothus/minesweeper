@@ -13,4 +13,9 @@ add_executable(minesweeper ${SOURCES})
 # add src/ as an include directory
 target_include_directories(minesweeper PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
+# link ncurses library
+find_package(Curses REQUIRED)
+target_link_libraries(minesweeper ${CURSES_LIBRARIES})
+target_include_directories(minesweeper PRIVATE ${CURSES_INCLUDE_DIR})
+
 set_property(TARGET minesweeper PROPERTY CXX_STANDARD 23)
