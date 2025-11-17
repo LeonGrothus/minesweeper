@@ -13,7 +13,7 @@ public:
 private:
 	void draw_scene() const;
 
-	void update_scene(double delta_time) const;
+	void update_scene(double delta_time);
 
 	bool m_running;
 	double m_current_millis;

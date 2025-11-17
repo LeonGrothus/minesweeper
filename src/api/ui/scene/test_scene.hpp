@@ -1,7 +1,8 @@
 #pragma once
 
 #include "scene.hpp"
-#include "widgets/banner_widget.hpp"
+#include "widgets/column.hpp"
+#include <memory>
 
 class TestScene final : public Scene {
 public:
@@ -13,10 +14,11 @@ public:
 
 	void keyboard_press(int key) override;
 
-	void update(double delta_time) override;
+	bool update(double delta_time) override;
 
 	void draw() override;
 
 private:
-	BannerWidget m_banner;
+	std::unique_ptr<Column> m_column;
+	bool m_running = true;
 };

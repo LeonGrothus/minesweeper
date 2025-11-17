@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <utility>
+#include <ncurses.h>
 
 CanvasElement::CanvasElement(std::string canvas_element, const ElementSize size) {
 	m_canvas_element = std::move(canvas_element);

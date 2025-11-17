@@ -6,7 +6,7 @@
 class BannerWidget final : public Widget {
 
 public:
-	explicit BannerWidget(const CanvasElement &banner, Position position);
+	explicit BannerWidget(CanvasElement banner, Position position);
 
 	explicit BannerWidget(const std::string &banner, Position position);
 
@@ -17,6 +17,8 @@ public:
 	void update(double delta_time) override;
 
 	ElementSize get_minimum_size() const override;
+
+	void keyboard_press(int key) override;
 
 private:
 	CanvasElement m_banner;

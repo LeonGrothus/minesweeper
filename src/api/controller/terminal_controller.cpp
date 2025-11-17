@@ -1,9 +1,6 @@
 #include "terminal_controller.hpp"
 
-#include <iostream>
-#include <bits/this_thread_sleep.h>
-
-constexpr double FRAME_RATE = 1000;
+constexpr double FRAME_RATE = 1000.0 / 20.0;
 
 TerminalController::TerminalController(std::unique_ptr<Scene> default_scene)
 	: m_running(true),
@@ -25,7 +22,7 @@ void TerminalController::run() {
 			}
 		}
 
-		usleep(1 * 1000);
+		usleep(FRAME_RATE * 1000 / 10);
 	}
 }
 
@@ -33,10 +30,10 @@ void TerminalController::draw_scene() const {
 	m_current_scene->draw();
 }
 
-void TerminalController::update_scene(const double delta_time) const {
+void TerminalController::update_scene(const double delta_time) {
 	for (const int key : m_keyboard_controller.get_buffered()) {
 		m_current_scene->keyboard_press(key);
 	}
 
-	m_current_scene->update(delta_time);
+	m_running = m_current_scene->update(delta_time);
 }

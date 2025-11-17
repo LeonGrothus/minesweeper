@@ -1,7 +1,9 @@
 #include "banner_widget.hpp"
 
-BannerWidget::BannerWidget(const CanvasElement &banner, const Position position) : m_banner(banner),
-	m_position(position) {
+#include <utility>
+
+BannerWidget::BannerWidget(CanvasElement banner, const Position position) : m_banner(std::move(banner)),
+                                                                            m_position(position) {
 }
 
 BannerWidget::BannerWidget(const std::string &banner, const Position position) : m_banner(banner),
@@ -25,4 +27,7 @@ void BannerWidget::update(double delta_time) {
 
 ElementSize BannerWidget::get_minimum_size() const {
 	return m_banner.get_element_size();
+}
+
+void BannerWidget::keyboard_press(int key) {
 }

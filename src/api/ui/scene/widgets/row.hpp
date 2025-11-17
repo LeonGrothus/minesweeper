@@ -14,6 +14,8 @@ public:
 
 	ElementSize get_minimum_size() const override;
 
+	void keyboard_press(int key) override;
+
 private:
 	std::vector<Widget> m_children;
 };

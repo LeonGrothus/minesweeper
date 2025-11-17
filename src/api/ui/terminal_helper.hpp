@@ -36,3 +36,7 @@ CanvasElement position_canvas_element(const CanvasElement &element, Position pos
                                       char blank_char);
 
 void position_string_on_canvas(const CanvasElement &element, Position pos, CanvasElement &canvas);
+
+void render_to_ncurses(const std::string &to_render, ElementSize size);
+
+void show_temporary_message(const std::string &message, int duration_ms = 2000);

@@ -1,5 +1,6 @@
 #include "terminal_helper.hpp"
 #include <algorithm>
+#include <ncurses.h>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -169,4 +170,32 @@ void position_string_on_canvas(const CanvasElement &element, const Position pos,
 
 		canvas_canvas[i] = alpha_canvas[i];
 	}
+}
+
+void render_to_ncurses(const std::string &to_render, const ElementSize size) {
+	clear();
+
+	for (int y = 0; y < size.height; y++) {
+		const int offset = y * size.width;
+		for (int x = 0; x < size.width; x++) {
+			mvaddch(y, x, to_render[offset + x]);
+		}
+	}
+
+	refresh();
+}
+
+void show_temporary_message(const std::string &message, const int duration_ms) {
+	int width, height;
+	get_terminal_size(width, height);
+
+	clear();
+	const int y = height / 2;
+	int x = (width - static_cast<int>(message.length())) / 2;
+	if (x < 0)
+		x = 0;
+	mvprintw(y, x, "%s", message.c_str());
+	refresh();
+
+	napms(duration_ms);
 }

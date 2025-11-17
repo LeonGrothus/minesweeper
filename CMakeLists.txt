@@ -5,7 +5,7 @@ project(Minesweeper VERSION 0.1.0 LANGUAGES CXX)
 # export compile commands for clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# find all .cpp files in src/ directory and subdirectories and store them in SOURCES
+# find all cpp files in src directory AND subdirectories and store them in SOURCES
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
 add_executable(minesweeper ${SOURCES})
