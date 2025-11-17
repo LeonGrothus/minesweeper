@@ -37,9 +37,9 @@ std::string repeat_string(const unsigned int k, const std::string &s) {
 }
 
 std::string transform_to_canvas_element(const std::string &to_canvas_element, const char delimiter,
-										const char fill_char, int &box_width, int &box_height) {
+                                        const char fill_char, ElementSize &size) {
 	if (to_canvas_element.empty()) {
-		box_height = box_width = 0;
+		size = ElementSize{0, 0};
 		return to_canvas_element;
 	}
 
@@ -71,8 +71,9 @@ std::string transform_to_canvas_element(const std::string &to_canvas_element, co
 	lines.push_back(last_line);
 	longest = std::max(longest, last_line.length());
 
-	box_height = static_cast<int>(lines.size());
-	box_width = static_cast<int>(longest);
+	const int box_height = static_cast<int>(lines.size());
+	const int box_width = static_cast<int>(longest);
+	size = ElementSize(box_width, box_height);
 	if (all_same && first_line == false && first_len == last_line.length()) {
 		std::string result;
 		result.reserve(box_width * box_height);
@@ -93,27 +94,27 @@ std::string transform_to_canvas_element(const std::string &to_canvas_element, co
 	return result;
 }
 
-std::string position_canvas_element(const CanvasElement &element, const Position position, const int canvas_width,
-									const int canvas_height, const char blank_char) {
+CanvasElement position_canvas_element(const CanvasElement &element, const Position position,
+                                      const ElementSize canvas_size, const char blank_char) {
 	const int element_width = element.get_width();
 	const int element_height = element.get_height();
 
-	if (element_width > canvas_width || element_height > canvas_height)
-		return "";
+	if (element_width > canvas_size.width || element_height > canvas_size.height)
+		return CanvasElement("");
 
 	const int repeat_left = (position) & 0b11;
 	const int repeat_right = (position >> 2) & 0b11;
 	const int repeat_top = (position >> 4) & 0b11;
 	const int repeat_bottom = (position >> 6) & 0b11;
 
-	const std::string width_offset = std::string(canvas_width, blank_char);
-	std::string half_width_offset = std::string((canvas_width - element_width) / 2, blank_char);
+	const std::string width_offset = std::string(canvas_size.width, blank_char);
+	const std::string half_width_offset = std::string((canvas_size.width - element_width) / 2, blank_char);
 
 	std::string vertical_string_line;
-	vertical_string_line.reserve(canvas_width);
+	vertical_string_line.reserve(canvas_size.width);
 
 	std::string vertical_string;
-	vertical_string.reserve(canvas_width * element_height);
+	vertical_string.reserve(canvas_size.width * element_height);
 
 	for (int i = 0; i < element_height; i++) {
 		const std::string::size_type current_pos = i * element_width;
@@ -122,14 +123,14 @@ std::string position_canvas_element(const CanvasElement &element, const Position
 		vertical_string_line = repeat_string(repeat_left, half_width_offset);
 		vertical_string_line += line;
 		vertical_string_line += repeat_string(repeat_right, half_width_offset);
-		vertical_string_line += std::string(canvas_width - vertical_string_line.length(), blank_char);
+		vertical_string_line += std::string(canvas_size.width - vertical_string_line.length(), blank_char);
 		vertical_string += vertical_string_line;
 	}
 
 	std::string full_string;
-	const int height_diff = (canvas_height - element_height) / 2;
-	const int additional = (canvas_height - element_height) % 2;
-	full_string.reserve(canvas_width * canvas_height);
+	const int height_diff = (canvas_size.height - element_height) / 2;
+	const int additional = (canvas_size.height - element_height) % 2;
+	full_string.reserve(canvas_size.width * canvas_size.height);
 
 	const bool extra_at_top = (repeat_bottom != 0);
 
@@ -146,21 +147,20 @@ std::string position_canvas_element(const CanvasElement &element, const Position
 	if (additional && !extra_at_top) {
 		full_string += width_offset;
 	}
-	return full_string;
+	return CanvasElement(full_string, canvas_size);
 }
 
 void position_string_on_canvas(const CanvasElement &element, const Position pos, CanvasElement &canvas) {
-	const int canvas_width = canvas.get_width();
-	const int canvas_height = canvas.get_height();
+	const ElementSize canvas_size = element.get_element_size();
+	const int canvas_width = canvas_size.width;
+	const int canvas_height = canvas_size.height;
 
 	if (element.get_width() > canvas_width || element.get_height() > canvas_height) {
 		return;
 	}
 
 	//'\x7F' is non printable delete char
-	const std::string alpha_canvas = position_canvas_element(element, pos, canvas_width, canvas_height, '\x7F');
-
-	const std::string &element_canvas = element.get_canvas_element();
+	const std::string alpha_canvas = position_canvas_element(element, pos, canvas_size, '\x7F').get_canvas_element();
 	std::string &canvas_canvas = canvas.get_mutable_canvas_element();
 
 	for (int i = 0; i < canvas_width * canvas_height; i++) {
