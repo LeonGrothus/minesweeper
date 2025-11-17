@@ -5,9 +5,6 @@ project(Minesweeper VERSION 0.1.0 LANGUAGES CXX)
 # export compile commands for clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# find ncurses library
-find_package(Curses REQUIRED)
-
 # find all .cpp files in src/ directory and subdirectories and store them in SOURCES
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 
@@ -17,6 +14,8 @@ add_executable(minesweeper ${SOURCES})
 target_include_directories(minesweeper PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
 # link ncurses library
-target_link_libraries(minesweeper PRIVATE ${CURSES_LIBRARIES})
+find_package(Curses REQUIRED)
+target_link_libraries(minesweeper ${CURSES_LIBRARIES})
+target_include_directories(minesweeper PRIVATE ${CURSES_INCLUDE_DIR})
 
 set_property(TARGET minesweeper PROPERTY CXX_STANDARD 23)
