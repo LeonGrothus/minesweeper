@@ -74,18 +74,17 @@ std::string transform_to_canvas_element(const std::string &to_canvas_element, co
 
 	const int box_height = static_cast<int>(lines.size());
 	const int box_width = static_cast<int>(longest);
+
+	std::string result;
+	result.reserve(box_width * box_height);
+
 	size = ElementSize(box_width, box_height);
 	if (all_same && first_line == false && first_len == last_line.length()) {
-		std::string result;
-		result.reserve(box_width * box_height);
 		for (const std::string_view &line : lines) {
 			result += line;
 		}
 		return result;
 	}
-
-	std::string result;
-	result.reserve(box_width * box_height);
 
 	for (const std::string_view &line : lines) {
 		result += line;
@@ -152,7 +151,7 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
 }
 
 void position_string_on_canvas(const CanvasElement &element, const Position pos, CanvasElement &canvas) {
-	const ElementSize canvas_size = element.get_element_size();
+	const ElementSize canvas_size = canvas.get_element_size();
 	const int canvas_width = canvas_size.width;
 	const int canvas_height = canvas_size.height;
 
