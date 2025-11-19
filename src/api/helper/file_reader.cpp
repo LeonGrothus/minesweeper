@@ -3,7 +3,7 @@
 #include <sstream>
 
 FileReader::FileReader(const std::string &filePath) {
-	this->m_filePath = filePath;
+	m_filePath = filePath;
 }
 
 bool FileReader::file_exists() {
