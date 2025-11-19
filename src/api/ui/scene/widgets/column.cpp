@@ -52,8 +52,8 @@ bool Column::is_dirty() const {
 	return false;
 }
 
-void Column::keyboard_press(int key) {
-	for (std::unique_ptr<Widget> &child : m_children) {
+void Column::keyboard_press(const int key) {
+	for (const std::unique_ptr<Widget> &child : m_children) {
 		child->keyboard_press(key);
 	}
 }
