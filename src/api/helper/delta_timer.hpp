@@ -2,9 +2,9 @@
 
 #include <chrono>
 
-class DeltaTimer {
+class delta_timer {
 public:
-	explicit DeltaTimer();
+	explicit delta_timer();
 
 	void update();
 

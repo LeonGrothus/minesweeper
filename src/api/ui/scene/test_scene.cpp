@@ -3,13 +3,14 @@
 #include "api/helper/file_reader.hpp"
 #include "api/ui/terminal_helper.hpp"
 #include "widgets/banner_widget.hpp"
+#include "widgets/row.hpp"
 #include "widgets/text_selection_widget.hpp"
 
 #include <memory>
 #include <vector>
 
 TestScene::TestScene() {
-	FileReader fileReader("assets/banner.txt");
+	const FileReader fileReader("assets/banner.txt");
 	std::string content;
 	fileReader.read_string_content(content);
 

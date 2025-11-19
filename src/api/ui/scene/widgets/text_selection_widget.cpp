@@ -41,7 +41,7 @@ CanvasElement TextSelectionWidget::build_widget(ElementSize &size) const {
 
 	std::string result;
 	result.reserve(minimum_size.length());
-	for (int i = 0; i < size.height; ++i) {
+	for (int i = 0; i < minimum_size.height; ++i) {
 		std::string line;
 		line.reserve(size.width);
 

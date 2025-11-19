@@ -2,6 +2,8 @@
 
 #include "scene.hpp"
 #include "widgets/column.hpp"
+#include "widgets/row.hpp"
+
 #include <memory>
 
 class TestScene final : public Scene {

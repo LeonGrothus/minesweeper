@@ -29,7 +29,7 @@ CanvasElement Column::build_widget(ElementSize &size) const {
 		const int child_min_height = child->get_minimum_size().height;
 
 		ElementSize build_size{size.width, child_min_height};
-		if (child_flex > 0) {
+		if (child_flex > 0 && total_flex > 0) {
 			build_size.height += (flex_height * child_flex) / total_flex;
 		}
 		const CanvasElement child_element = child->build_widget(build_size);
@@ -59,7 +59,7 @@ void Column::keyboard_press(const int key) {
 }
 
 void Column::update(const double delta_time) {
-	for (std::unique_ptr<Widget> &child : m_children) {
+	for (const std::unique_ptr<Widget> &child : m_children) {
 		child->update(delta_time);
 	}
 }
