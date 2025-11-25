@@ -1,5 +1,5 @@
 #pragma once
-#include "widget.hpp"
+#include "../widget.hpp"
 #include <vector>
 #include <memory>
 
@@ -7,7 +7,7 @@ class Column final : public Widget {
 public:
 	explicit Column(std::vector<std::unique_ptr<Widget> > children);
 
-	CanvasElement build_widget(ElementSize &size) const override;
+	const CanvasElement &build_widget(const ElementSize &size) override;
 
 	bool is_dirty() const override;
 

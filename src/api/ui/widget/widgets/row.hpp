@@ -1,5 +1,5 @@
 #pragma once
-#include "widget.hpp"
+#include "../widget.hpp"
 
 #include <memory>
 #include <vector>
@@ -8,7 +8,7 @@ class Row final : public Widget {
 public:
 	explicit Row(std::vector<std::unique_ptr<Widget> > children);
 
-	CanvasElement build_widget(ElementSize &size) const override;
+	const CanvasElement &build_widget(const ElementSize &size) override;
 
 	bool is_dirty() const override;
 

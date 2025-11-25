@@ -21,6 +21,8 @@ public:
 
 	explicit CanvasElement(const std::string &normal_string, char delimiter = '\n');
 
+	static CanvasElement empty(ElementSize size, char empty_char);
+
 	int get_width() const;
 
 	int get_height() const;
@@ -33,6 +35,8 @@ public:
 
 	std::string &get_mutable_canvas_element();
 
+	CanvasElement fill_to_size(ElementSize size, char fill_char) const;
+
 	bool merge_below_with_other(const CanvasElement &other);
 
 	bool merge_above_with_other(const CanvasElement &other);
@@ -44,6 +48,9 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, const CanvasElement &elem);
 
 private:
+	static CanvasElement transform_to_canvas_element(const std::string &to_canvas_element, char delimiter,
+	                                                 char fill_char);
+
 	ElementSize m_size{};
 
 	std::string m_canvas_element;

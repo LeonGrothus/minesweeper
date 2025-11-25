@@ -14,17 +14,21 @@
 #include <unistd.h>
 #endif
 
-void get_terminal_size(int &width, int &height) {
+ElementSize get_terminal_size() {
+
+	if (stdscr != nullptr) {
+		return ElementSize{COLS, LINES};
+	}
 #if defined(_WIN32)
-	CONSOLE_SCREEN_BUFFER_INFO csbi;
-	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
-	width = (int)(csbi.srWindow.Right - csbi.srWindow.Left + 1);
-	height = (int)(csbi.srWindow.Bottom - csbi.srWindow.Top + 1);
+	CONSOLE_SCREEN_BUFFER_INFO console_info;
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &console_info);
+	width = (int)(console_info.srWindow.Right - console_info.srWindow.Left + 1);
+	height = (int)(console_info.srWindow.Bottom - console_info.srWindow.Top + 1);
+	return ElementSize{width, height};
 #elif defined(__linux__)
 	winsize w{};
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-	width = static_cast<int>(w.ws_col);
-	height = static_cast<int>(w.ws_row);
+	return ElementSize{(w.ws_col - 40), w.ws_row};
 #endif
 }
 
@@ -32,66 +36,9 @@ std::string repeat_string(const unsigned int k, const std::string &s) {
 	if (k == 0)
 		return "";
 	std::string t;
-	for (unsigned int i = 0; i < k; i++)
+	for (int i = 0; i < k; i++)
 		t += s;
 	return t;
-}
-
-std::string transform_to_canvas_element(const std::string &to_canvas_element, const char delimiter,
-                                        const char fill_char, ElementSize &size) {
-	if (to_canvas_element.empty()) {
-		size = ElementSize{0, 0};
-		return to_canvas_element;
-	}
-
-	std::vector<std::string_view> lines;
-	std::string::size_type longest = 0;
-
-	std::string::size_type prev_pos = 0;
-	std::string::size_type current_pos;
-
-	bool first_line = true;
-	std::string::size_type first_len = 0;
-	bool all_same = true;
-
-	while ((current_pos = to_canvas_element.find(delimiter, prev_pos)) != std::string::npos) {
-		std::string_view line(to_canvas_element.data() + prev_pos, current_pos - prev_pos);
-		lines.push_back(line);
-		longest = std::max(longest, line.length());
-		prev_pos = current_pos + 1;
-
-		if (first_line) {
-			first_len = longest;
-			first_line = false;
-		} else if (first_len != line.length()) {
-			all_same = false;
-		}
-	}
-
-	const std::string_view last_line(to_canvas_element.data() + prev_pos, to_canvas_element.length() - prev_pos);
-	lines.push_back(last_line);
-	longest = std::max(longest, last_line.length());
-
-	const int box_height = static_cast<int>(lines.size());
-	const int box_width = static_cast<int>(longest);
-
-	std::string result;
-	result.reserve(box_width * box_height);
-
-	size = ElementSize(box_width, box_height);
-	if (all_same && first_line == false && first_len == last_line.length()) {
-		for (const std::string_view &line : lines) {
-			result += line;
-		}
-		return result;
-	}
-
-	for (const std::string_view &line : lines) {
-		result += line;
-		result.append(longest - line.length(), fill_char);
-	}
-
-	return result;
 }
 
 CanvasElement position_canvas_element(const CanvasElement &element, const Position position,
@@ -99,8 +46,10 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
 	const int element_width = element.get_width();
 	const int element_height = element.get_height();
 
-	if (element_width > canvas_size.width || element_height > canvas_size.height)
-		return CanvasElement("");
+	if (element.get_element_size() > canvas_size)
+		return CanvasElement::empty(canvas_size, ' ');
+	if (element.get_element_size() == canvas_size)
+		return element;
 
 	const int repeat_left = (position) & 0b11;
 	const int repeat_right = (position >> 2) & 0b11;
@@ -185,8 +134,7 @@ void render_to_ncurses(const std::string &to_render, const ElementSize size) {
 }
 
 void show_temporary_message(const std::string &message, const int duration_ms) {
-	int width, height;
-	get_terminal_size(width, height);
+	auto [width, height] = get_terminal_size();
 
 	clear();
 	const int y = height / 2;

@@ -1,19 +1,20 @@
+
 #include "column.hpp"
 #include <memory>
 
 Column::Column(std::vector<std::unique_ptr<Widget> > children) : m_children(std::move(children)) {
 }
 
-CanvasElement Column::build_widget(ElementSize &size) const {
+const CanvasElement &Column::build_widget(const ElementSize &size) {
 	const ElementSize min_size = get_minimum_size();
-	CanvasElement widget("");
+	m_cached_canvas = CanvasElement("");
 	if (size < min_size || m_children.empty()) {
-		return widget;
+		m_cached_canvas = CanvasElement::empty(size, ' ');
+		return m_cached_canvas;
 	}
 	int flex_height = size.height;
 
 	int total_flex = 0;
-	int flex_widgets = 0;
 	for (const std::unique_ptr<Widget> &child : m_children) {
 		const int child_flex = child->m_flex;
 		flex_height -= child->get_minimum_size().height;
@@ -21,7 +22,6 @@ CanvasElement Column::build_widget(ElementSize &size) const {
 			continue;
 		}
 		total_flex += child_flex;
-		flex_widgets++;
 	}
 
 	for (const std::unique_ptr<Widget> &child : m_children) {
@@ -32,15 +32,15 @@ CanvasElement Column::build_widget(ElementSize &size) const {
 		if (child_flex > 0 && total_flex > 0) {
 			build_size.height += (flex_height * child_flex) / total_flex;
 		}
-		const CanvasElement child_element = child->build_widget(build_size);
+		const CanvasElement &child_element = child->build_widget(build_size);
 
-		if (widget.get_total_length() == 0) {
-			widget = child_element;
+		if (m_cached_canvas.get_total_length() == 0) {
+			m_cached_canvas = child_element;
 			continue;
 		}
-		widget.merge_below_with_other(child_element);
+		m_cached_canvas.merge_below_with_other(child_element);
 	}
-	return widget;
+	return m_cached_canvas;
 }
 
 bool Column::is_dirty() const {

@@ -25,12 +25,9 @@ enum Position {
 	BOTTOM_RIGHT = 0b00100010,
 };
 
-void get_terminal_size(int &width, int &height);
+ElementSize get_terminal_size();
 
 std::string repeat_string(unsigned int k, const std::string &s);
-
-std::string transform_to_canvas_element(const std::string &to_canvas_element, char delimiter,
-                                        char fill_char, ElementSize &size);
 
 CanvasElement position_canvas_element(const CanvasElement &element, Position position, ElementSize canvas_size,
                                       char blank_char);

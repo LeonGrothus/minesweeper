@@ -1,6 +1,6 @@
 #pragma once
-#include "widget.hpp"
-#include "api/ui/canvas_element.hpp"
+#include "../widget.hpp"
+#include "../../canvas/canvas_element.hpp"
 
 #include <functional>
 #include <string>
@@ -18,9 +18,7 @@ public:
 
 	std::string get_selected_option() const;
 
-	CanvasElement build_widget(ElementSize &size) const override;
-
-	bool is_dirty() const override;
+	const CanvasElement &build_widget(const ElementSize &size) override;
 
 	void keyboard_press(int key) override;
 
@@ -31,13 +29,10 @@ public:
 private:
 	std::vector<std::string> m_options;
 
-	//tmp
 	std::vector<std::function<void()> > m_options_func;
-
 
 	int m_selected_index = 0;
 	bool m_loop;
-	mutable bool m_dirty = true;
 
 	void move_selection(int amount);
 

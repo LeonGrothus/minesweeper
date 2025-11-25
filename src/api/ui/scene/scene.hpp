@@ -1,16 +1,29 @@
 #pragma once
+#include "api/ui/widget/widget.hpp"
+#include <memory>
 
 class Scene {
 public:
 	virtual ~Scene() = 0;
 
-	virtual bool is_dirty() = 0;
+	virtual bool is_dirty() {
+		return m_base_widget->is_dirty();
+	}
 
-	virtual void keyboard_press(int key) = 0;
+	virtual void keyboard_press(const int key) {
+		m_base_widget->keyboard_press(key);
+	}
 
-	virtual bool update(double delta_time) = 0;
+	virtual void update(const double delta_time) {
+		m_base_widget->update(delta_time);
+	}
 
-	virtual void draw() = 0;
+	virtual const CanvasElement &build_scene(const ElementSize &size) {
+		return m_base_widget->build_widget(size);
+	}
+
+protected:
+	std::unique_ptr<Widget> m_base_widget;
 };
 
 inline Scene::~Scene() = default;

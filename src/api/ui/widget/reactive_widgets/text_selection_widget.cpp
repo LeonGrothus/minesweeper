@@ -1,5 +1,5 @@
 #include "text_selection_widget.hpp"
-#include "api/ui/canvas_element.hpp"
+#include "../../canvas/canvas_element.hpp"
 
 #include <algorithm>
 #include <ncurses.h>
@@ -10,13 +10,13 @@ TextSelectionWidget::TextSelectionWidget(const bool loop) : m_loop(loop) {
 void TextSelectionWidget::add_option(const std::string &option, const std::function<void()> func) {
 	m_options.push_back(option);
 	m_options_func.push_back(func);
-	m_dirty = true;
+	m_is_dirty = true;
 }
 
 void TextSelectionWidget::set_selected_index(const int index) {
 	if (index >= 0 && index < static_cast<int>(m_options.size())) {
 		m_selected_index = index;
-		m_dirty = true;
+		m_is_dirty = true;
 	}
 }
 
@@ -31,36 +31,35 @@ std::string TextSelectionWidget::get_selected_option() const {
 	return "";
 }
 
-CanvasElement TextSelectionWidget::build_widget(ElementSize &size) const {
-	const ElementSize minimum_size = get_minimum_size();
-	if (size < minimum_size || m_options.empty()) {
-		return CanvasElement("");
+const CanvasElement &TextSelectionWidget::build_widget(const ElementSize &size) {
+	m_is_dirty = false;
+
+	if (size < get_minimum_size() || m_options.empty()) {
+		m_cached_canvas = CanvasElement::empty(size, ' ');
+		return m_cached_canvas;
 	}
 
-	m_dirty = false;
-
 	std::string result;
-	result.reserve(minimum_size.length());
-	for (int i = 0; i < minimum_size.height; ++i) {
+	result.reserve(size.length());
+
+	for (size_t i = 0; i < size.height; ++i) {
 		std::string line;
 		line.reserve(size.width);
 
-		if (i == m_selected_index) {
-			line = "> ";
-		} else {
-			line = "  ";
+		if (i < m_options.size()) {
+			if (i == m_selected_index) {
+				line = "> ";
+			} else {
+				line = "  ";
+			}
+			line += m_options[i];
 		}
-
-		line += m_options[i];
 		line.append(size.width - line.length(), ' ');
+
 		result += line;
 	}
-
-	return CanvasElement(result, size);
-}
-
-bool TextSelectionWidget::is_dirty() const {
-	return m_dirty;
+	m_cached_canvas = CanvasElement(result, size);
+	return m_cached_canvas;
 }
 
 void TextSelectionWidget::keyboard_press(const int key) {
@@ -111,7 +110,7 @@ void TextSelectionWidget::move_selection(const int amount) {
 		m_selected_index = std::clamp(m_selected_index, 0, options_size - 1);
 	}
 
-	m_dirty = true;
+	m_is_dirty = true;
 }
 
 void TextSelectionWidget::move_selection_up() {

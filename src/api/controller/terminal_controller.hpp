@@ -13,10 +13,11 @@ public:
 private:
 	void draw_scene() const;
 
-	void update_scene(double delta_time);
+	void update_scene(double delta_time) const;
 
 	bool m_running;
 	double m_current_millis;
+	ElementSize m_terminal_size;
 	KeyboardController m_keyboard_controller;
 	delta_timer m_delta_timer;
 	std::unique_ptr<Scene> m_current_scene;
