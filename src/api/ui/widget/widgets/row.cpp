@@ -11,8 +11,8 @@ const CanvasElement &Row::build_widget(const ElementSize &size) {
 		m_cached_canvas = CanvasElement::empty(size, ' ');
 		return m_cached_canvas;
 	}
-	int flex_width = size.width;
 
+	int flex_width = size.width;
 	int total_flex = 0;
 	for (const std::unique_ptr<Widget> &child : m_children) {
 		const int child_flex = child->m_flex;
@@ -31,7 +31,7 @@ const CanvasElement &Row::build_widget(const ElementSize &size) {
 		if (child_flex > 0 && total_flex > 0) {
 			build_size.width += (flex_width * child_flex) / total_flex;
 		}
-		const CanvasElement child_element = child->build_widget(build_size);
+		const CanvasElement &child_element = child->build_widget(build_size);
 
 		if (m_cached_canvas.get_total_length() == 0) {
 			m_cached_canvas = child_element;

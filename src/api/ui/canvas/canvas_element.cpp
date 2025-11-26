@@ -65,11 +65,9 @@ CanvasElement CanvasElement::fill_to_size(const ElementSize size, const char fil
 		new_canvas_element.append(size.width - m_size.width, fill_char);
 	}
 
-	for (int i = m_size.height; i < size.height; i++) {
-		new_canvas_element.append(size.width, fill_char);
-	}
+	new_canvas_element.append((size.height - m_size.height) * size.width, fill_char);
 
-	return CanvasElement(new_canvas_element, size);
+	return CanvasElement(std::move(new_canvas_element), size);
 }
 
 std::ostream &operator<<(std::ostream &os, const CanvasElement &elem) {
