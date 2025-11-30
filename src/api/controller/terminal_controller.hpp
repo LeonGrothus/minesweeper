@@ -19,6 +19,6 @@ private:
 	double m_current_millis;
 	Vector2D m_terminal_size;
 	KeyboardController m_keyboard_controller;
-	delta_timer m_delta_timer;
+	DeltaTimer m_delta_timer;
 	std::unique_ptr<Scene> m_current_scene;
 };

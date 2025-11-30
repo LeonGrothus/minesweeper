@@ -1,13 +1,15 @@
 #include "text_selection_widget.hpp"
 #include "../../canvas/canvas_element.hpp"
+#include "api/ui/canvas/terminal_helper.hpp"
 
 #include <algorithm>
 #include <ncurses.h>
 
-TextSelectionWidget::TextSelectionWidget(const bool loop) : m_loop(loop) {
+TextSelectionWidget::TextSelectionWidget(const bool loop, const bool blink_highlighted) : m_loop(loop),
+	m_blink_highlighted(blink_highlighted) {
 }
 
-void TextSelectionWidget::add_option(const std::string &option, const std::function<void()> func) {
+void TextSelectionWidget::add_option(const std::string &option, const std::function<void()> &func) {
 	m_options.push_back(option);
 	m_options_func.push_back(func);
 	m_is_dirty = true;
@@ -49,11 +51,20 @@ const CanvasElement &TextSelectionWidget::build_widget(const Vector2D &size) {
 		if (i < m_options.size()) {
 			if (i == m_selected_index) {
 				line = "> ";
+				if (!m_highlighted) {
+					line += m_options[i];
+				} else {
+					line += std::string(m_options[i].size(), '#');
+				}
 			} else {
 				line = "  ";
+				line += m_options[i];
 			}
-			line += m_options[i];
 		}
+		if (line.size() < size.x) {
+			line.append(size.x - line.size(), ' ');
+		}
+
 		line.append(size.x - line.length(), ' ');
 
 		result += line;
@@ -80,7 +91,16 @@ void TextSelectionWidget::keyboard_press(const int key) {
 	}
 }
 
-void TextSelectionWidget::update(double delta_time) {
+void TextSelectionWidget::update(const double delta_time) {
+	if (!m_blink_highlighted) {
+		return;
+	}
+	m_current_millis += delta_time;
+	if (m_current_millis > m_blink_highlighted) {
+		m_current_millis -= m_millis_blink_interval;
+		m_highlighted = !m_highlighted;
+		m_is_dirty = true;
+	}
 }
 
 Vector2D TextSelectionWidget::get_minimum_size() const {

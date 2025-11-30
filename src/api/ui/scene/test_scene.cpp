@@ -19,7 +19,7 @@ TestScene::TestScene() {
 		Alignment(std::make_unique<BannerWidget>(CanvasElement(content)), MIDDLE_CENTER));
 	aligned_banner->m_flex = 1;
 
-	std::unique_ptr<TextSelectionWidget> selection = std::make_unique<TextSelectionWidget>(true);
+	std::unique_ptr<TextSelectionWidget> selection = std::make_unique<TextSelectionWidget>(true, true);
 	selection->add_option("Beginner", []() {
 		show_temporary_message("Spielfeld von 8 mal 8 (64) Feldern mit 10 Minen (Minendichte 15,6 %)");
 	});

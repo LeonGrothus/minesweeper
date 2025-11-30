@@ -1,5 +1,6 @@
 #include "terminal_helper.hpp"
 #include <algorithm>
+#include <iostream>
 #include <ncurses.h>
 #include <string>
 #include <string_view>
@@ -123,11 +124,14 @@ void position_string_on_canvas(const CanvasElement &element, const Position pos,
 void render_to_ncurses(const std::string &to_render, const Vector2D size) {
 	clear();
 
+	// if (to_render.size() < size.x * size.y) {
+	// 	std::cerr << "string to short" << std::endl;
+	// 	return;
+	// }
+
 	for (int y = 0; y < size.y; y++) {
 		const int offset = y * size.x;
-		for (int x = 0; x < size.x; x++) {
-			mvaddch(y, x, to_render[offset + x]);
-		}
+		mvaddnstr(y, 0, to_render.c_str() + offset, size.x);
 	}
 
 	refresh();

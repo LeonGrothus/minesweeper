@@ -1,6 +1,7 @@
 #pragma once
 #include "../widget.hpp"
 #include "../../canvas/canvas_element.hpp"
+#include "api/helper/delta_timer.hpp"
 
 #include <functional>
 #include <string>
@@ -8,9 +9,9 @@
 
 class TextSelectionWidget final : public Widget {
 public:
-	explicit TextSelectionWidget(bool loop = false);
+	explicit TextSelectionWidget(bool loop = false, bool blink_highlighted = false);
 
-	void add_option(const std::string &option, std::function<void()> func);
+	void add_option(const std::string &option, const std::function<void()> &func);
 
 	void set_selected_index(int index);
 
@@ -33,6 +34,11 @@ private:
 
 	int m_selected_index = 0;
 	bool m_loop;
+
+	bool m_blink_highlighted;
+	double m_current_millis = 0;
+	double m_millis_blink_interval = 500;
+	bool m_highlighted = false;
 
 	void move_selection(int amount);
 

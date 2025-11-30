@@ -1,13 +1,15 @@
 #include "keyboard_controller.hpp"
 
+#include <clocale>
 #include <ncurses.h>
 #include <cstdlib>
 
 KeyboardController::KeyboardController() {
+	setlocale(LC_ALL, "");
 	if (!getenv("TERM")) {
 		setenv("TERM", "xterm-256color", 1);
 	}
-	
+
 	initscr();
 	cbreak();
 	noecho();
