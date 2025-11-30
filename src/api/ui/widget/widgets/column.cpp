@@ -5,19 +5,19 @@
 Column::Column(std::vector<std::unique_ptr<Widget> > children) : m_children(std::move(children)) {
 }
 
-const CanvasElement &Column::build_widget(const ElementSize &size) {
-	const ElementSize min_size = get_minimum_size();
+const CanvasElement &Column::build_widget(const Vector2D &size) {
+	const Vector2D min_size = get_minimum_size();
 	m_cached_canvas = CanvasElement("");
 	if (size < min_size || m_children.empty()) {
 		m_cached_canvas = CanvasElement::empty(size, ' ');
 		return m_cached_canvas;
 	}
-	int flex_height = size.height;
+	int flex_height = size.y;
 
 	int total_flex = 0;
 	for (const std::unique_ptr<Widget> &child : m_children) {
 		const int child_flex = child->m_flex;
-		flex_height -= child->get_minimum_size().height;
+		flex_height -= child->get_minimum_size().y;
 		if (child_flex <= 0) {
 			continue;
 		}
@@ -26,11 +26,11 @@ const CanvasElement &Column::build_widget(const ElementSize &size) {
 
 	for (const std::unique_ptr<Widget> &child : m_children) {
 		const int child_flex = child->m_flex;
-		const int child_min_height = child->get_minimum_size().height;
+		const int child_min_height = child->get_minimum_size().y;
 
-		ElementSize build_size{size.width, child_min_height};
+		Vector2D build_size{size.x, child_min_height};
 		if (child_flex > 0 && total_flex > 0) {
-			build_size.height += (flex_height * child_flex) / total_flex;
+			build_size.y += (flex_height * child_flex) / total_flex;
 		}
 		const CanvasElement &child_element = child->build_widget(build_size);
 
@@ -64,7 +64,7 @@ void Column::update(const double delta_time) {
 	}
 }
 
-ElementSize Column::get_minimum_size() const {
+Vector2D Column::get_minimum_size() const {
 	int height = 0;
 	int max_width = 0;
 
@@ -73,5 +73,5 @@ ElementSize Column::get_minimum_size() const {
 		max_width = std::max(max_width, width);
 		height += child_height;
 	}
-	return ElementSize{max_width, height};
+	return Vector2D{max_width, height};
 }

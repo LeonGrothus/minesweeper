@@ -33,11 +33,11 @@ TestScene::TestScene() {
 	});
 	selection->set_selected_index(0);
 
-	std::unique_ptr<Alignment> aligned_selection = std::make_unique<Alignment>(std::move(selection), BOTTOM_CENTER);
+	std::unique_ptr<Alignment> aligned_selection = std::make_unique<Alignment>(std::move(selection), BOTTOM_LEFT);
 	aligned_selection->m_flex = NO_FLEX;
 
 	std::vector<std::unique_ptr<Widget> > children;
 	children.push_back(std::move(aligned_banner));
 	children.push_back(std::move(aligned_selection));
-	m_base_widget = std::make_unique<Row>(std::move(children));
+	m_base_widget = std::make_unique<Column>(std::move(children));
 }

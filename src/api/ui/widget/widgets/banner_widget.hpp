@@ -10,11 +10,11 @@ public:
 
 	explicit BannerWidget(const std::string &banner);
 
-	const CanvasElement &build_widget(const ElementSize &size) override;
+	const CanvasElement &build_widget(const Vector2D &size) override;
 
 	void update(double delta_time) override;
 
-	ElementSize get_minimum_size() const override;
+	Vector2D get_minimum_size() const override;
 
 	void keyboard_press(int key) override;
 

@@ -14,21 +14,21 @@
 #include <unistd.h>
 #endif
 
-ElementSize get_terminal_size() {
+Vector2D get_terminal_size() {
 
 	if (stdscr != nullptr) {
-		return ElementSize{COLS, LINES};
+		return Vector2D{COLS, LINES};
 	}
 #if defined(_WIN32)
 	CONSOLE_SCREEN_BUFFER_INFO console_info;
 	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &console_info);
 	width = (int)(console_info.srWindow.Right - console_info.srWindow.Left + 1);
 	height = (int)(console_info.srWindow.Bottom - console_info.srWindow.Top + 1);
-	return ElementSize{width, height};
+	return Vector2D{width, height};
 #elif defined(__linux__)
 	winsize w{};
 	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-	return ElementSize{(w.ws_col - 40), w.ws_row};
+	return Vector2D{(w.ws_col - 40), w.ws_row};
 #endif
 }
 
@@ -42,7 +42,7 @@ std::string repeat_string(const unsigned int k, const std::string &s) {
 }
 
 CanvasElement position_canvas_element(const CanvasElement &element, const Position position,
-                                      const ElementSize canvas_size, const char blank_char) {
+                                      const Vector2D canvas_size, const char blank_char) {
 	const int element_width = element.get_width();
 	const int element_height = element.get_height();
 
@@ -56,14 +56,14 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
 	const int repeat_top = (position >> 4) & 0b11;
 	const int repeat_bottom = (position >> 6) & 0b11;
 
-	const std::string width_offset = std::string(canvas_size.width, blank_char);
-	const std::string half_width_offset = std::string((canvas_size.width - element_width) / 2, blank_char);
+	const std::string width_offset = std::string(canvas_size.x, blank_char);
+	const std::string half_width_offset = std::string((canvas_size.x - element_width) / 2, blank_char);
 
 	std::string vertical_string_line;
-	vertical_string_line.reserve(canvas_size.width);
+	vertical_string_line.reserve(canvas_size.x);
 
 	std::string vertical_string;
-	vertical_string.reserve(canvas_size.width * element_height);
+	vertical_string.reserve(canvas_size.x * element_height);
 
 	for (int i = 0; i < element_height; i++) {
 		const std::string::size_type current_pos = i * element_width;
@@ -72,14 +72,14 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
 		vertical_string_line = repeat_string(repeat_left, half_width_offset);
 		vertical_string_line += line;
 		vertical_string_line += repeat_string(repeat_right, half_width_offset);
-		vertical_string_line += std::string(canvas_size.width - vertical_string_line.length(), blank_char);
+		vertical_string_line += std::string(canvas_size.x - vertical_string_line.length(), blank_char);
 		vertical_string += vertical_string_line;
 	}
 
 	std::string full_string;
-	const int height_diff = (canvas_size.height - element_height) / 2;
-	const int additional = (canvas_size.height - element_height) % 2;
-	full_string.reserve(canvas_size.width * canvas_size.height);
+	const int height_diff = (canvas_size.y - element_height) / 2;
+	const int additional = (canvas_size.y - element_height) % 2;
+	full_string.reserve(canvas_size.x * canvas_size.y);
 
 	const bool extra_at_top = (repeat_bottom != 0);
 
@@ -100,9 +100,9 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
 }
 
 void position_string_on_canvas(const CanvasElement &element, const Position pos, CanvasElement &canvas) {
-	const ElementSize canvas_size = canvas.get_element_size();
-	const int canvas_width = canvas_size.width;
-	const int canvas_height = canvas_size.height;
+	const Vector2D canvas_size = canvas.get_element_size();
+	const int canvas_width = canvas_size.x;
+	const int canvas_height = canvas_size.y;
 
 	if (element.get_width() > canvas_width || element.get_height() > canvas_height) {
 		return;
@@ -120,12 +120,12 @@ void position_string_on_canvas(const CanvasElement &element, const Position pos,
 	}
 }
 
-void render_to_ncurses(const std::string &to_render, const ElementSize size) {
+void render_to_ncurses(const std::string &to_render, const Vector2D size) {
 	clear();
 
-	for (int y = 0; y < size.height; y++) {
-		const int offset = y * size.width;
-		for (int x = 0; x < size.width; x++) {
+	for (int y = 0; y < size.y; y++) {
+		const int offset = y * size.x;
+		for (int x = 0; x < size.x; x++) {
 			mvaddch(y, x, to_render[offset + x]);
 		}
 	}

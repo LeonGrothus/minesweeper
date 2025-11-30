@@ -9,7 +9,7 @@ BannerWidget::BannerWidget(const std::string &banner) : m_banner(banner) {
 }
 
 
-const CanvasElement &BannerWidget::build_widget(const ElementSize &size) {
+const CanvasElement &BannerWidget::build_widget(const Vector2D &size) {
 	m_is_dirty = false;
 	if (size < get_minimum_size()) {
 		m_cached_canvas = CanvasElement::empty(size, ' ');
@@ -22,7 +22,7 @@ const CanvasElement &BannerWidget::build_widget(const ElementSize &size) {
 void BannerWidget::update(double delta_time) {
 }
 
-ElementSize BannerWidget::get_minimum_size() const {
+Vector2D BannerWidget::get_minimum_size() const {
 	return m_banner.get_element_size();
 }
 

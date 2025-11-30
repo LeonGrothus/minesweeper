@@ -18,13 +18,13 @@ public:
 
 	std::string get_selected_option() const;
 
-	const CanvasElement &build_widget(const ElementSize &size) override;
+	const CanvasElement &build_widget(const Vector2D &size) override;
 
 	void keyboard_press(int key) override;
 
 	void update(double delta_time) override;
 
-	ElementSize get_minimum_size() const override;
+	Vector2D get_minimum_size() const override;
 
 private:
 	std::vector<std::string> m_options;

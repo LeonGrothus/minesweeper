@@ -2,32 +2,44 @@
 
 #include <string>
 
-struct ElementSize {
-	int width;
-	int height;
+struct Vector2D {
+	int x;
+	int y;
 
-	auto operator<=>(const ElementSize &a) const = default;
+	auto operator<=>(const Vector2D &a) const = default;
 
-	int length() const {
-		return width * height;
+	Vector2D operator +(const Vector2D &other) const {
+		return Vector2D(x + other.x, y + other.y);
+	}
+
+	Vector2D operator -(const Vector2D &other) const {
+		return Vector2D(x - other.x, y - other.y);
+	}
+
+	Vector2D operator %(const Vector2D &other) const {
+		return Vector2D(x % other.x, y % other.y);
+	}
+
+	int size() const {
+		return x * y;
 	}
 };
 
 class CanvasElement {
 public:
-	explicit CanvasElement(std::string canvas_element, ElementSize size);
+	explicit CanvasElement(std::string canvas_element, Vector2D size);
 
 	explicit CanvasElement(std::string canvas_element, int width, int height);
 
 	explicit CanvasElement(const std::string &normal_string, char delimiter = '\n');
 
-	static CanvasElement empty(ElementSize size, char empty_char);
+	static CanvasElement empty(Vector2D size, char empty_char);
 
 	int get_width() const;
 
 	int get_height() const;
 
-	ElementSize get_element_size() const;
+	Vector2D get_element_size() const;
 
 	int get_total_length() const;
 
@@ -35,7 +47,7 @@ public:
 
 	std::string &get_mutable_canvas_element();
 
-	CanvasElement fill_to_size(ElementSize size, char fill_char) const;
+	CanvasElement fill_to_size(Vector2D size, char fill_char) const;
 
 	bool merge_below_with_other(const CanvasElement &other);
 
@@ -51,7 +63,7 @@ private:
 	static CanvasElement transform_to_canvas_element(const std::string &to_canvas_element, char delimiter,
 	                                                 char fill_char);
 
-	ElementSize m_size{};
+	Vector2D m_size{};
 
 	std::string m_canvas_element;
 };

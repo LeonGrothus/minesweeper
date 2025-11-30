@@ -8,9 +8,9 @@ class Alignment final : public Widget {
 public:
 	explicit Alignment(std::unique_ptr<Widget> child, Position alignment);
 
-	const CanvasElement &build_widget(const ElementSize &size) override;
+	const CanvasElement &build_widget(const Vector2D &size) override;
 
-	ElementSize get_minimum_size() const override;
+	Vector2D get_minimum_size() const override;
 
 	void keyboard_press(int key) override;
 

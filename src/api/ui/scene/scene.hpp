@@ -18,7 +18,7 @@ public:
 		m_base_widget->update(delta_time);
 	}
 
-	virtual const CanvasElement &build_scene(const ElementSize &size) {
+	virtual const CanvasElement &build_scene(const Vector2D &size) {
 		return m_base_widget->build_widget(size);
 	}
 

@@ -25,15 +25,15 @@ enum Position {
 	BOTTOM_RIGHT = 0b00100010,
 };
 
-ElementSize get_terminal_size();
+Vector2D get_terminal_size();
 
 std::string repeat_string(unsigned int k, const std::string &s);
 
-CanvasElement position_canvas_element(const CanvasElement &element, Position position, ElementSize canvas_size,
+CanvasElement position_canvas_element(const CanvasElement &element, Position position, Vector2D canvas_size,
                                       char blank_char);
 
 void position_string_on_canvas(const CanvasElement &element, Position pos, CanvasElement &canvas);
 
-void render_to_ncurses(const std::string &to_render, ElementSize size);
+void render_to_ncurses(const std::string &to_render, Vector2D size);
 
 void show_temporary_message(const std::string &message, int duration_ms = 2000);

@@ -7,7 +7,7 @@ class Column final : public Widget {
 public:
 	explicit Column(std::vector<std::unique_ptr<Widget> > children);
 
-	const CanvasElement &build_widget(const ElementSize &size) override;
+	const CanvasElement &build_widget(const Vector2D &size) override;
 
 	bool is_dirty() const override;
 
@@ -15,7 +15,7 @@ public:
 
 	void update(double delta_time) override;
 
-	ElementSize get_minimum_size() const override;
+	Vector2D get_minimum_size() const override;
 
 private:
 	std::vector<std::unique_ptr<Widget> > m_children;

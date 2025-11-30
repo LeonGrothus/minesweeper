@@ -16,7 +16,7 @@ TerminalController::TerminalController(std::unique_ptr<Scene> default_scene)
 
 void TerminalController::run() {
 	while (m_running) {
-		const ElementSize new_terminal_size = get_terminal_size();
+		const Vector2D new_terminal_size = get_terminal_size();
 		const bool terminal_size_changed = new_terminal_size != m_terminal_size;
 		m_terminal_size = new_terminal_size;
 
@@ -28,7 +28,7 @@ void TerminalController::run() {
 			m_current_millis = std::max(m_current_millis - FRAME_TIME, 0.0);
 
 			update_scene(delta_time);
-			if (m_current_scene->is_dirty()) {
+			if (m_current_scene->is_dirty() || terminal_size_changed) {
 				draw_scene();
 			}
 		}

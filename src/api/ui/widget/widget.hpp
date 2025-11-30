@@ -10,9 +10,9 @@ class Widget {
 public:
 	virtual ~Widget() = 0;
 
-	virtual const CanvasElement &build_widget(const ElementSize &size) = 0;
+	virtual const CanvasElement &build_widget(const Vector2D &size) = 0;
 
-	virtual ElementSize get_minimum_size() const = 0;
+	virtual Vector2D get_minimum_size() const = 0;
 
 	virtual void keyboard_press(int key) = 0;
 

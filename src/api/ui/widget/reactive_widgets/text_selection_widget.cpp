@@ -31,7 +31,7 @@ std::string TextSelectionWidget::get_selected_option() const {
 	return "";
 }
 
-const CanvasElement &TextSelectionWidget::build_widget(const ElementSize &size) {
+const CanvasElement &TextSelectionWidget::build_widget(const Vector2D &size) {
 	m_is_dirty = false;
 
 	if (size < get_minimum_size() || m_options.empty()) {
@@ -40,11 +40,11 @@ const CanvasElement &TextSelectionWidget::build_widget(const ElementSize &size) 
 	}
 
 	std::string result;
-	result.reserve(size.length());
+	result.reserve(size.size());
 
-	for (size_t i = 0; i < size.height; ++i) {
+	for (size_t i = 0; i < size.y; ++i) {
 		std::string line;
-		line.reserve(size.width);
+		line.reserve(size.x);
 
 		if (i < m_options.size()) {
 			if (i == m_selected_index) {
@@ -54,7 +54,7 @@ const CanvasElement &TextSelectionWidget::build_widget(const ElementSize &size) 
 			}
 			line += m_options[i];
 		}
-		line.append(size.width - line.length(), ' ');
+		line.append(size.x - line.length(), ' ');
 
 		result += line;
 	}
@@ -83,9 +83,9 @@ void TextSelectionWidget::keyboard_press(const int key) {
 void TextSelectionWidget::update(double delta_time) {
 }
 
-ElementSize TextSelectionWidget::get_minimum_size() const {
+Vector2D TextSelectionWidget::get_minimum_size() const {
 	if (m_options.empty()) {
-		return ElementSize{0, 0};
+		return Vector2D{0, 0};
 	}
 
 	int max_width = 0;
@@ -93,7 +93,7 @@ ElementSize TextSelectionWidget::get_minimum_size() const {
 		max_width = std::max(max_width, static_cast<int>(option.length()) + 4);
 	}
 
-	return ElementSize{max_width, static_cast<int>(m_options.size())};
+	return Vector2D{max_width, static_cast<int>(m_options.size())};
 }
 
 void TextSelectionWidget::move_selection(const int amount) {

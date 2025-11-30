@@ -7,13 +7,13 @@ Alignment::Alignment(std::unique_ptr<Widget> child, const Position alignment)
 	  m_alignment(alignment) {
 }
 
-const CanvasElement &Alignment::build_widget(const ElementSize &size) {
+const CanvasElement &Alignment::build_widget(const Vector2D &size) {
 	const CanvasElement &child = m_child->build_widget(m_child->get_minimum_size());
 	m_cached_canvas = position_canvas_element(child, m_alignment, size, ' ');
 	return m_cached_canvas;
 }
 
-ElementSize Alignment::get_minimum_size() const {
+Vector2D Alignment::get_minimum_size() const {
 	return m_child->get_minimum_size();
 }
 
