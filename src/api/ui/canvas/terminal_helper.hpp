@@ -36,4 +36,6 @@ void position_string_on_canvas(const CanvasElement &element, Position pos, Canva
 
 void render_to_ncurses(const std::string &to_render, Vector2D size);
 
+void render_to_ncurses_buffered(const std::string &to_render, Vector2D size);
+
 void show_temporary_message(const std::string &message, int duration_ms = 2000);

@@ -11,6 +11,8 @@ KeyboardController::KeyboardController() {
 	}
 
 	initscr();
+	curs_set(0);
+
 	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);

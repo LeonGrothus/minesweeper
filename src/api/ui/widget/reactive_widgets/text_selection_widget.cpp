@@ -96,7 +96,7 @@ void TextSelectionWidget::update(const double delta_time) {
 		return;
 	}
 	m_current_millis += delta_time;
-	if (m_current_millis > m_blink_highlighted) {
+	if (m_current_millis > m_millis_blink_interval) {
 		m_current_millis -= m_millis_blink_interval;
 		m_highlighted = !m_highlighted;
 		m_is_dirty = true;
@@ -129,6 +129,9 @@ void TextSelectionWidget::move_selection(const int amount) {
 	} else {
 		m_selected_index = std::clamp(m_selected_index, 0, options_size - 1);
 	}
+
+	m_current_millis = 0;
+	m_highlighted = false;
 
 	m_is_dirty = true;
 }

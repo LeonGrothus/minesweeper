@@ -137,6 +137,28 @@ void render_to_ncurses(const std::string &to_render, const Vector2D size) {
 	refresh();
 }
 
+std::string last_frame;
+
+void render_to_ncurses_buffered(const std::string &to_render, const Vector2D size) {
+	if (last_frame.size() != to_render.size()) {
+		last_frame.assign(to_render.size(), '\x7F');
+	}
+
+	for (int i = 0; i < to_render.size(); i++) {
+		if (last_frame[i] == to_render[i]) {
+			continue;
+		}
+		const int x = i % size.x;
+		const int y = i / size.x;
+
+		mvaddch(y, x, to_render[i]);
+	}
+	last_frame = to_render;
+
+	wnoutrefresh(stdscr);
+	doupdate();
+}
+
 void show_temporary_message(const std::string &message, const int duration_ms) {
 	auto [width, height] = get_terminal_size();
 

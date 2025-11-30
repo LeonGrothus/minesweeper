@@ -6,6 +6,7 @@
 #include "../widget/reactive_widgets/text_selection_widget.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
 #include "api/ui/widget/widgets/column.hpp"
+#include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/row.hpp"
 
 #include <vector>
@@ -33,11 +34,17 @@ TestScene::TestScene() {
 	});
 	selection->set_selected_index(0);
 
-	std::unique_ptr<Alignment> aligned_selection = std::make_unique<Alignment>(std::move(selection), BOTTOM_LEFT);
+	std::unique_ptr<Padding> padding = std::make_unique<Padding>(std::move(selection), 6, 6, 2, 2);
+	padding->set_border_char('#');
+
+	std::unique_ptr<Alignment> aligned_selection = std::make_unique<Alignment>(std::move(padding), BOTTOM_LEFT);
 	aligned_selection->m_flex = NO_FLEX;
 
 	std::vector<std::unique_ptr<Widget> > children;
 	children.push_back(std::move(aligned_banner));
 	children.push_back(std::move(aligned_selection));
-	m_base_widget = std::make_unique<Column>(std::move(children));
+	std::unique_ptr<Padding> all_padding = std::make_unique<Padding>(std::make_unique<Column>(std::move(children)), 4,
+	                                                                 4, 2, 2);
+	all_padding->set_border_char('#');
+	m_base_widget = std::move(all_padding);
 }
