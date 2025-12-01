@@ -34,6 +34,7 @@ TestScene::TestScene() {
     board_row_children.push_back(std::make_unique<Alignment>(std::move(professional_with_padding), MIDDLE_CENTER));
 
     std::unique_ptr<Row> board_row = std::make_unique<Row>(std::move(board_row_children));
+    board_row->set_spacing(2);
     std::unique_ptr<Alignment> aligned_boards = std::make_unique<Alignment>(std::move(board_row), MIDDLE_CENTER);
     aligned_boards->m_flex = 1;
 

@@ -6,19 +6,22 @@
 
 class Row final : public Widget {
 public:
-	explicit Row(std::vector<std::unique_ptr<Widget> > children);
+    explicit Row(std::vector<std::unique_ptr<Widget> > children);
 
-	const CanvasElement &build_widget(const Vector2D &size) override;
+    void set_spacing(int spacing);
 
-	bool is_dirty() const override;
+    const CanvasElement &build_widget(const Vector2D &size) override;
 
-	void keyboard_press(int key) override;
+    bool is_dirty() const override;
 
-	void update(double delta_time) override;
+    void keyboard_press(int key) override;
 
-	Vector2D get_minimum_size() const override;
+    void update(double delta_time) override;
+
+    Vector2D get_minimum_size() const override;
 
 private:
-	std::vector<std::unique_ptr<Widget> > m_children;
+    std::vector<std::unique_ptr<Widget> > m_children;
+    int m_spacing = 0;
 };
 
