@@ -1,4 +1,7 @@
 #include "grid_2d.hpp"
+#include "cell.hpp"
+#include <tuple>
+#include <vector>
 
 
 template<typename T>
@@ -68,7 +71,7 @@ std::vector<std::tuple<Vector2D, T> > Grid2D<T>::get_close_adjacent(const Vector
             if (!in_bounds(new_pos)) {
                 continue;
             }
-            adjacent.push_back(std::tuple<Vector2D, int>(new_pos + m_offset, m_data[get_index(new_pos)]));
+            adjacent.emplace_back(new_pos + m_offset, m_data[get_index(new_pos)]);
         }
     }
     return adjacent;
@@ -86,7 +89,7 @@ std::vector<std::tuple<Vector2D, T> > Grid2D<T>::get_all_adjacent(const Vector2D
             if (!in_bounds(new_pos)) {
                 continue;
             }
-            adjacent.push_back(std::tuple<Vector2D, int>(new_pos + m_offset, m_data[get_index(new_pos)]));
+            adjacent.emplace_back(new_pos + m_offset, m_data[get_index(new_pos)]);
         }
     }
     return adjacent;
@@ -99,5 +102,7 @@ T &Grid2D<T>::operator[](const Vector2D &pos) {
 
 template<typename T>
 T &Grid2D<T>::operator[](const int x, const int y) {
-    return this[Vector2D(x, y)];
+    return (*this)[Vector2D(x, y)];
 }
+
+template class Grid2D<Cell>;

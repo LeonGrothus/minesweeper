@@ -9,40 +9,40 @@
 
 class TextSelectionWidget final : public Widget {
 public:
-	explicit TextSelectionWidget(bool loop = false, bool blink_highlighted = false);
+    explicit TextSelectionWidget(bool loop = false, bool blink_highlighted = false);
 
-	void add_option(const std::string &option, const std::function<void()> &func);
+    void add_option(const std::string &option, const std::function<void()> &func);
 
-	void set_selected_index(int index);
+    void set_selected_index(int index);
 
-	int get_selected_index() const;
+    int get_selected_index() const;
 
-	std::string get_selected_option() const;
+    std::string get_selected_option() const;
 
-	const CanvasElement &build_widget(const Vector2D &size) override;
+    const CanvasElement &build_widget(const Vector2D &size) override;
 
-	void keyboard_press(int key) override;
+    void keyboard_press(int key) override;
 
-	void update(double delta_time) override;
+    void update(double delta_time) override;
 
-	Vector2D get_minimum_size() const override;
+    Vector2D get_minimum_size() const override;
 
 private:
-	std::vector<std::string> m_options;
+    std::vector<std::string> m_options;
 
-	std::vector<std::function<void()> > m_options_func;
+    std::vector<std::function<void()> > m_options_func;
 
-	int m_selected_index = 0;
-	bool m_loop;
+    int m_selected_index = 0;
+    bool m_loop;
 
-	bool m_blink_highlighted;
-	double m_current_millis = 0;
-	double m_millis_blink_interval = 500;
-	bool m_highlighted = false;
+    bool m_blink_highlighted;
+    double m_current_millis = 0;
+    bool m_highlighted = false;
+    static constexpr double BLINK_INTERVAL_MS = 500.0; //ms
 
-	void move_selection(int amount);
+    void move_selection(int amount);
 
-	void move_selection_up();
+    void move_selection_up();
 
-	void move_selection_down();
+    void move_selection_down();
 };

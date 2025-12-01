@@ -14,7 +14,7 @@ public:
 
     int get_adjacent_mines() const;
 
-    bool contains_mine() const;
+    bool has_mine() const;
 
     bool is_revealed() const;
 

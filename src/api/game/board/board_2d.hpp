@@ -6,7 +6,7 @@
 
 class Board2D {
 public:
-    explicit Board2D(Vector2D size, int mines);
+    explicit Board2D(Vector2D size, int mines, bool force_mines = false);
 
     void first_move(const Vector2D &pos);
 
@@ -20,22 +20,23 @@ public:
 
     const Cell &get_cell(const Vector2D &pos);
 
-    const CanvasElement &draw_board();
-
-    bool is_dirty() const;
-
     bool is_won() const;
 
     bool is_lost() const;
 
     int get_flagged_count() const;
 
+    int get_mine_count() const;
+
+    Vector2D get_grid_size() const;
+
+    std::vector<Vector2D> get_all_mine_positions() const;
+
 private:
     Grid2D<Cell> m_grid;
     int m_mine_count;
     int m_flagged_count;
-    bool m_dirty;
-    
+
     bool m_is_lost;
     bool m_is_won;
     int m_safe_cells_remaining;
@@ -46,7 +47,7 @@ private:
 
     void place_mines(int count, const Vector2D &start_pos);
 
-    void mark_dirty();
+    void place_mines(int count, int start_index);
 
     void calculate_all_adjacent_mines();
 

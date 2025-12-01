@@ -96,8 +96,8 @@ void TextSelectionWidget::update(const double delta_time) {
         return;
     }
     m_current_millis += delta_time;
-    if (m_current_millis > m_millis_blink_interval) {
-        m_current_millis -= m_millis_blink_interval;
+    if (m_current_millis > BLINK_INTERVAL_MS) {
+        m_current_millis -= BLINK_INTERVAL_MS;
         m_highlighted = !m_highlighted;
         m_is_dirty = true;
     }

@@ -27,7 +27,7 @@ int Cell::get_adjacent_mines() const {
     return m_adjacent_mines;
 }
 
-bool Cell::contains_mine() const {
+bool Cell::has_mine() const {
     return m_has_mine;
 }
 
@@ -44,7 +44,7 @@ char Cell::get_representation() const {
         if (m_is_flagged) {
             return 'F';
         }
-        return '#';
+        return '+';
     }
 
     if (m_has_mine) {
