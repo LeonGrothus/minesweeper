@@ -23,7 +23,7 @@ CanvasElement::CanvasElement(const std::string &normal_string, const char delimi
 }
 
 CanvasElement CanvasElement::empty(const Vector2D size, const char empty_char) {
-	return CanvasElement(std::string(size.size(), empty_char), size);
+	return CanvasElement(std::string(size.area(), empty_char), size);
 }
 
 int CanvasElement::get_width() const {
@@ -39,7 +39,7 @@ Vector2D CanvasElement::get_element_size() const {
 }
 
 int CanvasElement::get_total_length() const {
-	return m_size.size();
+	return m_size.area();
 }
 
 
@@ -57,7 +57,7 @@ CanvasElement CanvasElement::fill_to_size(const Vector2D size, const char fill_c
 	}
 
 	std::string new_canvas_element;
-	new_canvas_element.reserve(size.size());
+	new_canvas_element.reserve(size.area());
 
 	for (int i = 0; i < m_size.y; i++) {
 		const std::string_view line(m_canvas_element.data() + i * m_size.x, m_size.x);

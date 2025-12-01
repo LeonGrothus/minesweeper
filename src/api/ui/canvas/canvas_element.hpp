@@ -20,7 +20,7 @@ struct Vector2D {
 		return Vector2D(x % other.x, y % other.y);
 	}
 
-	int size() const {
+	int area() const {
 		return x * y;
 	}
 };
