@@ -63,11 +63,12 @@ const CanvasElement &BoardWidget::build_widget(const Vector2D &size) {
             const Cell &cell = m_board->get_cell(pos);
 
             if (x == m_cursor_pos.x && y == m_cursor_pos.y) {
-                if (!cell.is_revealed()) {
-                    canvas_str += 'C';
-                } else {
-                    canvas_str += cell.get_representation();
-                }
+                canvas_str += 'C';
+                // if (!cell.is_revealed()) {
+                //     canvas_str += 'C';
+                // } else {
+                //     canvas_str += cell.get_representation();
+                // }
             } else {
                 canvas_str += cell.get_representation();
             }
