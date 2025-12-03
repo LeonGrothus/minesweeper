@@ -47,7 +47,7 @@ CanvasElement BoardShowcaseWidget::build_canvas_element(const Vector2D &size) {
             }
 
             if (is_mine && m_show_mines) {
-                canvas_str += u'#';
+                canvas_str += u'\u25CF';
             } else {
                 canvas_str += cell.get_representation();
             }
