@@ -11,15 +11,13 @@ class TextSelectionWidget final : public Widget {
 public:
     explicit TextSelectionWidget(bool loop = false, bool blink_highlighted = false);
 
-    void add_option(const std::string &option, const std::function<void()> &func);
+    void add_option(const std::u16string &option, const std::function<void()> &func);
 
     void set_selected_index(int index);
 
     int get_selected_index() const;
 
-    std::string get_selected_option() const;
-
-    const CanvasElement &build_widget(const Vector2D &size) override;
+    std::u16string get_selected_option() const;
 
     void keyboard_press(int key) override;
 
@@ -27,8 +25,11 @@ public:
 
     Vector2D get_minimum_size() const override;
 
+protected:
+    CanvasElement build_canvas_element(const Vector2D &size) override;
+
 private:
-    std::vector<std::string> m_options;
+    std::vector<std::u16string> m_options;
 
     std::vector<std::function<void()> > m_options_func;
 

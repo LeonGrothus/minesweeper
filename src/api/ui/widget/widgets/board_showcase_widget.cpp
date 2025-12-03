@@ -22,14 +22,13 @@ void BoardShowcaseWidget::set_blinking(const bool enabled) {
 }
 
 
-const CanvasElement &BoardShowcaseWidget::build_widget(const Vector2D &size) {
+CanvasElement BoardShowcaseWidget::build_canvas_element(const Vector2D &size) {
     const Vector2D grid_size = m_board->get_grid_size();
     if (grid_size < size) {
-        m_cached_canvas = CanvasElement::empty(size, ' ');
-        return m_cached_canvas;
+        return CanvasElement::empty(size, u' ');
     }
 
-    std::string canvas_str;
+    std::u16string canvas_str;
     canvas_str.reserve(grid_size.area());
 
     const std::vector<Vector2D> mine_positions = m_board->get_all_mine_positions();
@@ -48,16 +47,14 @@ const CanvasElement &BoardShowcaseWidget::build_widget(const Vector2D &size) {
             }
 
             if (is_mine && m_show_mines) {
-                canvas_str += '#';
+                canvas_str += u'#';
             } else {
                 canvas_str += cell.get_representation();
             }
         }
     }
 
-    m_cached_canvas = CanvasElement(canvas_str, grid_size);
-    m_is_dirty = false;
-    return m_cached_canvas;
+    return CanvasElement(canvas_str, grid_size);
 }
 
 Vector2D BoardShowcaseWidget::get_minimum_size() const {

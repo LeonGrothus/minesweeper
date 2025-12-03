@@ -13,13 +13,14 @@ public:
 
     void set_blinking(bool enabled);
 
-    const CanvasElement &build_widget(const Vector2D &size) override;
-
     Vector2D get_minimum_size() const override;
 
     void keyboard_press(int key) override;
 
     void update(double delta_time) override;
+
+protected:
+    CanvasElement build_canvas_element(const Vector2D &size) override;
 
 private:
     std::shared_ptr<Board2D> m_board;

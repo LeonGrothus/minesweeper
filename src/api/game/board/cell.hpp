@@ -20,7 +20,7 @@ public:
 
     bool is_flagged() const;
 
-    char get_representation() const;
+    char16_t get_representation() const;
 
 private:
     bool m_has_mine;

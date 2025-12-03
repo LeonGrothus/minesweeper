@@ -27,13 +27,13 @@ struct Vector2D {
 
 class CanvasElement {
 public:
-	explicit CanvasElement(std::string canvas_element, Vector2D size);
+	explicit CanvasElement(std::u16string canvas_element, Vector2D size);
 
-	explicit CanvasElement(std::string canvas_element, int width, int height);
+	explicit CanvasElement(std::u16string canvas_element, int width, int height);
 
 	explicit CanvasElement(const std::string &normal_string, char delimiter = '\n');
 
-	static CanvasElement empty(Vector2D size, char empty_char);
+	static CanvasElement empty(Vector2D size, char16_t empty_char);
 
 	int get_width() const;
 
@@ -43,11 +43,11 @@ public:
 
 	int get_total_length() const;
 
-	const std::string &get_canvas_element() const;
+	const std::u16string &get_canvas_element() const;
 
-	std::string &get_mutable_canvas_element();
+	std::u16string &get_mutable_canvas_element();
 
-	CanvasElement fill_to_size(Vector2D size, char fill_char) const;
+	CanvasElement fill_to_size(Vector2D size, char16_t fill_char) const;
 
 	bool merge_below_with_other(const CanvasElement &other);
 
@@ -60,10 +60,10 @@ public:
 	friend std::ostream &operator<<(std::ostream &os, const CanvasElement &elem);
 
 private:
-	static CanvasElement transform_to_canvas_element(const std::string &to_canvas_element, char delimiter,
-	                                                 char fill_char);
+	static CanvasElement transform_to_canvas_element_utf8(const std::string &to_canvas_element, char delimiter,
+	                                                     char16_t fill_char);
 
 	Vector2D m_size{};
 
-	std::string m_canvas_element;
+	std::u16string m_canvas_element;
 };

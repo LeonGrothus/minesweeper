@@ -9,12 +9,9 @@ void Column::set_spacing(const int spacing) {
     m_spacing = spacing;
 }
 
-const CanvasElement &Column::build_widget(const Vector2D &size) {
-    const Vector2D min_size = get_minimum_size();
-    m_cached_canvas = CanvasElement("");
-    if (size < min_size || m_children.empty()) {
-        m_cached_canvas = CanvasElement::empty(size, ' ');
-        return m_cached_canvas;
+CanvasElement Column::build_canvas_element(const Vector2D &size) {
+    if (const Vector2D min_size = get_minimum_size(); size < min_size || m_children.empty()) {
+        return CanvasElement::empty(size, u' ');
     }
     int flex_height = size.y;
 
@@ -28,7 +25,9 @@ const CanvasElement &Column::build_widget(const Vector2D &size) {
         total_flex += child_flex;
     }
 
-    const CanvasElement spacing_canvas = CanvasElement::empty(Vector2D(size.x, m_spacing), ' ');
+
+    CanvasElement build_widget("");
+    const CanvasElement spacing_canvas = CanvasElement::empty(Vector2D(size.x, m_spacing), u' ');
     bool first = true;
 
     for (int i = 0; i < m_children.size(); i++) {
@@ -43,16 +42,16 @@ const CanvasElement &Column::build_widget(const Vector2D &size) {
         const CanvasElement &child_element = child->build_widget(build_size);
 
         if (first) {
-            m_cached_canvas = child_element;
+            build_widget = child_element;
             first = false;
         } else {
-            m_cached_canvas.merge_below_with_other(child_element);
+            build_widget.merge_below_with_other(child_element);
         }
         if (m_spacing != 0 && i != m_children.size() - 1) {
-            m_cached_canvas.merge_below_with_other(spacing_canvas);
+            build_widget.merge_below_with_other(spacing_canvas);
         }
     }
-    return m_cached_canvas;
+    return build_widget;
 }
 
 bool Column::is_dirty() const {
@@ -60,6 +59,9 @@ bool Column::is_dirty() const {
         if (child->is_dirty()) {
             return true;
         }
+    }
+    if (m_is_dirty) {
+        return true;
     }
     return false;
 }

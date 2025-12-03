@@ -9,7 +9,7 @@ TextSelectionWidget::TextSelectionWidget(const bool loop, const bool blink_highl
                                                                                           m_blink_highlighted(blink_highlighted) {
 }
 
-void TextSelectionWidget::add_option(const std::string &option, const std::function<void()> &func) {
+void TextSelectionWidget::add_option(const std::u16string &option, const std::function<void()> &func) {
     m_options.push_back(option);
     m_options_func.push_back(func);
     m_is_dirty = true;
@@ -26,51 +26,47 @@ int TextSelectionWidget::get_selected_index() const {
     return m_selected_index;
 }
 
-std::string TextSelectionWidget::get_selected_option() const {
+std::u16string TextSelectionWidget::get_selected_option() const {
     if (m_selected_index >= 0 && m_selected_index < static_cast<int>(m_options.size())) {
         return m_options[m_selected_index];
     }
-    return "";
+    return u"";
 }
 
-const CanvasElement &TextSelectionWidget::build_widget(const Vector2D &size) {
-    m_is_dirty = false;
-
+CanvasElement TextSelectionWidget::build_canvas_element(const Vector2D &size) {
     if (size < get_minimum_size() || m_options.empty()) {
-        m_cached_canvas = CanvasElement::empty(size, ' ');
-        return m_cached_canvas;
+        return CanvasElement::empty(size, u' ');
     }
 
-    std::string result;
+    std::u16string result;
     result.reserve(size.area());
 
     for (size_t i = 0; i < size.y; ++i) {
-        std::string line;
+        std::u16string line;
         line.reserve(size.x);
 
         if (i < m_options.size()) {
             if (i == m_selected_index) {
-                line = "> ";
+                line = u"> ";
                 if (!m_highlighted) {
                     line += m_options[i];
                 } else {
-                    line += std::string(m_options[i].size(), '#');
+                    line += std::u16string(m_options[i].size(), u'#');
                 }
             } else {
-                line = "  ";
+                line = u"  ";
                 line += m_options[i];
             }
         }
         if (line.size() < size.x) {
-            line.append(size.x - line.size(), ' ');
+            line.append(size.x - line.size(), u' ');
         }
 
-        line.append(size.x - line.length(), ' ');
+        line.append(size.x - line.length(), u' ');
 
         result += line;
     }
-    m_cached_canvas = CanvasElement(result, size);
-    return m_cached_canvas;
+    return CanvasElement(result, size);;
 }
 
 void TextSelectionWidget::keyboard_press(const int key) {
@@ -109,7 +105,7 @@ Vector2D TextSelectionWidget::get_minimum_size() const {
     }
 
     int max_width = 0;
-    for (const std::string &option: m_options) {
+    for (const std::u16string &option: m_options) {
         max_width = std::max(max_width, static_cast<int>(option.length()) + 4);
     }
 

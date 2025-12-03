@@ -39,20 +39,20 @@ bool Cell::is_flagged() const {
     return m_is_flagged;
 }
 
-char Cell::get_representation() const {
+char16_t Cell::get_representation() const {
     if (!m_is_revealed) {
         if (m_is_flagged) {
-            return 'F';
+            return u'\u25B2';
         }
-        return '+';
+        return u'\u2593';
     }
 
     if (m_has_mine) {
-        return 'X';
+        return u'\u25CF';
     }
 
     if (m_adjacent_mines == 0) {
-        return ' ';
+        return u' ';
     }
-    return '0' + m_adjacent_mines;
+    return u'0' + m_adjacent_mines;
 }

@@ -17,8 +17,8 @@ TestScene::TestScene() {
         std::make_shared<Board2D>(Vector2D{8, 8}, 10, true));
     std::unique_ptr<BoardShowcaseWidget> advanced_widget = std::make_unique<BoardShowcaseWidget>(
         std::make_shared<Board2D>(Vector2D{16, 16}, 40, true));
-    std::unique_ptr<BoardShowcaseWidget> professional_widget = std::make_unique<BoardShowcaseWidget>(
-        std::make_shared<Board2D>(Vector2D{30, 16}, 99, true));
+    std::unique_ptr<BoardWidget> professional_widget = std::make_unique<BoardWidget>(
+        std::make_shared<Board2D>(Vector2D{30, 16}, 30, false));
 
     std::vector<std::unique_ptr<Widget> > board_row_children;
 
@@ -39,16 +39,16 @@ TestScene::TestScene() {
     aligned_boards->m_flex = 1;
 
     std::unique_ptr<TextSelectionWidget> selection = std::make_unique<TextSelectionWidget>(true, true);
-    selection->add_option("Beginner", []() {
-        show_temporary_message("Spielfeld von 8 mal 8 (64) Feldern mit 10 Minen (Minendichte 15,6 %)");
+    selection->add_option(u"Beginner", []() {
+        show_temporary_message(u"Spielfeld von 8 mal 8 (64) Feldern mit 10 Minen (Minendichte 15,6 %)");
     });
-    selection->add_option("Advanced", []() {
-        show_temporary_message("Spielfeld von 16 mal 16 (256) Feldern mit 40 Minen (15,6 %)");
+    selection->add_option(u"Advanced", []() {
+        show_temporary_message(u"Spielfeld von 16 mal 16 (256) Feldern mit 40 Minen (15,6 %)");
     });
-    selection->add_option("Professional", []() {
-        show_temporary_message("Spielfeld von 30 mal 16 (480) Feldern mit 99 Minen (20,6 %)");
+    selection->add_option(u"Professional", []() {
+        show_temporary_message(u"Spielfeld von 30 mal 16 (480) Feldern mit 99 Minen (20,6 %)");
     });
-    selection->add_option("Exit", []() {
+    selection->add_option(u"Exit", []() {
     });
     selection->set_selected_index(0);
 
@@ -60,7 +60,7 @@ TestScene::TestScene() {
 
     std::vector<std::unique_ptr<Widget> > children;
     children.push_back(std::move(aligned_boards));
-    children.push_back(std::move(aligned_selection));
+    // children.push_back(std::move(aligned_selection));
     std::unique_ptr<Padding> all_padding = std::make_unique<Padding>(std::make_unique<Column>(std::move(children)), 4,
                                                                      4, 2, 2);
     all_padding->set_border_char('#');

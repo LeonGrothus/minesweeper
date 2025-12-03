@@ -10,36 +10,36 @@ Padding::Padding(std::unique_ptr<Widget> child, const int left, const int right,
                                      m_right(right), m_top(top), m_bottom(bottom) {
 }
 
-void Padding::set_border_char(const char border_char) {
+void Padding::set_border_char(const char16_t border_char) {
     m_border_char = border_char;
 }
 
-void Padding::set_fill_char(const char fill_char) {
+void Padding::set_fill_char(const char16_t fill_char) {
     m_fill_char = fill_char;
 }
 
 bool Padding::is_dirty() const {
-    return m_child->is_dirty();
+    return m_child->is_dirty() || m_is_dirty;
 }
 
-const CanvasElement &Padding::build_widget(const Vector2D &size) {
+CanvasElement Padding::build_canvas_element(const Vector2D &size) {
     if (size < get_minimum_size()) {
         return m_child->build_widget(size);
     }
     const Vector2D child_size = size - Vector2D(m_left + m_right, m_top + m_bottom);
     const CanvasElement &child = m_child->build_widget(child_size);
 
-    std::string padding;
+    std::u16string padding;
     padding.reserve(size.area());
 
-    std::string horizontal_padding;
+    std::u16string horizontal_padding;
     horizontal_padding.reserve(child_size.area() + (m_left + m_right) * child.get_height());
     for (int i = 0; i < child.get_height(); i++) {
         if (m_left > 0) {
             horizontal_padding += m_border_char;
             horizontal_padding.append(m_left - 1, m_fill_char);
         }
-        std::string_view line(child.get_canvas_element().data() + i * child.get_width(), child.get_width());
+        std::u16string_view line(child.get_canvas_element().data() + i * child.get_width(), child.get_width());
         horizontal_padding.append(line);
         if (m_right > 0) {
             horizontal_padding.append(m_right - 1, m_fill_char);
@@ -48,8 +48,8 @@ const CanvasElement &Padding::build_widget(const Vector2D &size) {
     }
 
     if (m_top > 0 || m_bottom > 0) {
-        const std::string border_line(size.x, m_border_char);
-        std::string fill_line;
+        const std::u16string border_line(size.x, m_border_char);
+        std::u16string fill_line;
         fill_line.reserve(size.x);
         int left_right_padding = 0;
         if (m_left > 0) {
@@ -78,11 +78,10 @@ const CanvasElement &Padding::build_widget(const Vector2D &size) {
             padding.append(border_line);
         }
     } else {
-        m_cached_canvas = CanvasElement(horizontal_padding, size);
-        return m_cached_canvas;
+        return CanvasElement(horizontal_padding, size);
     }
-    m_cached_canvas = CanvasElement(padding, size);
-    return m_cached_canvas;
+
+    return CanvasElement(padding, size);
 }
 
 Vector2D Padding::get_minimum_size() const {

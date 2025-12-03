@@ -1,5 +1,5 @@
 #include "board_widget.hpp"
-#include <ncurses.h>
+#include <curses.h>
 #include <vector>
 
 BoardWidget::BoardWidget(std::shared_ptr<Board2D> board)
@@ -52,9 +52,9 @@ void BoardWidget::handle_flag() {
     }
 }
 
-const CanvasElement &BoardWidget::build_widget(const Vector2D &size) {
+CanvasElement BoardWidget::build_canvas_element(const Vector2D &size) {
     const Vector2D grid_size = m_board->get_grid_size();
-    std::string canvas_str;
+    std::u16string canvas_str;
     canvas_str.reserve(grid_size.area());
 
     for (int y = 0; y < grid_size.y; y++) {
@@ -63,7 +63,7 @@ const CanvasElement &BoardWidget::build_widget(const Vector2D &size) {
             const Cell &cell = m_board->get_cell(pos);
 
             if (x == m_cursor_pos.x && y == m_cursor_pos.y) {
-                canvas_str += 'C';
+                canvas_str += u'C';
                 // if (!cell.is_revealed()) {
                 //     canvas_str += 'C';
                 // } else {
@@ -74,10 +74,7 @@ const CanvasElement &BoardWidget::build_widget(const Vector2D &size) {
             }
         }
     }
-
-    m_cached_canvas = CanvasElement(canvas_str, grid_size);
-    m_is_dirty = false;
-    return m_cached_canvas;
+    return CanvasElement(canvas_str, grid_size);;
 }
 
 Vector2D BoardWidget::get_minimum_size() const {

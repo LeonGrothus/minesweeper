@@ -27,15 +27,20 @@ enum Position {
 
 Vector2D get_terminal_size();
 
-std::string repeat_string(unsigned int k, const std::string &s);
+std::u16string repeat_string(unsigned int k, const std::u16string &s);
+
+std::string u16_to_utf8(const std::u16string &s);
 
 CanvasElement position_canvas_element(const CanvasElement &element, Position position, Vector2D canvas_size,
-                                      char blank_char);
+									  char16_t blank_char);
 
 void position_string_on_canvas(const CanvasElement &element, Position pos, CanvasElement &canvas);
 
 void render_to_ncurses(const std::string &to_render, Vector2D size);
+void render_to_ncurses(const std::u16string &to_render, Vector2D size);
 
 void render_to_ncurses_buffered(const std::string &to_render, Vector2D size);
+void render_to_ncurses_buffered(const std::u16string &to_render, Vector2D size);
 
 void show_temporary_message(const std::string &message, int duration_ms = 2000);
+void show_temporary_message(const std::u16string &message, int duration_ms = 2000);

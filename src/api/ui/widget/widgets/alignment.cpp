@@ -3,28 +3,27 @@
 #include "api/ui/canvas/terminal_helper.hpp"
 
 Alignment::Alignment(std::unique_ptr<Widget> child, const Position alignment)
-	: m_child(std::move(child)),
-	  m_alignment(alignment) {
+    : m_child(std::move(child)),
+      m_alignment(alignment) {
 }
 
-const CanvasElement &Alignment::build_widget(const Vector2D &size) {
-	const CanvasElement &child = m_child->build_widget(m_child->get_minimum_size());
-	m_cached_canvas = position_canvas_element(child, m_alignment, size, ' ');
-	return m_cached_canvas;
+CanvasElement Alignment::build_canvas_element(const Vector2D &size) {
+    const CanvasElement &child = m_child->build_widget(m_child->get_minimum_size());
+    return position_canvas_element(child, m_alignment, size, u' ');
 }
 
 Vector2D Alignment::get_minimum_size() const {
-	return m_child->get_minimum_size();
+    return m_child->get_minimum_size();
 }
 
 void Alignment::keyboard_press(const int key) {
-	m_child->keyboard_press(key);
+    m_child->keyboard_press(key);
 }
 
 void Alignment::update(const double delta_time) {
-	m_child->update(delta_time);
+    m_child->update(delta_time);
 }
 
 bool Alignment::is_dirty() const {
-	return m_child->is_dirty();
+    return m_child->is_dirty() || m_is_dirty;
 }

@@ -9,13 +9,14 @@ public:
 
     void reset_game();
 
-    const CanvasElement &build_widget(const Vector2D &size) override;
-
     Vector2D get_minimum_size() const override;
 
     void keyboard_press(int key) override;
 
     void update(double delta_time) override;
+
+protected:
+    CanvasElement build_canvas_element(const Vector2D &size) override;
 
 private:
     std::shared_ptr<Board2D> m_board;
@@ -24,7 +25,7 @@ private:
     double m_reveal_timer;
     bool m_is_revealing;
     int m_mine_count;
-    static constexpr double REVEAL_INTERVAL = 50.0; //ms
+    static constexpr double REVEAL_INTERVAL = 20.0; //ms
 
     void handle_reveal();
 
