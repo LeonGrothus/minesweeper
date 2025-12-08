@@ -1,6 +1,6 @@
 #include "row.hpp"
 
-Row::Row(std::vector<std::unique_ptr<Widget> > children) {
+Row::Row(std::vector<std::shared_ptr<Widget> > children) {
     m_children = std::move(children);
 }
 
@@ -15,7 +15,7 @@ CanvasElement Row::build_canvas_element(const Vector2D &size) {
 
     int flex_width = size.x;
     int total_flex = 0;
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         const int child_flex = child->m_flex;
         flex_width -= child->get_minimum_size().x;
         if (child_flex <= 0) {
@@ -29,7 +29,7 @@ CanvasElement Row::build_canvas_element(const Vector2D &size) {
     bool first = true;
 
     for (int i = 0; i < m_children.size(); i++) {
-        const std::unique_ptr<Widget> &child = m_children[i];
+        const std::shared_ptr<Widget> &child = m_children[i];
         const int child_flex = child->m_flex;
         const int child_min_width = child->get_minimum_size().x;
 
@@ -53,7 +53,7 @@ CanvasElement Row::build_canvas_element(const Vector2D &size) {
 }
 
 bool Row::is_dirty() const {
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         if (child->is_dirty()) {
             return true;;
         }
@@ -65,7 +65,7 @@ bool Row::is_dirty() const {
 }
 
 void Row::update(const double delta_time) {
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         child->update(delta_time);
     }
 }
@@ -74,7 +74,7 @@ Vector2D Row::get_minimum_size() const {
     int max_height = 0;
     int length = 0;
 
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         const auto [width, height] = child->get_minimum_size();
         max_height = std::max(max_height, height);
         length += width;
@@ -84,7 +84,7 @@ Vector2D Row::get_minimum_size() const {
 }
 
 void Row::keyboard_press(const int key) {
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         child->keyboard_press(key);
     }
 }

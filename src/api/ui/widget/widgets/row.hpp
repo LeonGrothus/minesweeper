@@ -6,7 +6,7 @@
 
 class Row final : public Widget {
 public:
-    explicit Row(std::vector<std::unique_ptr<Widget> > children);
+    explicit Row(std::vector<std::shared_ptr<Widget> > children);
 
     void set_spacing(int spacing);
 
@@ -22,7 +22,7 @@ protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
 
 private:
-    std::vector<std::unique_ptr<Widget> > m_children;
+    std::vector<std::shared_ptr<Widget> > m_children;
     int m_spacing = 0;
 };
 

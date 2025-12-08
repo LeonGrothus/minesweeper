@@ -8,35 +8,36 @@
 #include "api/ui/widget/widgets/row.hpp"
 #include "api/ui/widget/widgets/board_widget.hpp"
 
+#include <memory>
 #include <vector>
 
 #include "api/ui/widget/widgets/board_showcase_widget.hpp"
 #include "api/ui/widget/widgets/border.hpp"
 
 TestScene::TestScene() {
-    std::unique_ptr<BoardShowcaseWidget> beginner_widget = std::make_unique<BoardShowcaseWidget>(
+    auto beginner_widget = std::make_shared<BoardShowcaseWidget>(
         std::make_shared<Board2D>(Vector2D{8, 8}, 10, true));
-    std::unique_ptr<BoardShowcaseWidget> advanced_widget = std::make_unique<BoardShowcaseWidget>(
+    auto advanced_widget = std::make_shared<BoardShowcaseWidget>(
         std::make_shared<Board2D>(Vector2D{16, 16}, 40, true));
-    std::unique_ptr<BoardWidget> professional_widget = std::make_unique<BoardWidget>(
+    auto professional_widget = std::make_shared<BoardWidget>(
         std::make_shared<Board2D>(Vector2D{30, 16}, 30, false));
 
-    std::vector<std::unique_ptr<Widget> > board_row_children;
+    std::vector<std::shared_ptr<Widget> > board_row_children;
 
-    std::unique_ptr<Padding> beginner_with_padding = std::make_unique<Padding>(std::move(beginner_widget), 4, 4, 2, 2);
-    std::unique_ptr<Padding> advanced_with_padding = std::make_unique<Padding>(std::move(advanced_widget), 4, 4, 2, 2);
-    std::unique_ptr<Padding> professional_with_padding = std::make_unique<Padding>(std::move(professional_widget), 4, 4, 2, 2);
+    auto beginner_with_padding = std::make_shared<Padding>(beginner_widget, 4, 4, 2, 2);
+    auto advanced_with_padding = std::make_shared<Padding>(advanced_widget, 4, 4, 2, 2);
+    auto professional_with_padding = std::make_shared<Padding>(professional_widget, 4, 4, 2, 2);
 
-    board_row_children.push_back(std::make_unique<Alignment>(std::move(beginner_with_padding), MIDDLE_CENTER));
-    board_row_children.push_back(std::make_unique<Alignment>(std::move(advanced_with_padding), MIDDLE_CENTER));
-    board_row_children.push_back(std::make_unique<Alignment>(std::move(professional_with_padding), MIDDLE_CENTER));
+    board_row_children.push_back(std::make_shared<Alignment>(beginner_with_padding, MIDDLE_CENTER));
+    board_row_children.push_back(std::make_shared<Alignment>(advanced_with_padding, MIDDLE_CENTER));
+    board_row_children.push_back(std::make_shared<Alignment>(professional_with_padding, MIDDLE_CENTER));
 
-    std::unique_ptr<Row> board_row = std::make_unique<Row>(std::move(board_row_children));
+    auto board_row = std::make_shared<Row>(std::move(board_row_children));
     board_row->set_spacing(2);
-    std::unique_ptr<Alignment> aligned_boards = std::make_unique<Alignment>(std::move(board_row), MIDDLE_CENTER);
+    auto aligned_boards = std::make_shared<Alignment>(board_row, MIDDLE_CENTER);
     aligned_boards->m_flex = 1;
 
-    std::unique_ptr<TextSelectionWidget> selection = std::make_unique<TextSelectionWidget>(true, true);
+    auto selection = std::make_shared<TextSelectionWidget>(true, true);
     selection->add_option(u"Beginner", []() {
         show_temporary_message(u"Spielfeld von 8 mal 8 (64) Feldern mit 10 Minen (Minendichte 15,6 %)");
     });
@@ -50,16 +51,16 @@ TestScene::TestScene() {
     });
     selection->set_selected_index(0);
 
-    std::unique_ptr<Padding> padding = std::make_unique<Padding>(std::move(selection), 6, 6, 2, 2);
+    auto padding = std::make_shared<Padding>(selection, 6, 6, 2, 2);
 
-    const std::unique_ptr<Alignment> aligned_selection = std::make_unique<Alignment>(std::move(padding), BOTTOM_LEFT);
+    const auto aligned_selection = std::make_shared<Alignment>(padding, BOTTOM_LEFT);
     aligned_selection->m_flex = NO_FLEX;
 
-    std::vector<std::unique_ptr<Widget> > children;
-    children.push_back(std::move(aligned_boards));
-    // children.push_back(std::move(aligned_selection));
-    std::unique_ptr<Padding> all_padding = std::make_unique<Padding>(std::make_unique<Column>(std::move(children)), 4,
-                                                                     4, 2, 2);
-    std::unique_ptr<Border> all_border = std::make_unique<Border>(std::move(all_padding), PaddingBorderStyle::double_line_border());
-    m_base_widget = std::move(all_border);
+    std::vector<std::shared_ptr<Widget> > children;
+    children.push_back(aligned_boards);
+    // children.push_back(aligned_selection);
+    auto all_padding = std::make_shared<Padding>(std::make_shared<Column>(std::move(children)), 4,
+                                                4, 2, 2);
+    auto all_border = std::make_shared<Border>(all_padding, PaddingBorderStyle::double_line_border());
+    m_base_widget = all_border;
 }

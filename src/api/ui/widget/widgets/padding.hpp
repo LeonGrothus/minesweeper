@@ -5,9 +5,9 @@
 
 class Padding final : public Widget {
 public:
-    explicit Padding(std::unique_ptr<Widget> child, int all_sides);
+    explicit Padding(std::shared_ptr<Widget> child, int all_sides);
 
-    explicit Padding(std::unique_ptr<Widget> child, int left, int right, int top, int bottom);
+    explicit Padding(std::shared_ptr<Widget> child, int left, int right, int top, int bottom);
 
     void set_fill_char(char16_t fill_char);
 
@@ -23,7 +23,7 @@ protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
 
 private:
-    std::unique_ptr<Widget> m_child;
+    std::shared_ptr<Widget> m_child;
 
     int m_left;
     int m_right;

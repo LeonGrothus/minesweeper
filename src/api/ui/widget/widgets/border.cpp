@@ -4,7 +4,7 @@
 
 #include "api/ui/widget/widget.hpp"
 
-Border::Border(std::unique_ptr<Widget> child, const PaddingBorderStyle &style)
+Border::Border(std::shared_ptr<Widget> child, const PaddingBorderStyle &style)
     : m_child(std::move(child)), m_border_style(style) {
 }
 

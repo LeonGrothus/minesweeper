@@ -2,7 +2,7 @@
 
 #include "api/ui/canvas/terminal_helper.hpp"
 
-Alignment::Alignment(std::unique_ptr<Widget> child, const Position alignment)
+Alignment::Alignment(std::shared_ptr<Widget> child, const Position alignment)
     : m_child(std::move(child)),
       m_alignment(alignment) {
 }

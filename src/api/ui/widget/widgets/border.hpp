@@ -8,7 +8,7 @@
 
 class Border final : public Widget {
 public:
-    explicit Border(std::unique_ptr<Widget> child, const PaddingBorderStyle &style);
+    explicit Border(std::shared_ptr<Widget> child, const PaddingBorderStyle &style);
 
     void set_border_style(const PaddingBorderStyle &style);
 
@@ -25,7 +25,7 @@ public:
     Vector2D get_minimum_size() const override;
 
 private:
-    std::unique_ptr<Widget> m_child;
+    std::shared_ptr<Widget> m_child;
     PaddingBorderStyle m_border_style;
     std::bitset<4> m_enabled_borders = std::bitset<4>(0b1111); //top, bottom, left, right
 };

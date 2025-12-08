@@ -23,7 +23,7 @@ public:
 	}
 
 protected:
-	std::unique_ptr<Widget> m_base_widget;
+	std::shared_ptr<Widget> m_base_widget;
 };
 
 inline Scene::~Scene() = default;

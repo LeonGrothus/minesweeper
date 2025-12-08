@@ -6,7 +6,7 @@
 
 class Alignment final : public Widget {
 public:
-	explicit Alignment(std::unique_ptr<Widget> child, Position alignment);
+	explicit Alignment(std::shared_ptr<Widget> child, Position alignment);
 
 	Vector2D get_minimum_size() const override;
 
@@ -19,6 +19,6 @@ public:
 protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
 
-	std::unique_ptr<Widget> m_child;
+	std::shared_ptr<Widget> m_child;
 	Position m_alignment;
 };

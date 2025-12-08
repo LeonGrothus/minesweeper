@@ -2,7 +2,7 @@
 #include "column.hpp"
 #include <memory>
 
-Column::Column(std::vector<std::unique_ptr<Widget> > children) : m_children(std::move(children)) {
+Column::Column(std::vector<std::shared_ptr<Widget> > children) : m_children(std::move(children)) {
 }
 
 void Column::set_spacing(const int spacing) {
@@ -16,7 +16,7 @@ CanvasElement Column::build_canvas_element(const Vector2D &size) {
     int flex_height = size.y;
 
     int total_flex = 0;
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         const int child_flex = child->m_flex;
         flex_height -= child->get_minimum_size().y;
         if (child_flex <= 0) {
@@ -31,7 +31,7 @@ CanvasElement Column::build_canvas_element(const Vector2D &size) {
     bool first = true;
 
     for (int i = 0; i < m_children.size(); i++) {
-        const std::unique_ptr<Widget> &child = m_children[i];
+        const std::shared_ptr<Widget> &child = m_children[i];
         const int child_flex = child->m_flex;
         const int child_min_height = child->get_minimum_size().y;
 
@@ -55,7 +55,7 @@ CanvasElement Column::build_canvas_element(const Vector2D &size) {
 }
 
 bool Column::is_dirty() const {
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         if (child->is_dirty()) {
             return true;
         }
@@ -67,13 +67,13 @@ bool Column::is_dirty() const {
 }
 
 void Column::keyboard_press(const int key) {
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         child->keyboard_press(key);
     }
 }
 
 void Column::update(const double delta_time) {
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         child->update(delta_time);
     }
 }
@@ -82,7 +82,7 @@ Vector2D Column::get_minimum_size() const {
     int height = 0;
     int max_width = 0;
 
-    for (const std::unique_ptr<Widget> &child: m_children) {
+    for (const std::shared_ptr<Widget> &child: m_children) {
         const auto [width, child_height] = child->get_minimum_size();
         max_width = std::max(max_width, width);
         height += child_height;

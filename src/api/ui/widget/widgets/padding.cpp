@@ -1,11 +1,11 @@
 #include "padding.hpp"
 
-Padding::Padding(std::unique_ptr<Widget> child, const int all_sides) : m_child(std::move(child)), m_left(all_sides),
+Padding::Padding(std::shared_ptr<Widget> child, const int all_sides) : m_child(std::move(child)), m_left(all_sides),
                                                                        m_right(all_sides), m_top(all_sides),
                                                                        m_bottom(all_sides) {
 }
 
-Padding::Padding(std::unique_ptr<Widget> child, const int left, const int right, const int top,
+Padding::Padding(std::shared_ptr<Widget> child, const int left, const int right, const int top,
                  const int bottom) : m_child(std::move(child)), m_left(left),
                                      m_right(right), m_top(top), m_bottom(bottom) {
 }
