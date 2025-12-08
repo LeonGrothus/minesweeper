@@ -19,6 +19,8 @@ public:
 
     void update(double delta_time) override;
 
+    bool is_dirty() const override;
+
 protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
 

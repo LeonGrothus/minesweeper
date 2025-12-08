@@ -9,17 +9,15 @@ public:
 
     explicit Padding(std::unique_ptr<Widget> child, int left, int right, int top, int bottom);
 
-    void set_border_char(char16_t border_char);
-
     void set_fill_char(char16_t fill_char);
-
-    bool is_dirty() const override;
 
     Vector2D get_minimum_size() const override;
 
     void keyboard_press(int key) override;
 
     void update(double delta_time) override;
+
+    bool is_dirty() const override;
 
 protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
@@ -32,6 +30,5 @@ private:
     int m_top;
     int m_bottom;
 
-    char16_t m_border_char = u' ';
     char16_t m_fill_char = u' ';
 };

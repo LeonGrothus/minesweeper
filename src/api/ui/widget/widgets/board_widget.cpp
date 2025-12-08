@@ -151,3 +151,7 @@ void BoardWidget::update(const double delta_time) {
         }
     }
 }
+
+bool BoardWidget::is_dirty() const {
+    return m_is_dirty;
+}

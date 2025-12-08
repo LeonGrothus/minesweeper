@@ -47,7 +47,7 @@ CanvasElement BoardShowcaseWidget::build_canvas_element(const Vector2D &size) {
             }
 
             if (is_mine && m_show_mines) {
-                canvas_str += u'\u25CF';
+                canvas_str += u'X';
             } else {
                 canvas_str += cell.get_representation();
             }
@@ -75,4 +75,8 @@ void BoardShowcaseWidget::update(const double delta_time) {
         m_show_mines = !m_show_mines;
         m_is_dirty = true;
     }
+}
+
+bool BoardShowcaseWidget::is_dirty() const {
+    return m_is_dirty;
 }

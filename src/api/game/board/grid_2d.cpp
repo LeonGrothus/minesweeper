@@ -16,7 +16,8 @@ const Vector2D &Grid2D<T>::get_grid_size() const {
 
 template<typename T>
 int Grid2D<T>::get_index(const Vector2D &pos) const {
-    return pos.x + pos.y * m_size.x;
+    auto [adjusted_x, adjusted_y] = pos - m_offset;
+    return adjusted_x + adjusted_y * m_size.x;
 }
 
 template<typename T>
@@ -51,12 +52,13 @@ void Grid2D<T>::set_at_index(const int index, const T value) {
 
 template<typename T>
 bool Grid2D<T>::in_bounds(const int index) const {
-    return (get_index_position(index) - m_offset) < m_size;
+    return in_bounds(get_index_position(index));
 }
 
 template<typename T>
 bool Grid2D<T>::in_bounds(const Vector2D &pos) const {
-    return (pos - m_offset) < m_size;
+    auto [adjusted_x, adjusted_y] = pos - m_offset;
+    return adjusted_x >= 0 && adjusted_x < m_size.x && adjusted_y >= 0 && adjusted_y < m_size.y;
 }
 
 template<typename T>
@@ -82,7 +84,7 @@ std::vector<std::tuple<Vector2D, T> > Grid2D<T>::get_all_adjacent(const Vector2D
     std::vector<std::tuple<Vector2D, T> > adjacent;
     for (int local_x = -1; local_x <= 1; local_x++) {
         for (int local_y = -1; local_y <= 1; local_y++) {
-            if (local_x + local_y == 0) {
+            if (local_x == 0 && local_y == 0) {
                 continue;
             }
             const Vector2D new_pos = Vector2D{pos.x + local_x, pos.y + local_y};

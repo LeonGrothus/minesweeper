@@ -1,43 +1,10 @@
 #include "terminal_helper.hpp"
 #include "api/ui/canvas/canvas_element.hpp"
-#include <algorithm>
-#include <iostream>
 #include <curses.h>
 #include <string>
 #include <string_view>
 
-std::string u16_to_utf8(const std::u16string &s) {
-    std::string out;
-    out.reserve(s.size() * 3);
-    for (size_t i = 0; i < s.size(); ++i) {
-        uint32_t codepoint = s[i];
-        if (codepoint >= 0xD800 && codepoint <= 0xDBFF) {
-            if (i + 1 < s.size()) {
-                if (const uint32_t low = s[i + 1]; low >= 0xDC00 && low <= 0xDFFF) {
-                    codepoint = (((codepoint - 0xD800) << 10) | (low - 0xDC00)) + 0x10000;
-                    i++;
-                }
-            }
-        }
-
-        if (codepoint <= 0x7F) {
-            out.push_back(static_cast<char>(codepoint));
-        } else if (codepoint <= 0x7FF) {
-            out.push_back(static_cast<char>(0xC0 | (codepoint >> 6)));
-            out.push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
-        } else if (codepoint <= 0xFFFF) {
-            out.push_back(static_cast<char>(0xE0 | (codepoint >> 12)));
-            out.push_back(static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
-        } else {
-            out.push_back(static_cast<char>(0xF0 | (codepoint >> 18)));
-            out.push_back(static_cast<char>(0x80 | ((codepoint >> 12) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | ((codepoint >> 6) & 0x3F)));
-            out.push_back(static_cast<char>(0x80 | (codepoint & 0x3F)));
-        }
-    }
-    return out;
-}
+#include "api/helper/conversion_helper.hpp"
 
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
@@ -172,7 +139,7 @@ void render_to_ncurses(const std::u16string &to_render, const Vector2D size) {
     for (int y = 0; y < size.y; y++) {
         const int offset = y * size.x;
         const std::u16string_view line(to_render.data() + offset, size.x);
-        const std::string utf8 = u16_to_utf8(std::u16string(line));
+        const std::string utf8 = utf16_to_utf8(std::u16string(line));
         mvaddnstr(y, 0, utf8.c_str(), static_cast<int>(utf8.size()));
     }
     refresh();
@@ -209,7 +176,7 @@ void render_to_ncurses_buffered(const std::u16string &to_render, const Vector2D 
         }
         const int x = i % size.x;
         const int y = i / size.x;
-        const std::string utf8 = u16_to_utf8(std::u16string(1, to_render[i]));
+        const std::string utf8 = utf16_to_utf8(std::u16string(1, to_render[i]));
         mvaddnstr(y, x, utf8.c_str(), static_cast<int>(utf8.size()));
     }
     last_frame = to_render;
@@ -234,6 +201,6 @@ void show_temporary_message(const std::string &message, const int duration_ms) {
 }
 
 void show_temporary_message(const std::u16string &message, const int duration_ms) {
-    const std::string utf8 = u16_to_utf8(message);
+    const std::string utf8 = utf16_to_utf8(message);
     show_temporary_message(utf8, duration_ms);
 }

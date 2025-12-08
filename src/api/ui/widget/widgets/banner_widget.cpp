@@ -25,3 +25,7 @@ Vector2D BannerWidget::get_minimum_size() const {
 
 void BannerWidget::keyboard_press(int key) {
 }
+
+bool BannerWidget::is_dirty() const {
+    return m_is_dirty;
+}

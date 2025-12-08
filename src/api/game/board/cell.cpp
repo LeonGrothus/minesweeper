@@ -48,7 +48,7 @@ char16_t Cell::get_representation() const {
     }
 
     if (m_has_mine) {
-        return u'\u25CF';
+        return u'X';
     }
 
     if (m_adjacent_mines == 0) {

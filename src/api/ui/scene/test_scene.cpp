@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "api/ui/widget/widgets/board_showcase_widget.hpp"
+#include "api/ui/widget/widgets/border.hpp"
 
 TestScene::TestScene() {
     std::unique_ptr<BoardShowcaseWidget> beginner_widget = std::make_unique<BoardShowcaseWidget>(
@@ -23,11 +24,8 @@ TestScene::TestScene() {
     std::vector<std::unique_ptr<Widget> > board_row_children;
 
     std::unique_ptr<Padding> beginner_with_padding = std::make_unique<Padding>(std::move(beginner_widget), 4, 4, 2, 2);
-    beginner_with_padding->set_border_char('#');
     std::unique_ptr<Padding> advanced_with_padding = std::make_unique<Padding>(std::move(advanced_widget), 4, 4, 2, 2);
-    advanced_with_padding->set_border_char('#');
     std::unique_ptr<Padding> professional_with_padding = std::make_unique<Padding>(std::move(professional_widget), 4, 4, 2, 2);
-    professional_with_padding->set_border_char('#');
 
     board_row_children.push_back(std::make_unique<Alignment>(std::move(beginner_with_padding), MIDDLE_CENTER));
     board_row_children.push_back(std::make_unique<Alignment>(std::move(advanced_with_padding), MIDDLE_CENTER));
@@ -53,9 +51,8 @@ TestScene::TestScene() {
     selection->set_selected_index(0);
 
     std::unique_ptr<Padding> padding = std::make_unique<Padding>(std::move(selection), 6, 6, 2, 2);
-    padding->set_border_char('#');
 
-    std::unique_ptr<Alignment> aligned_selection = std::make_unique<Alignment>(std::move(padding), BOTTOM_LEFT);
+    const std::unique_ptr<Alignment> aligned_selection = std::make_unique<Alignment>(std::move(padding), BOTTOM_LEFT);
     aligned_selection->m_flex = NO_FLEX;
 
     std::vector<std::unique_ptr<Widget> > children;
@@ -63,6 +60,6 @@ TestScene::TestScene() {
     // children.push_back(std::move(aligned_selection));
     std::unique_ptr<Padding> all_padding = std::make_unique<Padding>(std::make_unique<Column>(std::move(children)), 4,
                                                                      4, 2, 2);
-    all_padding->set_border_char('#');
-    m_base_widget = std::move(all_padding);
+    std::unique_ptr<Border> all_border = std::make_unique<Border>(std::move(all_padding), PaddingBorderStyle::double_line_border());
+    m_base_widget = std::move(all_border);
 }

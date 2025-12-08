@@ -1,6 +1,5 @@
 #include "text_selection_widget.hpp"
 #include "../../canvas/canvas_element.hpp"
-#include "api/ui/canvas/terminal_helper.hpp"
 
 #include <algorithm>
 #include <ncurses.h>
@@ -110,6 +109,10 @@ Vector2D TextSelectionWidget::get_minimum_size() const {
     }
 
     return Vector2D{max_width, static_cast<int>(m_options.size())};
+}
+
+bool TextSelectionWidget::is_dirty() const {
+    return m_is_dirty;
 }
 
 void TextSelectionWidget::move_selection(const int amount) {

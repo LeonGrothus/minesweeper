@@ -26,9 +26,7 @@ public:
 
     virtual void update(double delta_time) = 0;
 
-    virtual bool is_dirty() const {
-        return m_is_dirty;
-    }
+    virtual bool is_dirty() const = 0;
 
     int m_flex = DEFAULT_FLEX;
 
