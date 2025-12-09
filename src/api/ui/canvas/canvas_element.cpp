@@ -1,10 +1,13 @@
 #include "canvas_element.hpp"
+
+#include <bitset>
 #include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
 #include <string_view>
 #include "api/helper/conversion_helper.hpp"
+#include "api/ui/widget/widgets/styles/border_style.hpp"
 
 CanvasElement::CanvasElement(std::u16string canvas_element, const Vector2D size) {
     m_canvas_element = std::move(canvas_element);
@@ -24,6 +27,48 @@ CanvasElement::CanvasElement(const std::string &normal_string, const char delimi
 
 CanvasElement CanvasElement::empty(const Vector2D size, const char16_t empty_char) {
     return CanvasElement(std::u16string(size.area(), empty_char), size);
+}
+
+CanvasElement CanvasElement::wrap_with_border(const CanvasElement &element, const BorderStyle &style,
+                                              const std::bitset<4> enabled_borders) {
+    const Vector2D bordered_size = element.m_size + Vector2D(enabled_borders[2] + enabled_borders[3],
+                                                             enabled_borders[0] + enabled_borders[1]);
+    std::u16string border_canvas;
+    border_canvas.reserve(bordered_size.area());
+
+    if (enabled_borders[0]) {
+        std::u16string top_line(bordered_size.x, style.top);
+        if (enabled_borders[2]) {
+            top_line[0] = style.top_left_corner;
+        }
+        if (enabled_borders[3]) {
+            top_line[bordered_size.x - 1] = style.top_right_corner;
+        }
+        border_canvas.append(top_line);
+    }
+
+    for (int i = 0; i < element.get_height(); i++) {
+        if (enabled_borders[2]) {
+            border_canvas += style.left;
+        }
+        border_canvas.append(element.get_canvas_element().data() + i * element.get_width(), element.get_width());
+        if (enabled_borders[3]) {
+            border_canvas += style.right;
+        }
+    }
+
+    if (enabled_borders[1]) {
+        std::u16string bottom_line(bordered_size.x, style.bottom);
+        if (enabled_borders[2]) {
+            bottom_line[0] = style.bottom_left_corner;
+        }
+        if (enabled_borders[3]) {
+            bottom_line[bordered_size.x - 1] = style.bottom_right_corner;
+        }
+        border_canvas.append(bottom_line);
+    }
+
+    return CanvasElement(border_canvas, bordered_size);
 }
 
 int CanvasElement::get_width() const {

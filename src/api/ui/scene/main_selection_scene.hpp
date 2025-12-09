@@ -63,7 +63,7 @@ private:
 
     void update_display_widget();
 
-    static std::shared_ptr<BoardShowcaseWidget> create_board_showcase(Size size, Difficulty difficulty);
+    static std::shared_ptr<Widget> create_board_showcase(Size size, Difficulty difficulty);
 
     static Vector2D get_board_size(Size size);
 

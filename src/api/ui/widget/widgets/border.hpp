@@ -8,9 +8,9 @@
 
 class Border final : public Widget {
 public:
-    explicit Border(std::shared_ptr<Widget> child, const PaddingBorderStyle &style);
+    explicit Border(std::shared_ptr<Widget> child, const BorderStyle &style);
 
-    void set_border_style(const PaddingBorderStyle &style);
+    void set_border_style(const BorderStyle &style);
 
     void set_enabled_borders(bool top, bool bottom, bool left, bool right);
 
@@ -26,6 +26,6 @@ public:
 
 private:
     std::shared_ptr<Widget> m_child;
-    PaddingBorderStyle m_border_style;
+    BorderStyle m_border_style;
     std::bitset<4> m_enabled_borders = std::bitset<4>(0b1111); //top, bottom, left, right
 };

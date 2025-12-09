@@ -12,6 +12,7 @@
 #include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/styles/border_style.hpp"
 #include "api/game/board/board_2d.hpp"
+#include "api/ui/widget/widgets/board_widget.hpp"
 
 MainSelectionScene::MainSelectionScene() {
     FileReader reader("assets/banner.txt");
@@ -75,10 +76,10 @@ MainSelectionScene::MainSelectionScene() {
     std::shared_ptr<Padding> m_conf_menu_padded = std::make_shared<Padding>(m_confirm_menu, 2, 2, 1, 1);
 
     const std::shared_ptr<Border> m_main_menu_border = std::make_shared<Border>(m_main_menu_padded,
-                                                                                PaddingBorderStyle::single_thick_border());
-    std::shared_ptr<Border> m_size_menu_border = std::make_shared<Border>(m_size_menu_padded, PaddingBorderStyle::single_thick_border());
-    std::shared_ptr<Border> m_diff_menu_border = std::make_shared<Border>(m_diff_menu_padded, PaddingBorderStyle::single_thick_border());
-    std::shared_ptr<Border> m_conf_menu_border = std::make_shared<Border>(m_conf_menu_padded, PaddingBorderStyle::single_thick_border());
+                                                                                BorderStyle::single_thick_border());
+    std::shared_ptr<Border> m_size_menu_border = std::make_shared<Border>(m_size_menu_padded, BorderStyle::single_thick_border());
+    std::shared_ptr<Border> m_diff_menu_border = std::make_shared<Border>(m_diff_menu_padded, BorderStyle::single_thick_border());
+    std::shared_ptr<Border> m_conf_menu_border = std::make_shared<Border>(m_conf_menu_padded, BorderStyle::single_thick_border());
 
     m_size_visible = std::make_shared<Visibility>(m_size_menu_border, false);
     m_difficulty_visible = std::make_shared<Visibility>(m_diff_menu_border, false);
@@ -103,7 +104,7 @@ MainSelectionScene::MainSelectionScene() {
     std::vector<std::shared_ptr<Widget> > layout;
     layout.push_back(m_display_alignment);
     layout.push_back(selection_widget);
-    m_base_widget = std::make_shared<Border>(std::make_shared<Column>(layout), PaddingBorderStyle::double_line_border());
+    m_base_widget = std::make_shared<Border>(std::make_shared<Column>(layout), BorderStyle::double_line_border());
 
     go_to_stage(Stage::Main);
 }
@@ -203,8 +204,8 @@ float MainSelectionScene::get_mine_percentage(const Difficulty difficulty) {
     return 0;
 }
 
-std::shared_ptr<BoardShowcaseWidget> MainSelectionScene::create_board_showcase(const Size size,
-                                                                               const Difficulty difficulty) {
+std::shared_ptr<Widget> MainSelectionScene::create_board_showcase(const Size size,
+                                                                  const Difficulty difficulty) {
     const Vector2D board_size = get_board_size(size);
     float mine_percentage = get_mine_percentage(difficulty);
 

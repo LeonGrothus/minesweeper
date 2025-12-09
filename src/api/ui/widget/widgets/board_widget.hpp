@@ -1,6 +1,7 @@
 #pragma once
 #include "../widget.hpp"
 #include "api/game/board/board_2d.hpp"
+#include "api/ui/widget/widgets/styles/border_style.hpp"
 #include <memory>
 
 class BoardWidget final : public Widget {
@@ -27,6 +28,12 @@ private:
     double m_reveal_timer;
     bool m_is_revealing;
     int m_mine_count;
+    
+    int m_x_spacing = 1;
+    int m_y_spacing = 1;
+    int m_label_spacing = 1;
+    BorderStyle m_border_style = BorderStyle::double_line_border();
+    
     static constexpr double REVEAL_INTERVAL = 20.0; //ms
 
     void handle_reveal();

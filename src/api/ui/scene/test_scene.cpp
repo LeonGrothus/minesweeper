@@ -34,7 +34,7 @@ TestScene::TestScene() {
 
     auto board_row = std::make_shared<Row>(std::move(board_row_children));
     board_row->set_spacing(2);
-    auto aligned_boards = std::make_shared<Alignment>(board_row, MIDDLE_CENTER);
+    const auto aligned_boards = std::make_shared<Alignment>(board_row, MIDDLE_CENTER);
     aligned_boards->m_flex = 1;
 
     auto selection = std::make_shared<TextSelectionWidget>(true, true);
@@ -60,7 +60,7 @@ TestScene::TestScene() {
     children.push_back(aligned_boards);
     // children.push_back(aligned_selection);
     auto all_padding = std::make_shared<Padding>(std::make_shared<Column>(std::move(children)), 4,
-                                                4, 2, 2);
-    auto all_border = std::make_shared<Border>(all_padding, PaddingBorderStyle::double_line_border());
+                                                 4, 2, 2);
+    auto all_border = std::make_shared<Border>(all_padding, BorderStyle::double_line_border());
     m_base_widget = all_border;
 }
