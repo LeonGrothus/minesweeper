@@ -24,6 +24,7 @@ CanvasElement Column::build_canvas_element(const Vector2D &size) {
         }
         total_flex += child_flex;
     }
+    flex_height -= m_spacing * (static_cast<int>(m_children.size()) - 1);
 
 
     CanvasElement build_widget("");
@@ -87,6 +88,6 @@ Vector2D Column::get_minimum_size() const {
         max_width = std::max(max_width, width);
         height += child_height;
     }
-    height += m_spacing + (static_cast<int>(m_children.size()) - 1);
+    height += m_spacing * (static_cast<int>(m_children.size()) - 1);
     return Vector2D{max_width, height};
 }

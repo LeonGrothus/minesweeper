@@ -8,6 +8,8 @@ class Board2D {
 public:
     explicit Board2D(Vector2D size, int mines, bool force_mines = false);
 
+    explicit Board2D(Vector2D size, float mines_percentage, bool force_mines = false);
+
     void first_move(const Vector2D &pos);
 
     std::vector<Vector2D> reveal_next(const Vector2D &pos);

@@ -3,14 +3,15 @@
 #include <string>
 
 class FileReader {
+public:
+    explicit FileReader(const std::string &filePath);
 
-  public:
-	FileReader(const std::string &filePath);
+    bool file_exists() const;
 
-	bool file_exists() const;
-	bool read_string_content(std::string &outContent) const;
-	bool write_string_content(const std::string &content) const;
+    bool read_string_content(std::string &outContent) const;
 
-  private:
-	std::string m_filePath;
+    bool write_string_content(const std::string &content) const;
+
+private:
+    std::string m_filePath;
 };

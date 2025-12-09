@@ -7,6 +7,11 @@ Alignment::Alignment(std::shared_ptr<Widget> child, const Position alignment)
       m_alignment(alignment) {
 }
 
+void Alignment::set_child(std::shared_ptr<Widget> child) {
+    m_child = std::move(child);
+    set_dirty();
+}
+
 CanvasElement Alignment::build_canvas_element(const Vector2D &size) {
     const CanvasElement &child = m_child->build_widget(m_child->get_minimum_size());
     return position_canvas_element(child, m_alignment, size, u' ');

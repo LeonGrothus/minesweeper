@@ -84,7 +84,7 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
     const int additional = (canvas_size.y - element_height) % 2;
     full_string.reserve(static_cast<size_t>(canvas_size.x) * canvas_size.y);
 
-    const bool extra_at_top = (repeat_bottom != 0);
+    const bool extra_at_top = (repeat_bottom == 0);
 
     for (int i = 0; i < repeat_top * height_diff; i++) {
         full_string += width_offset;

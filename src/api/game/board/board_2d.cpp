@@ -19,6 +19,17 @@ Board2D::Board2D(const Vector2D size, const int mines, const bool force_mines) :
     }
 }
 
+Board2D::Board2D(const Vector2D size, const float mines_percentage, const bool force_mines) : m_grid(Grid2D<Cell>(size)),
+    m_flagged_count(0), m_is_lost(false), m_is_won(false) {
+    assert(mines_percentage <= 1);
+    const int mines = static_cast<int>(mines_percentage * static_cast<float>(size.area()));
+    m_mine_count = mines;
+    m_safe_cells_remaining = size.area() - mines;
+    if (force_mines) {
+        place_mines(mines, -1);
+    }
+}
+
 void Board2D::first_move(const Vector2D &pos) {
     place_mines(m_mine_count, pos);
     calculate_all_adjacent_mines();

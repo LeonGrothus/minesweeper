@@ -17,6 +17,7 @@ KeyboardController::KeyboardController() {
 	noecho();
 	keypad(stdscr, TRUE);
 	nodelay(stdscr, TRUE);
+	set_escdelay(25);
 }
 
 KeyboardController::~KeyboardController() {

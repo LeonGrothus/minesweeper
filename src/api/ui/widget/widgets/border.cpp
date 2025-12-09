@@ -31,13 +31,14 @@ CanvasElement Border::build_canvas_element(const Vector2D &size) {
     border_canvas.reserve(size.area());
 
     if (m_enabled_borders[0]) {
-        border_canvas.append(size.x, m_border_style.top);
+        std::u16string top_line(size.x, m_border_style.top);
         if (m_enabled_borders[2]) {
-            border_canvas[0] = m_border_style.top_left_corner;
+            top_line[0] = m_border_style.top_left_corner;
         }
         if (m_enabled_borders[3]) {
-            border_canvas[size.x - 1] = m_border_style.top_right_corner;
+            top_line[size.x - 1] = m_border_style.top_right_corner;
         }
+        border_canvas.append(top_line);
     }
 
     for (int i = 0; i < child.get_height(); i++) {
@@ -51,13 +52,14 @@ CanvasElement Border::build_canvas_element(const Vector2D &size) {
     }
 
     if (m_enabled_borders[1]) {
-        border_canvas.append(size.x, m_border_style.bottom);
+        std::u16string bottom_line(size.x, m_border_style.bottom);
         if (m_enabled_borders[2]) {
-            border_canvas[size.area() - size.x] = m_border_style.bottom_left_corner;
+            bottom_line[0] = m_border_style.bottom_left_corner;
         }
         if (m_enabled_borders[3]) {
-            border_canvas[size.area() - 1] = m_border_style.bottom_right_corner;
+            bottom_line[size.x - 1] = m_border_style.bottom_right_corner;
         }
+        border_canvas.append(bottom_line);
     }
 
     return CanvasElement(border_canvas, size);

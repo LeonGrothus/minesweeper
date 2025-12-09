@@ -28,6 +28,10 @@ public:
 
     virtual bool is_dirty() const = 0;
 
+    virtual void set_dirty() {
+        m_is_dirty = true;
+    }
+
     int m_flex = DEFAULT_FLEX;
 
 protected:

@@ -8,6 +8,8 @@ class Alignment final : public Widget {
 public:
 	explicit Alignment(std::shared_ptr<Widget> child, Position alignment);
 
+	void set_child(std::shared_ptr<Widget> child);
+
 	Vector2D get_minimum_size() const override;
 
 	void keyboard_press(int key) override;

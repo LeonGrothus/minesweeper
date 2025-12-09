@@ -23,6 +23,7 @@ CanvasElement Row::build_canvas_element(const Vector2D &size) {
         }
         total_flex += child_flex;
     }
+    flex_width -= m_spacing * (static_cast<int>(m_children.size()) - 1);
 
     CanvasElement build_widget("");
     const CanvasElement spacing_canvas = CanvasElement::empty(Vector2D(m_spacing, size.y), u' ');

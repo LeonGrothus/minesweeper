@@ -143,33 +143,24 @@ CanvasElement CanvasElement::transform_to_canvas_element_utf8(const std::string 
         return CanvasElement(std::u16string(), size);
     }
 
-    std::vector<std::string_view> lines;
+    std::vector<std::u16string> lines;
     std::string::size_type longest = 0;
 
     std::string::size_type prev_pos = 0;
     std::string::size_type current_pos;
 
-    bool first_line = true;
-    std::string::size_type first_len = 0;
-    bool all_same = true;
-
     while ((current_pos = to_canvas_element.find(delimiter, prev_pos)) != std::string::npos) {
-        std::string_view line(to_canvas_element.data() + prev_pos, current_pos - prev_pos);
-        lines.push_back(line);
-        longest = std::max(longest, line.length());
+        std::string_view line_view(to_canvas_element.data() + prev_pos, current_pos - prev_pos);
+        const std::u16string line_u16 = utf8_to_utf16(std::string(line_view));
+        lines.push_back(line_u16);
+        longest = std::max(longest, line_u16.length());
         prev_pos = current_pos + 1;
-
-        if (first_line) {
-            first_len = longest;
-            first_line = false;
-        } else if (first_len != line.length()) {
-            all_same = false;
-        }
     }
 
-    const std::string_view last_line(to_canvas_element.data() + prev_pos, to_canvas_element.length() - prev_pos);
-    lines.push_back(last_line);
-    longest = std::max(longest, last_line.length());
+    const std::string_view last_line_view(to_canvas_element.data() + prev_pos, to_canvas_element.length() - prev_pos);
+    const std::u16string last_line_u16 = utf8_to_utf16(std::string(last_line_view));
+    lines.push_back(last_line_u16);
+    longest = std::max(longest, last_line_u16.length());
 
     const int box_height = static_cast<int>(lines.size());
     const int box_width = static_cast<int>(longest);
@@ -177,17 +168,10 @@ CanvasElement CanvasElement::transform_to_canvas_element_utf8(const std::string 
     std::u16string result;
     result.reserve(box_width * box_height);
     const Vector2D size(box_width, box_height);
-    if (all_same && first_line == false && first_len == last_line.length()) {
-        for (const std::string_view &line: lines) {
-            result += utf8_to_utf16(line.data());
-        }
-        return CanvasElement(result, size);
-    }
 
-    for (const std::string_view &line: lines) {
-        const std::u16string u16_line = utf8_to_utf16(line.data());
-        result += u16_line;
-        result.append(longest - static_cast<int>(u16_line.length()), fill_char);
+    for (const std::u16string &line: lines) {
+        result += line;
+        result.append(longest - line.length(), fill_char);
     }
 
     return CanvasElement(result, size);
