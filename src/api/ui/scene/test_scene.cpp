@@ -6,7 +6,7 @@
 #include "api/ui/widget/widgets/column.hpp"
 #include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/row.hpp"
-#include "api/ui/widget/widgets/board_widget.hpp"
+#include "../widget/reactive_widgets/board_widget.hpp"
 
 #include <memory>
 #include <vector>

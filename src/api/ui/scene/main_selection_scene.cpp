@@ -12,7 +12,7 @@
 #include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/styles/border_style.hpp"
 #include "api/game/board/board_2d.hpp"
-#include "api/ui/widget/widgets/board_widget.hpp"
+#include "../widget/reactive_widgets/board_widget.hpp"
 
 MainSelectionScene::MainSelectionScene() {
     FileReader reader("assets/banner.txt");
@@ -130,13 +130,19 @@ void MainSelectionScene::go_to_stage(const Stage stage) {
     m_confirm_visible->set_visible(stage >= Stage::Confirm);
 
     if (stage == Stage::Main) {
+        m_main_menu->unselect();
         m_display_widget = m_banner_widget;
         if (m_display_alignment) {
             m_display_alignment->set_child(m_banner_widget);
         }
     }
 
+    if (stage == Stage::Size) {
+        m_size_menu->unselect();
+    }
+
     if (stage == Stage::Difficulty) {
+        m_difficulty_menu->unselect();
         m_selected_difficulty = Difficulty::NoDifficulty;
         update_display_widget();
     }

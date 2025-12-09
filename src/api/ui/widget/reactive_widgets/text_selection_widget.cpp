@@ -32,6 +32,10 @@ std::u16string TextSelectionWidget::get_selected_option() const {
     return u"";
 }
 
+void TextSelectionWidget::unselect() {
+    m_selected = false;
+}
+
 CanvasElement TextSelectionWidget::build_canvas_element(const Vector2D &size) {
     if (size < get_minimum_size() || m_options.empty()) {
         return CanvasElement::empty(size, u' ');
@@ -68,6 +72,12 @@ CanvasElement TextSelectionWidget::build_canvas_element(const Vector2D &size) {
     return CanvasElement(result, size);;
 }
 
+void TextSelectionWidget::select() {
+    m_options_func[get_selected_index()]();
+    m_selected = true;
+    m_highlighted = true;
+}
+
 void TextSelectionWidget::keyboard_press(const int key) {
     switch (key) {
         case KEY_UP:
@@ -79,7 +89,7 @@ void TextSelectionWidget::keyboard_press(const int key) {
         case 10:
         case 13:
         case KEY_ENTER:
-            m_options_func[get_selected_index()]();
+            select();
             break;
         default:
             break;
@@ -87,9 +97,10 @@ void TextSelectionWidget::keyboard_press(const int key) {
 }
 
 void TextSelectionWidget::update(const double delta_time) {
-    if (!m_blink_highlighted) {
+    if (!m_blink_highlighted || m_selected) {
         return;
     }
+
     m_current_millis += delta_time;
     if (m_current_millis > BLINK_INTERVAL_MS) {
         m_current_millis -= BLINK_INTERVAL_MS;
@@ -116,6 +127,7 @@ bool TextSelectionWidget::is_dirty() const {
 }
 
 void TextSelectionWidget::move_selection(const int amount) {
+    unselect();
     if (m_options.empty()) {
         return;
     }

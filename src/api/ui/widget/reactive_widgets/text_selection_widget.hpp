@@ -18,6 +18,8 @@ public:
 
     std::u16string get_selected_option() const;
 
+    void unselect();
+
     void keyboard_press(int key) override;
 
     void update(double delta_time) override;
@@ -30,6 +32,8 @@ protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
 
 private:
+    void select();
+
     std::vector<std::u16string> m_options;
 
     std::vector<std::function<void()> > m_options_func;
@@ -40,6 +44,7 @@ private:
     bool m_blink_highlighted;
     double m_current_millis = 0;
     bool m_highlighted = false;
+    bool m_selected = false;
     static constexpr double BLINK_INTERVAL_MS = 500.0; //ms
 
     void move_selection(int amount);
