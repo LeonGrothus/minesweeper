@@ -28,12 +28,12 @@ private:
     double m_reveal_timer;
     bool m_is_revealing;
     int m_mine_count;
-    
+
     int m_x_spacing = 1;
-    int m_y_spacing = 1;
+    int m_y_spacing = 0;
     int m_label_spacing = 1;
     BorderStyle m_border_style = BorderStyle::double_line_border();
-    
+
     static constexpr double REVEAL_INTERVAL = 20.0; //ms
 
     void handle_reveal();

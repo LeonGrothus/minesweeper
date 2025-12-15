@@ -24,9 +24,9 @@ CanvasElement Visibility::build_canvas_element(const Vector2D &size) {
 }
 
 Vector2D Visibility::get_minimum_size() const {
-    if (!m_visible) {
-        return Vector2D{0, 0};
-    }
+    // if (!m_visible) {
+    //     return Vector2D{0, 0};
+    // }
     return m_child->get_minimum_size();
 }
 

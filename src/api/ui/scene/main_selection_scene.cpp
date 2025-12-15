@@ -5,6 +5,7 @@
 
 #include "api/helper/file_reader.hpp"
 #include "api/ui/canvas/terminal_helper.hpp"
+#include "api/ui/scene/game_scene.hpp"
 #include "api/ui/widget/widgets/row.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
 #include "api/ui/widget/widgets/border.hpp"
@@ -51,6 +52,11 @@ MainSelectionScene::MainSelectionScene() {
         go_to_stage(Stage::Difficulty);
     });
 
+    m_difficulty_menu->add_option(u"Very Easy", [this]() {
+        m_selected_difficulty = Difficulty::VeryEasy;
+        update_display_widget();
+        go_to_stage(Stage::Confirm);
+    });
     m_difficulty_menu->add_option(u"Easy", [this]() {
         m_selected_difficulty = Difficulty::Easy;
         update_display_widget();
@@ -67,8 +73,12 @@ MainSelectionScene::MainSelectionScene() {
         go_to_stage(Stage::Confirm);
     });
 
-    m_confirm_menu->add_option(u"Play", []() {
+    m_confirm_menu->add_option(u"Play", [this]() {
+        std::shared_ptr<BoardWidget> board = create_board(m_selected_size, m_selected_difficulty);
+        auto game_scene = std::make_unique<GameScene>(board);
+        request_scene_change(std::move(game_scene));
     });
+
 
     std::shared_ptr<Padding> m_main_menu_padded = std::make_shared<Padding>(m_main_menu, 2, 2, 1, 1);
     std::shared_ptr<Padding> m_size_menu_padded = std::make_shared<Padding>(m_size_menu, 2, 2, 1, 1);
@@ -99,7 +109,7 @@ MainSelectionScene::MainSelectionScene() {
     std::shared_ptr<Widget> selection_widget = std::make_shared<Alignment>(padded_row, BOTTOM_LEFT);
 
     m_display_alignment = std::make_shared<Alignment>(m_display_widget, MIDDLE_CENTER);
-    selection_widget->m_flex = Flex::NO_FLEX;
+    selection_widget->m_flex = NO_FLEX;
 
     std::vector<std::shared_ptr<Widget> > layout;
     layout.push_back(m_display_alignment);
@@ -200,6 +210,8 @@ float MainSelectionScene::get_mine_percentage(const Difficulty difficulty) {
     switch (difficulty) {
         case Difficulty::NoDifficulty:
             return 0;
+        case Difficulty::VeryEasy:
+            return 0.05;
         case Difficulty::Easy:
             return 0.2;
         case Difficulty::Medium:
@@ -215,8 +227,17 @@ std::shared_ptr<Widget> MainSelectionScene::create_board_showcase(const Size siz
     const Vector2D board_size = get_board_size(size);
     float mine_percentage = get_mine_percentage(difficulty);
 
-    auto board = std::make_shared<Board2D>(board_size, mine_percentage, true);
+    std::shared_ptr<Board2D> board = std::make_shared<Board2D>(board_size, mine_percentage, true);
     return std::make_shared<BoardShowcaseWidget>(board);
+}
+
+std::shared_ptr<BoardWidget> MainSelectionScene::create_board(const Size size,
+                                                              const Difficulty difficulty) {
+    const Vector2D board_size = get_board_size(size);
+    float mine_percentage = get_mine_percentage(difficulty);
+
+    std::shared_ptr<Board2D> board = std::make_shared<Board2D>(board_size, mine_percentage, false);
+    return std::make_shared<BoardWidget>(board);
 }
 
 void MainSelectionScene::update_display_widget() {

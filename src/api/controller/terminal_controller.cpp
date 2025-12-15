@@ -3,6 +3,7 @@
 #include "api/ui/canvas/terminal_helper.hpp"
 
 #include <curses.h>
+#include <memory>
 
 constexpr double FRAME_RATE = 60.0;
 constexpr double FRAME_TIME = 1000.0 / FRAME_RATE;
@@ -24,11 +25,19 @@ void TerminalController::run() {
         const double delta_time = m_delta_timer.get_delta_millis();
         m_current_millis += delta_time;
 
+        bool scene_changed = false;
         if (m_current_millis >= FRAME_TIME || terminal_size_changed) {
             m_current_millis = std::max(m_current_millis - FRAME_TIME, 0.0);
 
             update_scene(delta_time);
-            if (m_current_scene->is_dirty() || terminal_size_changed) {
+
+            if (std::unique_ptr<Scene> next_scene = m_current_scene->take_pending_scene()) {
+                m_current_scene = std::move(next_scene);
+                m_current_scene->set_dirty();
+                scene_changed = true;
+            }
+
+            if (m_current_scene->is_dirty() || terminal_size_changed || scene_changed) {
                 draw_scene();
             }
         }

@@ -67,7 +67,7 @@ CanvasElement BoardWidget::build_canvas_element(const Vector2D &size) {
     const int max_digits_x = digits(board_x);
     const int max_digits_y = digits(board_y);
 
-    const int effective_x_spacing = std::max(m_x_spacing, max_digits_x - 1);
+    const int effective_x_spacing = std::max(m_x_spacing, max_digits_x - 1) + m_label_spacing;
 
     //plus 2 for spacing left and right; border is added later
     const int grid_width = board_x + (board_x - 1) * effective_x_spacing + 2;
@@ -166,7 +166,7 @@ Vector2D BoardWidget::get_minimum_size() const {
     const int max_digits_x = digits(board_x);
     const int max_digits_y = digits(board_y);
 
-    const int effective_x_spacing = std::max(m_x_spacing, max_digits_x - 1);
+    const int effective_x_spacing = std::max(m_x_spacing, max_digits_x - 1) + m_label_spacing;
 
     //plus 2 for spacing left and right
     const int grid_width = board_x + (board_x - 1) * effective_x_spacing + 2;

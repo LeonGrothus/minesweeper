@@ -8,6 +8,7 @@
 
 #include <memory>
 
+#include "api/ui/widget/reactive_widgets/board_widget.hpp"
 #include "api/ui/widget/widgets/banner_widget.hpp"
 #include "api/ui/widget/widgets/board_showcase_widget.hpp"
 
@@ -35,6 +36,7 @@ private:
 
     enum class Difficulty {
         NoDifficulty,
+        VeryEasy,
         Easy,
         Medium,
         Hard
@@ -64,6 +66,8 @@ private:
     void update_display_widget();
 
     static std::shared_ptr<Widget> create_board_showcase(Size size, Difficulty difficulty);
+
+    static std::shared_ptr<BoardWidget> create_board(Size size, Difficulty difficulty);
 
     static Vector2D get_board_size(Size size);
 
