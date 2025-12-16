@@ -21,7 +21,7 @@ MainSelectionScene::MainSelectionScene() {
     reader.read_string_content(content);
     m_aligned_banner_widget = wrap_with_alignment(std::make_shared<BannerWidget>(content));
 
-    m_display_widget = std::make_shared<TransitionWidget>(m_aligned_banner_widget);
+    m_display_widget = std::make_shared<TransitionWidget>(m_aligned_banner_widget, false);
 
     m_main_menu = std::make_shared<TextSelectionWidget>(true, true);
     m_size_menu = std::make_shared<TextSelectionWidget>(true, true);
@@ -140,7 +140,7 @@ void MainSelectionScene::go_to_stage(const Stage stage) {
 
     if (stage == Stage::Main) {
         m_main_menu->unselect();
-        m_display_widget->set_new_end(wrap_with_alignment(m_aligned_banner_widget));
+        m_display_widget->set_new_end(m_aligned_banner_widget);
     }
 
     if (stage == Stage::Size) {
@@ -184,9 +184,9 @@ void MainSelectionScene::keyboard_press(const int key) {
 
 void MainSelectionScene::update(const double delta_time) {
     m_main_menu->update(delta_time);
-    m_size_menu->update(delta_time);
-    m_difficulty_menu->update(delta_time);
-    m_confirm_menu->update(delta_time);
+    m_size_visible->update(delta_time);
+    m_difficulty_visible->update(delta_time);
+    m_confirm_visible->update(delta_time);
     m_display_widget->update(delta_time);
 }
 

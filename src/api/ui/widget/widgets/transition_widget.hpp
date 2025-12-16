@@ -6,7 +6,7 @@
 
 class TransitionWidget : public Widget {
 public:
-    explicit TransitionWidget(const std::shared_ptr<Widget> &end);
+    explicit TransitionWidget(const std::shared_ptr<Widget> &end, bool fade_in);
 
     explicit TransitionWidget(const std::shared_ptr<Widget> &start, const std::shared_ptr<Widget> &end);
 
@@ -32,7 +32,7 @@ private:
 
     void handle_next_transitions(int count);
 
-    double m_transition_time = 400; //ms
+    double m_transition_time = 600; //ms
     double m_char_reveal_time = 0;
 
     double m_passed_time = 0;
@@ -40,7 +40,8 @@ private:
     char16_t m_transition_char = u'#';
 
     bool m_transition_finished = false;
-    bool m_break_between = false;
+    bool m_set_new_end = false;
+    bool m_break_between_transition = false;
 
     int m_to_change = 0;
     std::vector<int> m_cover_indices = std::vector<int>();

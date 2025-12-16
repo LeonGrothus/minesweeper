@@ -5,9 +5,16 @@
 #include <random>
 #include <utility>
 
-TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &end) : m_start_widget(end), m_end_widget(end), m_start_canvas(""),
-                                                                         m_end_canvas("") {
-    m_transition_finished = true;
+#include "empty.hpp"
+
+TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &end, const bool fade_in)
+    : m_start_widget(fade_in ? std::make_shared<Empty>() : end),
+      m_end_widget(end),
+      m_start_canvas(""),
+      m_end_canvas("") {
+    if (!fade_in) {
+        m_transition_finished = true;
+    }
 }
 
 TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &start, const std::shared_ptr<Widget> &end) : m_start_widget(start),
@@ -15,6 +22,14 @@ TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &start, const s
 }
 
 void TransitionWidget::set_new_end(const std::shared_ptr<Widget> &new_end) {
+    if (m_end_widget == new_end) {
+        return;
+    }
+
+    if (!m_transition_finished) {
+        m_break_between_transition = true;
+    }
+
     m_end_widget = new_end;
     m_cover_indices.clear();
     m_uncover_indices.clear();
@@ -24,7 +39,7 @@ void TransitionWidget::set_new_end(const std::shared_ptr<Widget> &new_end) {
     m_transition_finished = false;
 
     m_start_canvas = m_cached_canvas;
-    m_break_between = true;
+    m_set_new_end = true;
     set_dirty();
 }
 
@@ -69,19 +84,24 @@ void TransitionWidget::update(const double delta_time) {
 
 
 bool TransitionWidget::is_dirty() const {
-    return m_is_dirty;
+    return m_is_dirty || (m_transition_finished && m_end_widget->is_dirty());
 }
 
 CanvasElement TransitionWidget::build_canvas_element(const Vector2D &size) {
-    if (!m_transition_finished && m_to_change == 0) {
-        if (!m_break_between) {
+    if (m_transition_finished) {
+        return m_end_widget->build_widget(size);
+    }
+
+    //to change is 0 when transition needs to start
+    if (m_to_change == 0) {
+        if (!m_set_new_end) {
             m_start_canvas = m_start_widget->build_widget(size);
         } else {
             if (m_start_canvas.get_element_size() != size) {
                 m_start_canvas = m_start_canvas.fill_to_size(size, u' ');
             }
         }
-        m_break_between = false;
+        m_set_new_end = false;
         m_end_canvas = m_end_widget->build_widget(size);
 
         m_cover_indices.clear();
@@ -95,8 +115,8 @@ CanvasElement TransitionWidget::build_canvas_element(const Vector2D &size) {
 
     if (m_canvas_size != size) {
         m_start_canvas = m_start_widget->build_widget(size);
-
         m_end_canvas = m_end_widget->build_widget(size);
+
         const double percentage = (2.0 * m_to_change + static_cast<double>(-m_cover_indices.size() - m_uncover_indices.size())) /
                                   m_to_change;
         init_transition(size);
@@ -111,17 +131,23 @@ void TransitionWidget::init_transition(const Vector2D size) {
     const std::u16string &start_canvas = m_start_canvas.get_canvas_element();
     const std::u16string &end_canvas = m_end_canvas.get_canvas_element();
 
-    m_to_change = 0;
+    std::vector<int> transition_chars{};
+    std::vector<int> non_transition_chars{};
 
-    std::vector<int> to_change{};
     for (int i = 0; i < size.area(); i++) {
         if (start_canvas.at(i) == end_canvas.at(i)) {
             continue;
         }
-        m_to_change++;
-        to_change.push_back(i);
+        if (start_canvas.at(i) == m_transition_char) {
+            transition_chars.push_back(i);
+        } else {
+            non_transition_chars.push_back(i);
+        }
     }
 
+    m_to_change = static_cast<int>(transition_chars.size() + non_transition_chars.size());
+
+    //skip transition when no transition needed to avoid div by 0
     if (m_to_change == 0) {
         m_transition_finished = true;
         m_cached_canvas = m_end_canvas;
@@ -129,10 +155,22 @@ void TransitionWidget::init_transition(const Vector2D size) {
         return;
     }
 
-    std::ranges::shuffle(to_change, std::random_device());
-    m_cover_indices = std::vector(to_change);
-    std::ranges::shuffle(to_change, std::random_device());
-    m_uncover_indices = std::move(to_change);
+    //if no chars to cover go straight to uncovering
+    if (non_transition_chars.empty()) {
+        m_cover_indices.clear();
+        std::ranges::shuffle(transition_chars, std::random_device());
+        m_uncover_indices = std::move(transition_chars);
+    } else {
+        //covered chars need to be uncovered
+        std::vector<int> all_to_uncover = transition_chars;
+        all_to_uncover.insert(all_to_uncover.end(), m_cover_indices.begin(), m_cover_indices.end());
+
+        std::ranges::shuffle(non_transition_chars, std::random_device());
+        m_cover_indices = std::move(non_transition_chars);
+
+        std::ranges::shuffle(all_to_uncover, std::random_device());
+        m_uncover_indices = std::move(all_to_uncover);
+    }
 
     m_char_reveal_time = m_transition_time / m_to_change;
     m_cached_canvas = m_start_canvas;
