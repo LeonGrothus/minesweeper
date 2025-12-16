@@ -5,23 +5,22 @@
 #include <random>
 #include <utility>
 
-#include "api/ui/canvas/terminal_helper.hpp"
-
 TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &start, const std::shared_ptr<Widget> &end) : m_start_widget(start),
     m_end_widget(end), m_start_canvas(""), m_end_canvas("") {
 }
 
 void TransitionWidget::set_new_end(const std::shared_ptr<Widget> &new_end) {
     m_end_widget = new_end;
-    if (m_transition_finished) {
-        m_cover_indices.clear();
-        m_uncover_indices.clear();
-        m_to_change = 0;
-        m_transition_finished = false;
-    } else {
-        m_start_canvas = m_cached_canvas;
-        m_break_between = true;
-    }
+    m_cover_indices.clear();
+    m_uncover_indices.clear();
+    m_to_change = 0;
+    m_passed_time = 0;
+    m_char_reveal_time = 0;
+    m_transition_finished = false;
+
+    m_start_canvas = m_cached_canvas;
+    m_break_between = true;
+    set_dirty();
 }
 
 void TransitionWidget::set_transition_time(const float transition_time) {
@@ -72,14 +71,24 @@ CanvasElement TransitionWidget::build_canvas_element(const Vector2D &size) {
     if (!m_transition_finished && m_to_change == 0) {
         if (!m_break_between) {
             m_start_canvas = m_start_widget->build_widget(size);
-            m_break_between = false;
         }
+        m_break_between = false;
         m_end_canvas = m_end_widget->build_widget(size);
+
+        m_cover_indices.clear();
+        m_uncover_indices.clear();
+        m_to_change = 0;
+        m_passed_time = 0;
+        m_transition_finished = false;
+
         init_transition(size);
     }
 
     if (m_canvas_size != size) {
-        const double percentage = (2.0 * m_to_change - static_cast<double>(m_cover_indices.size() - m_uncover_indices.size())) /
+        m_start_canvas = m_start_widget->build_widget(size);
+
+        m_end_canvas = m_end_widget->build_widget(size);
+        const double percentage = (2.0 * m_to_change + static_cast<double>(-m_cover_indices.size() - m_uncover_indices.size())) /
                                   m_to_change;
         init_transition(size);
         handle_next_transitions(static_cast<int>(2 * m_to_change * percentage));
@@ -93,6 +102,8 @@ void TransitionWidget::init_transition(const Vector2D size) {
     const std::u16string &start_canvas = m_start_canvas.get_canvas_element();
     const std::u16string &end_canvas = m_end_canvas.get_canvas_element();
 
+    m_to_change = 0;
+
     std::vector<int> to_change{};
     for (int i = 0; i < size.area(); i++) {
         if (start_canvas.at(i) == end_canvas.at(i)) {
@@ -101,6 +112,14 @@ void TransitionWidget::init_transition(const Vector2D size) {
         m_to_change++;
         to_change.push_back(i);
     }
+
+    if (m_to_change == 0) {
+        m_transition_finished = true;
+        m_cached_canvas = m_end_canvas;
+        m_char_reveal_time = 0;
+        return;
+    }
+
     std::ranges::shuffle(to_change, std::random_device());
     m_cover_indices = std::vector(to_change);
     std::ranges::shuffle(to_change, std::random_device());
