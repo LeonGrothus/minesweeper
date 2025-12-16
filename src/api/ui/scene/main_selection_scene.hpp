@@ -11,6 +11,7 @@
 #include "api/ui/widget/reactive_widgets/board_widget.hpp"
 #include "api/ui/widget/widgets/banner_widget.hpp"
 #include "api/ui/widget/widgets/board_showcase_widget.hpp"
+#include "api/ui/widget/widgets/transition_widget.hpp"
 
 class MainSelectionScene final : public Scene {
 public:
@@ -46,9 +47,8 @@ private:
     Size m_selected_size = Size::Small;
     Difficulty m_selected_difficulty = Difficulty::NoDifficulty;
 
-    std::shared_ptr<BannerWidget> m_banner_widget;
-    std::shared_ptr<Widget> m_display_widget;
-    std::shared_ptr<Alignment> m_display_alignment;
+    std::shared_ptr<Alignment> m_aligned_banner_widget;
+    std::shared_ptr<TransitionWidget> m_display_widget;
 
     std::shared_ptr<TextSelectionWidget> m_main_menu;
     std::shared_ptr<TextSelectionWidget> m_size_menu;
@@ -63,7 +63,7 @@ private:
 
     void go_to_stage(Stage stage);
 
-    void update_display_widget();
+    void update_display_widget() const;
 
     static std::shared_ptr<Widget> create_board_showcase(Size size, Difficulty difficulty);
 
@@ -72,4 +72,6 @@ private:
     static Vector2D get_board_size(Size size);
 
     static float get_mine_percentage(Difficulty difficulty);
+
+    static std::shared_ptr<Alignment> wrap_with_alignment(std::shared_ptr<Widget> widget);
 };

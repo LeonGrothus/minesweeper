@@ -5,6 +5,11 @@
 #include <random>
 #include <utility>
 
+TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &end) : m_start_widget(end), m_end_widget(end), m_start_canvas(""),
+                                                                         m_end_canvas("") {
+    m_transition_finished = true;
+}
+
 TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &start, const std::shared_ptr<Widget> &end) : m_start_widget(start),
     m_end_widget(end), m_start_canvas(""), m_end_canvas("") {
 }
@@ -71,6 +76,10 @@ CanvasElement TransitionWidget::build_canvas_element(const Vector2D &size) {
     if (!m_transition_finished && m_to_change == 0) {
         if (!m_break_between) {
             m_start_canvas = m_start_widget->build_widget(size);
+        } else {
+            if (m_start_canvas.get_element_size() != size) {
+                m_start_canvas = m_start_canvas.fill_to_size(size, u' ');
+            }
         }
         m_break_between = false;
         m_end_canvas = m_end_widget->build_widget(size);

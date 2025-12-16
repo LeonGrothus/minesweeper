@@ -4,6 +4,6 @@
 
 
 int main(int argc, char *argv[]) {
-    TerminalController controller{std::make_unique<TestScene>()};
+    TerminalController controller{std::make_unique<MainSelectionScene>()};
     controller.run();
 }

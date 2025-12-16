@@ -19,8 +19,9 @@ MainSelectionScene::MainSelectionScene() {
     FileReader reader("assets/banner.txt");
     std::string content;
     reader.read_string_content(content);
-    m_banner_widget = std::make_shared<BannerWidget>(content);
-    m_display_widget = m_banner_widget;
+    m_aligned_banner_widget = wrap_with_alignment(std::make_shared<BannerWidget>(content));
+
+    m_display_widget = std::make_shared<TransitionWidget>(m_aligned_banner_widget);
 
     m_main_menu = std::make_shared<TextSelectionWidget>(true, true);
     m_size_menu = std::make_shared<TextSelectionWidget>(true, true);
@@ -107,12 +108,10 @@ MainSelectionScene::MainSelectionScene() {
 
     std::shared_ptr<Padding> padded_row = std::make_shared<Padding>(row, 1, 1, 0, 0);
     std::shared_ptr<Widget> selection_widget = std::make_shared<Alignment>(padded_row, BOTTOM_LEFT);
-
-    m_display_alignment = std::make_shared<Alignment>(m_display_widget, MIDDLE_CENTER);
     selection_widget->m_flex = NO_FLEX;
 
     std::vector<std::shared_ptr<Widget> > layout;
-    layout.push_back(m_display_alignment);
+    layout.push_back(m_display_widget);
     layout.push_back(selection_widget);
     m_base_widget = std::make_shared<Border>(std::make_shared<Column>(layout), BorderStyle::double_line_border());
 
@@ -141,10 +140,7 @@ void MainSelectionScene::go_to_stage(const Stage stage) {
 
     if (stage == Stage::Main) {
         m_main_menu->unselect();
-        m_display_widget = m_banner_widget;
-        if (m_display_alignment) {
-            m_display_alignment->set_child(m_banner_widget);
-        }
+        m_display_widget->set_new_end(wrap_with_alignment(m_aligned_banner_widget));
     }
 
     if (stage == Stage::Size) {
@@ -222,6 +218,10 @@ float MainSelectionScene::get_mine_percentage(const Difficulty difficulty) {
     return 0;
 }
 
+std::shared_ptr<Alignment> MainSelectionScene::wrap_with_alignment(std::shared_ptr<Widget> widget) {
+    return std::make_shared<Alignment>(widget, MIDDLE_CENTER);
+}
+
 std::shared_ptr<Widget> MainSelectionScene::create_board_showcase(const Size size,
                                                                   const Difficulty difficulty) {
     const Vector2D board_size = get_board_size(size);
@@ -240,11 +240,10 @@ std::shared_ptr<BoardWidget> MainSelectionScene::create_board(const Size size,
     return std::make_shared<BoardWidget>(board);
 }
 
-void MainSelectionScene::update_display_widget() {
-    m_display_widget = create_board_showcase(m_selected_size, m_selected_difficulty);
-    if (m_display_alignment) {
-        m_display_alignment->set_child(m_display_widget);
-    }
+
+void MainSelectionScene::update_display_widget() const {
+    m_display_widget->set_new_end(wrap_with_alignment(create_board_showcase(m_selected_size, m_selected_difficulty)));
+
     m_display_widget->set_dirty();
     m_base_widget->set_dirty();
 }

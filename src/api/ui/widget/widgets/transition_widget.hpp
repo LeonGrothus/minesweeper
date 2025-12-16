@@ -6,6 +6,8 @@
 
 class TransitionWidget : public Widget {
 public:
+    explicit TransitionWidget(const std::shared_ptr<Widget> &end);
+
     explicit TransitionWidget(const std::shared_ptr<Widget> &start, const std::shared_ptr<Widget> &end);
 
     void set_new_end(const std::shared_ptr<Widget> &new_end);
@@ -30,7 +32,7 @@ private:
 
     void handle_next_transitions(int count);
 
-    double m_transition_time = 200; //ms
+    double m_transition_time = 400; //ms
     double m_char_reveal_time = 0;
 
     double m_passed_time = 0;

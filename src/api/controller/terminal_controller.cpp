@@ -49,7 +49,7 @@ void TerminalController::run() {
 void TerminalController::draw_scene() const {
     const CanvasElement &scene_canvas = m_current_scene->build_scene(m_terminal_size);
 
-    render_to_ncurses(scene_canvas.get_canvas_element(), m_terminal_size);
+    render_to_ncurses_buffered(scene_canvas.get_canvas_element(), m_terminal_size);
 }
 
 void TerminalController::update_scene(const double delta_time) const {
