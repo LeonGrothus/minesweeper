@@ -1,5 +1,6 @@
 #pragma once
 #include "../canvas/canvas_element.hpp"
+#include "api/ui/canvas/terminal_helper.hpp"
 
 enum Flex {
     NO_FLEX = 0,
@@ -11,11 +12,23 @@ public:
     virtual ~Widget() = 0;
 
     const CanvasElement &build_widget(const Vector2D &size) {
+        if (size < get_minimum_size()) {
+            if (m_cached_canvas.get_element_size() != size) {
+                m_cached_canvas = CanvasElement::empty(size, u' ');
+            }
+            return m_cached_canvas;
+        }
+
         if (!is_dirty() && m_cached_canvas.get_element_size() == size) {
             return m_cached_canvas;
         }
 
         m_cached_canvas = std::move(build_canvas_element(size));
+
+        if (m_cached_canvas.get_element_size() != size) {
+            m_cached_canvas = m_cached_canvas.fill_to_size(size, u' ');
+        }
+
         m_is_dirty = false;
         return m_cached_canvas;
     }

@@ -25,8 +25,8 @@ void TerminalController::run() {
         const double delta_time = m_delta_timer.get_delta_millis();
         m_current_millis += delta_time;
 
-        bool scene_changed = false;
         if (m_current_millis >= FRAME_TIME || terminal_size_changed) {
+            bool scene_changed = false;
             m_current_millis = std::max(m_current_millis - FRAME_TIME, 0.0);
 
             update_scene(delta_time);

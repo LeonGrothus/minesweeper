@@ -13,7 +13,7 @@ CanvasElement BannerWidget::build_canvas_element(const Vector2D &size) {
     if (size < get_minimum_size()) {
         return CanvasElement::empty(size, u' ');
     }
-    return m_banner.fill_to_size(size, u' ');
+    return m_banner;
 }
 
 void BannerWidget::update(double delta_time) {
