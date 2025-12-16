@@ -9,6 +9,7 @@ Visibility::Visibility(std::shared_ptr<Widget> child, bool visible, bool transit
         m_transition_widget = visible
                                   ? std::make_shared<TransitionWidget>(empty, m_child)
                                   : std::make_shared<TransitionWidget>(empty, empty);
+        m_transition_widget->set_transition_time(200);
     }
 }
 

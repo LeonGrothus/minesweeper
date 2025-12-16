@@ -73,5 +73,5 @@ private:
 
     static float get_mine_percentage(Difficulty difficulty);
 
-    static std::shared_ptr<Alignment> wrap_with_alignment(std::shared_ptr<Widget> widget);
+    static std::shared_ptr<Alignment> wrap_with_alignment(const std::shared_ptr<Widget> &widget);
 };

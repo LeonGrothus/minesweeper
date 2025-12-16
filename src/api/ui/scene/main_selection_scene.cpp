@@ -21,7 +21,7 @@ MainSelectionScene::MainSelectionScene() {
     reader.read_string_content(content);
     m_aligned_banner_widget = wrap_with_alignment(std::make_shared<BannerWidget>(content));
 
-    m_display_widget = std::make_shared<TransitionWidget>(m_aligned_banner_widget, false);
+    m_display_widget = std::make_shared<TransitionWidget>(m_aligned_banner_widget, true);
 
     m_main_menu = std::make_shared<TextSelectionWidget>(true, true);
     m_size_menu = std::make_shared<TextSelectionWidget>(true, true);
@@ -218,7 +218,7 @@ float MainSelectionScene::get_mine_percentage(const Difficulty difficulty) {
     return 0;
 }
 
-std::shared_ptr<Alignment> MainSelectionScene::wrap_with_alignment(std::shared_ptr<Widget> widget) {
+std::shared_ptr<Alignment> MainSelectionScene::wrap_with_alignment(const std::shared_ptr<Widget> &widget) {
     return std::make_shared<Alignment>(widget, MIDDLE_CENTER);
 }
 
@@ -228,7 +228,9 @@ std::shared_ptr<Widget> MainSelectionScene::create_board_showcase(const Size siz
     float mine_percentage = get_mine_percentage(difficulty);
 
     std::shared_ptr<Board2D> board = std::make_shared<Board2D>(board_size, mine_percentage, true);
-    return std::make_shared<BoardShowcaseWidget>(board);
+    const std::shared_ptr<BoardShowcaseWidget> board_showcase_widget = std::make_shared<BoardShowcaseWidget>(board);
+    board_showcase_widget->set_blinking(mine_percentage != 0);
+    return board_showcase_widget;
 }
 
 std::shared_ptr<BoardWidget> MainSelectionScene::create_board(const Size size,
