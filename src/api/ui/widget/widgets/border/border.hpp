@@ -1,6 +1,6 @@
 #pragma once
 
-#include "styles/border_style.hpp"
+#include "border_style.hpp"
 #include <bitset>
 #include <memory>
 

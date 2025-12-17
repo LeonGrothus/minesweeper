@@ -8,12 +8,12 @@
 #include "api/ui/scene/game_scene.hpp"
 #include "api/ui/widget/widgets/row.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
-#include "api/ui/widget/widgets/border.hpp"
+#include "../widget/widgets/border/border.hpp"
 #include "api/ui/widget/widgets/column.hpp"
 #include "api/ui/widget/widgets/padding.hpp"
-#include "api/ui/widget/widgets/styles/border_style.hpp"
+#include "api/ui/widget/widgets/border/border_style.hpp"
 #include "api/game/board/board_2d.hpp"
-#include "../widget/reactive_widgets/board_widget.hpp"
+#include "../widget/widgets/boards/board_widget.hpp"
 
 MainSelectionScene::MainSelectionScene() {
     FileReader reader("assets/banner.txt");

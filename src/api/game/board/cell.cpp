@@ -39,12 +39,12 @@ bool Cell::is_flagged() const {
     return m_is_flagged;
 }
 
-char16_t Cell::get_representation() const {
+char16_t Cell::get_representation(const bool force_mine_visibility) const {
     if (!m_is_revealed) {
-        if (m_is_flagged) {
-            return u'\u25B2';
+        if (m_has_mine && force_mine_visibility) {
+            return u'X';
         }
-        return u'\u2593';
+        return m_is_flagged ? u'\u25B2' : u'\u2593';
     }
 
     if (m_has_mine) {

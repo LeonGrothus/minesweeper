@@ -1,7 +1,7 @@
 #pragma once
-#include "../widget.hpp"
+#include "../../widget.hpp"
 #include "api/game/board/board_2d.hpp"
-#include "api/ui/widget/widgets/styles/border_style.hpp"
+#include "api/ui/widget/widgets/border/border_style.hpp"
 #include <memory>
 
 class BoardWidget final : public Widget {
@@ -9,6 +9,12 @@ public:
     explicit BoardWidget(std::shared_ptr<Board2D> board);
 
     void reset_game();
+
+    void set_x_spacing(int spacing);
+
+    void set_y_spacing(int spacing);
+
+    void set_border_style(const BorderStyle &style);
 
     Vector2D get_minimum_size() const override;
 

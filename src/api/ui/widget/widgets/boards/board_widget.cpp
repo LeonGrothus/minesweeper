@@ -23,6 +23,21 @@ void BoardWidget::reset_game() {
     m_is_dirty = true;
 }
 
+void BoardWidget::set_x_spacing(const int spacing) {
+    m_x_spacing = spacing;
+    m_is_dirty = true;
+}
+
+void BoardWidget::set_y_spacing(const int spacing) {
+    m_y_spacing = spacing;
+    m_is_dirty = true;
+}
+
+void BoardWidget::set_border_style(const BorderStyle &style) {
+    m_border_style = style;
+    m_is_dirty = true;
+}
+
 void BoardWidget::handle_reveal() {
     if (m_board->is_won() || m_board->is_lost()) {
         return;
@@ -58,10 +73,6 @@ void BoardWidget::handle_flag() {
 }
 
 CanvasElement BoardWidget::build_canvas_element(const Vector2D &size) {
-    if (size < get_minimum_size()) {
-        return CanvasElement::empty(size, u' ');
-    }
-
     const auto [board_x, board_y] = m_board->get_grid_size();
 
     const int max_digits_x = digits(board_x);
@@ -227,10 +238,6 @@ void BoardWidget::keyboard_press(const int key) {
         case 'f':
         case 'F':
             handle_flag();
-            break;
-        case 'r':
-        case 'R':
-            reset_game();
             break;
         default:
             break;

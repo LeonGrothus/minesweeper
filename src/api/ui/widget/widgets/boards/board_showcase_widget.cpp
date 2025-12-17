@@ -11,16 +11,6 @@ BoardShowcaseWidget::BoardShowcaseWidget(std::shared_ptr<Board2D> board)
     : m_board(std::move(board)) {
 }
 
-void BoardShowcaseWidget::show_all() {
-    m_show_mines = true;
-    m_is_dirty = true;
-}
-
-void BoardShowcaseWidget::hide_all() {
-    m_show_mines = false;
-    m_is_dirty = true;
-}
-
 void BoardShowcaseWidget::set_blinking(const bool enabled) {
     m_blinking_enabled = enabled;
     m_blink_timer = 0.0;
@@ -43,10 +33,6 @@ void BoardShowcaseWidget::set_border_style(const BorderStyle &style) {
 }
 
 CanvasElement BoardShowcaseWidget::build_canvas_element(const Vector2D &size) {
-    if (size < get_minimum_size()) {
-        return CanvasElement::empty(size, u' ');
-    }
-
     const auto [board_x, board_y] = m_board->get_grid_size();
     const std::vector<Vector2D> mine_positions = m_board->get_all_mine_positions();
 
@@ -77,11 +63,8 @@ CanvasElement BoardShowcaseWidget::build_canvas_element(const Vector2D &size) {
                 }
             }
 
-            if (is_mine && m_show_mines) {
-                line += u'X';
-            } else {
-                line += cell.get_representation();
-            }
+
+            line += cell.get_representation(is_mine && m_show_mines);
 
             if (x < board_x - 1) {
                 line.append(effective_x_spacing, u' ');

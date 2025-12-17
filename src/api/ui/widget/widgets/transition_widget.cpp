@@ -162,8 +162,8 @@ void TransitionWidget::init_transition(const Vector2D size) {
         m_uncover_indices = std::move(transition_chars);
     } else {
         //covered chars need to be uncovered
-        std::vector<int> all_to_uncover = transition_chars;
-        all_to_uncover.insert(all_to_uncover.end(), m_cover_indices.begin(), m_cover_indices.end());
+        std::vector<int> all_to_uncover(transition_chars);
+        all_to_uncover.insert(all_to_uncover.end(), non_transition_chars.begin(), non_transition_chars.end());
 
         std::ranges::shuffle(non_transition_chars, std::random_device());
         m_cover_indices = std::move(non_transition_chars);
@@ -172,7 +172,7 @@ void TransitionWidget::init_transition(const Vector2D size) {
         m_uncover_indices = std::move(all_to_uncover);
     }
 
-    m_char_reveal_time = m_transition_time / m_to_change;
+    m_char_reveal_time = m_transition_time / (2 * m_to_change);
     m_cached_canvas = m_start_canvas;
 }
 

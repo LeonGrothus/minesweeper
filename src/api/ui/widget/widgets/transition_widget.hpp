@@ -32,7 +32,7 @@ private:
 
     void handle_next_transitions(int count);
 
-    double m_transition_time = 500; //ms
+    double m_transition_time = 300; //ms
     double m_char_reveal_time = 0;
 
     double m_passed_time = 0;

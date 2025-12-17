@@ -1,16 +1,12 @@
 #pragma once
-#include "../widget.hpp"
+#include "../../widget.hpp"
 #include "api/game/board/board_2d.hpp"
-#include "api/ui/widget/widgets/styles/border_style.hpp"
+#include "api/ui/widget/widgets/border/border_style.hpp"
 #include <memory>
 
 class BoardShowcaseWidget final : public Widget {
 public:
     explicit BoardShowcaseWidget(std::shared_ptr<Board2D> board);
-
-    void show_all();
-
-    void hide_all();
 
     void set_blinking(bool enabled);
 

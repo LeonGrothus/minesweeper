@@ -7,7 +7,7 @@
 #include <vector>
 #include <string_view>
 #include "api/helper/conversion_helper.hpp"
-#include "api/ui/widget/widgets/styles/border_style.hpp"
+#include "api/ui/widget/widgets/border/border_style.hpp"
 
 CanvasElement::CanvasElement(std::u16string canvas_element, const Vector2D size) {
     m_canvas_element = std::move(canvas_element);

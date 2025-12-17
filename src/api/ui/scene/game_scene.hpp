@@ -1,6 +1,6 @@
 #pragma once
 #include "scene.hpp"
-#include "api/ui/widget/reactive_widgets/board_widget.hpp"
+#include "../widget/widgets/boards/board_widget.hpp"
 
 class GameScene : public Scene {
 public:
