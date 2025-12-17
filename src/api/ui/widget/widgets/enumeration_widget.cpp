@@ -93,8 +93,8 @@ CanvasElement EnumerationWidget::build_canvas_element(const Vector2D &size) {
             x_labels.append(m_label_spacing, u' ');
         }
         const std::u16string number = utf8_to_utf16(std::to_string(x + 1));
-        x_labels.append(max_digits_x - static_cast<int>(number.size()), u' ');
         x_labels.append(number);
+        x_labels.append(max_digits_x - static_cast<int>(number.size()), u' ');
     }
     x_labels.append(m_skip_right, u' ');
     if (m_enabled_label[1]) {

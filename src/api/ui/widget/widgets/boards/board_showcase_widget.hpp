@@ -32,10 +32,11 @@ protected:
 private:
     void rebuild_layout();
 
+    std::shared_ptr<Board2D> m_board_2d;
     std::shared_ptr<Board2dWidget> m_board_widget;
     std::shared_ptr<Widget> m_layout_widget;
 
-    int m_x_spacing = 2;
+    int m_x_spacing = 1;
     int m_y_spacing = 0;
 
     BorderStyle m_border_style = BorderStyle::double_line_border();
