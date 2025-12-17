@@ -4,9 +4,11 @@
 #include "api/ui/widget/widgets/border/border_style.hpp"
 #include <memory>
 
+#include "board_2d_widget.hpp"
+
 class BoardShowcaseWidget final : public Widget {
 public:
-    explicit BoardShowcaseWidget(std::shared_ptr<Board2D> board);
+    explicit BoardShowcaseWidget(const std::shared_ptr<Board2D> &board);
 
     void set_blinking(bool enabled);
 
@@ -28,15 +30,13 @@ protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
 
 private:
-    std::shared_ptr<Board2D> m_board;
-    bool m_show_mines = true;
-    bool m_blinking_enabled = true;
-    double m_blink_timer = 0;
+    void rebuild_layout();
 
-    int m_x_spacing = 1;
+    std::shared_ptr<Board2dWidget> m_board_widget;
+    std::shared_ptr<Widget> m_layout_widget;
+
+    int m_x_spacing = 2;
     int m_y_spacing = 0;
-    int m_label_spacing = 1;
 
     BorderStyle m_border_style = BorderStyle::double_line_border();
-    static constexpr double BLINK_INTERVAL_MS = 500.0; //ms
 };

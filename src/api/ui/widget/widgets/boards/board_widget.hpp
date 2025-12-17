@@ -4,9 +4,11 @@
 #include "api/ui/widget/widgets/border/border_style.hpp"
 #include <memory>
 
+#include "board_2d_widget.hpp"
+
 class BoardWidget final : public Widget {
 public:
-    explicit BoardWidget(std::shared_ptr<Board2D> board);
+    explicit BoardWidget(const std::shared_ptr<Board2D> &board);
 
     void reset_game();
 
@@ -28,21 +30,15 @@ protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
 
 private:
+    void rebuild_layout();
+
     std::shared_ptr<Board2D> m_board;
-    Vector2D m_cursor_pos;
-    bool m_first_move_done;
-    double m_reveal_timer;
-    bool m_is_revealing;
+    std::shared_ptr<Board2dWidget> m_board_widget;
+    std::shared_ptr<Widget> m_layout_widget;
+
     int m_mine_count;
 
-    int m_x_spacing = 1;
+    int m_x_spacing = 2;
     int m_y_spacing = 0;
-    int m_label_spacing = 1;
     BorderStyle m_border_style = BorderStyle::double_line_border();
-
-    static constexpr double REVEAL_INTERVAL = 20.0; //ms
-
-    void handle_reveal();
-
-    void handle_flag();
 };
