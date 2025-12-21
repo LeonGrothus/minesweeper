@@ -1,6 +1,5 @@
 #pragma once
 #include "../canvas/canvas_element.hpp"
-#include "api/ui/canvas/terminal_helper.hpp"
 
 enum Flex {
     NO_FLEX = 0,

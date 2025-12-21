@@ -1,17 +1,8 @@
 #include "test_scene.hpp"
 
-#include "../canvas/terminal_helper.hpp"
-#include "../widget/reactive_widgets/text_selection_widget.hpp"
 
 #include <memory>
-#include <vector>
 
-#include "api/ui/widget/widgets/alignment.hpp"
-#include "../widget/widgets/boards/board_showcase_widget.hpp"
-#include "../widget/widgets/border/border.hpp"
-#include "api/ui/widget/widgets/enumeration_widget.hpp"
-#include "api/ui/widget/widgets/padding.hpp"
-#include "api/ui/widget/widgets/transition_widget.hpp"
 #include "api/ui/widget/widgets/boards/board_2d_widget.hpp"
 #include "api/ui/widget/widgets/boards/board_widget.hpp"
 

@@ -8,8 +8,6 @@
 
 #include <memory>
 
-#include "api/ui/widget/widgets/banner_widget.hpp"
-#include "../widget/widgets/boards/board_showcase_widget.hpp"
 #include "api/ui/widget/widgets/transition_widget.hpp"
 #include "api/ui/widget/widgets/boards/board_widget.hpp"
 

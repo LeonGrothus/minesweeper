@@ -14,6 +14,8 @@
 #include "api/ui/widget/widgets/border/border_style.hpp"
 #include "api/game/board/board_2d.hpp"
 #include "../widget/widgets/boards/board_widget.hpp"
+#include "api/ui/widget/widgets/banner_widget.hpp"
+#include "api/ui/widget/widgets/boards/board_showcase_widget.hpp"
 
 MainSelectionScene::MainSelectionScene() {
     FileReader reader("assets/banner.txt");
@@ -162,7 +164,7 @@ void MainSelectionScene::go_to_stage(const Stage stage) {
 
 void MainSelectionScene::keyboard_press(const int key) {
     //esc
-    if (key == 27) {
+    if (key == 27 || key == KEY_LEFT) {
         switch (m_stage) {
             case Stage::Main:
                 break;

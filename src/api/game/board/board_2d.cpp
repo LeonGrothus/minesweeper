@@ -78,7 +78,7 @@ std::vector<Vector2D> Board2D::reveal_next(const Vector2D &pos) {
     return revealed_positions;
 }
 
-std::vector<Vector2D> Board2D::reveal_step(int max_count) {
+std::vector<Vector2D> Board2D::reveal_step(const int max_count) {
     std::vector<Vector2D> revealed;
     int processed = 0;
 
@@ -168,8 +168,23 @@ void Board2D::place_mines(const int count, const Vector2D &start_pos) {
 void Board2D::place_mines(const int count, const int start_index) {
     int to_place = count;
     std::vector<int> placed_mines;
+
+    const std::vector<std::tuple<Vector2D, Cell> > keep_clear = m_grid.get_all_adjacent(m_grid.get_index_position(start_index));
+    bool break_loop = false;
+
     placed_mines.reserve(m_grid.get_grid_size().area());
     for (int i = 0; i < m_grid.get_grid_size().area(); i++) {
+        //block surrounding chars as well
+        for (const std::tuple<Vector2D, Cell> &item: keep_clear) {
+            if (i == m_grid.get_index(std::get<0>(item))) {
+                break_loop = true;
+                break;
+            }
+        }
+        if (break_loop) {
+            break_loop = false;
+            continue;
+        }
         if (i == start_index) {
             continue;
         }
@@ -178,7 +193,7 @@ void Board2D::place_mines(const int count, const int start_index) {
 
     std::mt19937 &rng = get_rng();
 
-    while (to_place-- > 0) {
+    while (to_place-- > 0 || placed_mines.empty()) {
         std::uniform_int_distribution<int> gen(0, static_cast<int>(placed_mines.size()) - 1);
         const int r = gen(rng);
         const int removed = placed_mines.at(r);

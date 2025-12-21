@@ -44,7 +44,7 @@ char16_t Cell::get_representation(const bool force_mine_visibility) const {
         if (m_has_mine && force_mine_visibility) {
             return u'X';
         }
-        return m_is_flagged ? u'\u25B2' : u'\u2593';
+        return m_is_flagged ? u'\u25B2' : u'\u2593'; //or use ◼
     }
 
     if (m_has_mine) {
@@ -52,7 +52,7 @@ char16_t Cell::get_representation(const bool force_mine_visibility) const {
     }
 
     if (m_adjacent_mines == 0) {
-        return u' ';
+        return u'.';
     }
     return u'0' + m_adjacent_mines;
 }

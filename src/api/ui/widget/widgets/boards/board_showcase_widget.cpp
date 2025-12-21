@@ -4,7 +4,6 @@
 #include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/border/border.hpp"
 #include "api/ui/widget/widgets/enumeration_widget.hpp"
-#include "api/ui/widget/widgets/alignment.hpp"
 
 BoardShowcaseWidget::BoardShowcaseWidget(const std::shared_ptr<Board2D> &board)
     : m_board_2d(board), m_board_widget(std::make_shared<Board2dWidget>(board)) {

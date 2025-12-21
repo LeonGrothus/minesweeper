@@ -3,7 +3,6 @@
 #include <memory>
 
 #include "api/helper/math_helper.hpp"
-#include "api/ui/widget/widgets/alignment.hpp"
 #include "api/ui/widget/widgets/border/border.hpp"
 #include "api/ui/widget/widgets/enumeration_widget.hpp"
 #include "api/ui/widget/widgets/padding.hpp"
