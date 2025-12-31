@@ -2,7 +2,9 @@
 
 #include <memory>
 #include <ncurses.h>
+#include <utility>
 
+#include "transition_scene.hpp"
 #include "api/helper/file_reader.hpp"
 #include "api/ui/canvas/terminal_helper.hpp"
 #include "api/ui/scene/game_scene.hpp"
@@ -78,8 +80,9 @@ MainSelectionScene::MainSelectionScene() {
 
     m_confirm_menu->add_option(u"Play", [this]() {
         std::shared_ptr<BoardWidget> board = create_board(m_selected_size, m_selected_difficulty);
-        auto game_scene = std::make_unique<GameScene>(board);
-        request_scene_change(std::move(game_scene));
+        std::unique_ptr<Scene> game_scene = std::make_unique<GameScene>(board);
+
+        request_scene_change_with_transition(std::move(game_scene));
     });
 
 

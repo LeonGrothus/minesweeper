@@ -5,6 +5,8 @@
 #include <curses.h>
 #include <memory>
 
+#include "api/ui/scene/transition_scene.hpp"
+
 constexpr double FRAME_RATE = 60.0;
 constexpr double FRAME_TIME = 1000.0 / FRAME_RATE;
 
@@ -32,7 +34,12 @@ void TerminalController::run() {
             update_scene(delta_time);
 
             if (std::unique_ptr<Scene> next_scene = m_current_scene->take_pending_scene()) {
-                m_current_scene = std::move(next_scene);
+                if (m_current_scene->should_use_transition()) {
+                    std::shared_ptr<Widget> current_widget = m_current_scene->get_base_widget();
+                    m_current_scene = std::make_unique<TransitionScene>(current_widget, std::move(next_scene));
+                } else {
+                    m_current_scene = std::move(next_scene);
+                }
                 m_current_scene->set_dirty();
                 scene_changed = true;
             }

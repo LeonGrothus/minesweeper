@@ -4,41 +4,56 @@
 
 class Scene {
 public:
-	virtual ~Scene() = 0;
+    virtual ~Scene() = 0;
 
-	void request_scene_change(std::unique_ptr<Scene> next_scene) {
-		m_pending_scene = std::move(next_scene);
-	}
+    void request_scene_change(std::unique_ptr<Scene> next_scene) {
+        m_pending_scene = std::move(next_scene);
+        m_use_transition = false;
+    }
 
-	std::unique_ptr<Scene> take_pending_scene() {
-		return std::move(m_pending_scene);
-	}
+    void request_scene_change_with_transition(std::unique_ptr<Scene> next_scene) {
+        m_pending_scene = std::move(next_scene);
+        m_use_transition = true;
+    }
 
-	virtual void set_dirty() {
-		if (m_base_widget) {
-			m_base_widget->set_dirty();
-		}
-	}
+    std::unique_ptr<Scene> take_pending_scene() {
+        return std::move(m_pending_scene);
+    }
 
-	virtual bool is_dirty() {
-		return m_base_widget->is_dirty();
-	}
+    bool should_use_transition() const {
+        return m_use_transition;
+    }
 
-	virtual void keyboard_press(const int key) {
-		m_base_widget->keyboard_press(key);
-	}
+    virtual void set_dirty() {
+        if (m_base_widget) {
+            m_base_widget->set_dirty();
+        }
+    }
 
-	virtual void update(const double delta_time) {
-		m_base_widget->update(delta_time);
-	}
+    virtual bool is_dirty() {
+        return m_base_widget->is_dirty();
+    }
 
-	virtual const CanvasElement &build_scene(const Vector2D &size) {
-		return m_base_widget->build_widget(size);
-	}
+    virtual void keyboard_press(const int key) {
+        m_base_widget->keyboard_press(key);
+    }
+
+    virtual void update(const double delta_time) {
+        m_base_widget->update(delta_time);
+    }
+
+    virtual const CanvasElement &build_scene(const Vector2D &size) {
+        return m_base_widget->build_widget(size);
+    }
+
+    const std::shared_ptr<Widget> &get_base_widget() {
+        return m_base_widget;
+    }
 
 protected:
-	std::shared_ptr<Widget> m_base_widget;
-	std::unique_ptr<Scene> m_pending_scene;
+    std::shared_ptr<Widget> m_base_widget;
+    std::unique_ptr<Scene> m_pending_scene;
+    bool m_use_transition = false;
 };
 
 inline Scene::~Scene() = default;

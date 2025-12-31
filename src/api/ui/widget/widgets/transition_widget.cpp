@@ -43,6 +43,10 @@ void TransitionWidget::set_new_end(const std::shared_ptr<Widget> &new_end) {
     set_dirty();
 }
 
+bool TransitionWidget::is_transition_finished() const {
+    return m_transition_finished;
+}
+
 void TransitionWidget::set_transition_time(const float transition_time) {
     m_transition_time = transition_time;
 }

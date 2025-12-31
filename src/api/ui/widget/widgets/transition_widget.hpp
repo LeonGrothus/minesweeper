@@ -12,6 +12,8 @@ public:
 
     void set_new_end(const std::shared_ptr<Widget> &new_end);
 
+    bool is_transition_finished() const;
+
     void set_transition_time(float transition_time);
 
     void set_transition_char(char16_t transition_char);
