@@ -8,6 +8,8 @@ public:
 
     explicit BannerWidget(const std::string &banner);
 
+    void set_color_role(ColorRole role);
+
     void update(double delta_time) override;
 
     Vector2D get_minimum_size() const override;
@@ -21,4 +23,6 @@ protected:
 
 private:
     CanvasElement m_banner;
+
+    uint8_t m_banner_color_role = static_cast<uint8_t>(ColorRole::Text);
 };

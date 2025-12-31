@@ -37,6 +37,7 @@ void EnumerationWidget::set_label_spacing(const int spacing) {
 
 void EnumerationWidget::set_color_role(ColorRole role) {
     m_enumeration_color_role = static_cast<uint8_t>(role);
+    set_dirty();
 }
 
 Vector2D EnumerationWidget::get_minimum_size() const {

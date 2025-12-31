@@ -8,12 +8,15 @@ BannerWidget::BannerWidget(CanvasElement banner) : m_banner(std::move(banner)) {
 BannerWidget::BannerWidget(const std::string &banner) : m_banner(banner) {
 }
 
-
 CanvasElement BannerWidget::build_canvas_element(const Vector2D &size) {
-    if (size < get_minimum_size()) {
-        return CanvasElement::empty(size, u' ');
-    }
+    std::vector<uint8_t> &banner_roles = m_banner.get_mutable_color_roles();
+    banner_roles.assign(banner_roles.size(), m_banner_color_role);
     return m_banner;
+}
+
+void BannerWidget::set_color_role(ColorRole role) {
+    m_banner_color_role = static_cast<uint8_t>(role);
+    set_dirty();
 }
 
 void BannerWidget::update(double delta_time) {

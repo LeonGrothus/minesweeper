@@ -21,6 +21,7 @@ void Border::set_enabled_borders(const bool top, const bool bottom, const bool l
 
 void Border::set_color_role(ColorRole role) {
     m_border_color_role = static_cast<uint8_t>(role);
+    set_dirty();
 }
 
 CanvasElement Border::build_canvas_element(const Vector2D &size) {

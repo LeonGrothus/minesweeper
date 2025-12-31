@@ -33,7 +33,7 @@ private:
     void rebuild_layout();
 
     std::shared_ptr<Board2D> m_board_2d;
-    std::shared_ptr<Board2dWidget> m_board_widget;
+    std::shared_ptr<Board2DWidget> m_board_widget;
     std::shared_ptr<Widget> m_layout_widget;
 
     int m_x_spacing = 1;

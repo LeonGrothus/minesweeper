@@ -5,7 +5,11 @@
 #include <ncurses.h>
 
 TextSelectionWidget::TextSelectionWidget(const bool loop, const bool blink_highlighted) : m_loop(loop),
-                                                                                          m_blink_highlighted(blink_highlighted) {
+                                                                                          m_blink_highlighted(blink_highlighted),
+                                                                                          m_blink_loop([this]() {
+                                                                                              m_highlighted = !m_highlighted;
+                                                                                              m_is_dirty = true;
+                                                                                          }, BLINK_INTERVAL_MS) {
 }
 
 void TextSelectionWidget::add_option(const std::u16string &option, const std::function<void()> &func) {
@@ -102,12 +106,7 @@ void TextSelectionWidget::update(const double delta_time) {
         return;
     }
 
-    m_current_millis += delta_time;
-    if (m_current_millis > BLINK_INTERVAL_MS) {
-        m_current_millis -= BLINK_INTERVAL_MS;
-        m_highlighted = !m_highlighted;
-        m_is_dirty = true;
-    }
+    m_blink_loop.update(delta_time);
 }
 
 Vector2D TextSelectionWidget::get_minimum_size() const {
@@ -142,7 +141,6 @@ void TextSelectionWidget::move_selection(const int amount) {
         m_selected_index = std::clamp(m_selected_index, 0, options_size - 1);
     }
 
-    m_current_millis = 0;
     m_highlighted = false;
 
     m_is_dirty = true;

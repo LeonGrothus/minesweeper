@@ -2,12 +2,13 @@
 #include <memory>
 
 #include "api/ui/widget/widget.hpp"
+#include "api/helper/looped_execution_wrapper.hpp"
 
 class Board2D;
 
-class Board2dWidget : public Widget {
+class Board2DWidget : public Widget {
 public:
-    explicit Board2dWidget(const std::shared_ptr<Board2D> &board);
+    explicit Board2DWidget(const std::shared_ptr<Board2D> &board);
 
     void show_all_mines();
 
@@ -37,14 +38,14 @@ private:
 
     Vector2D m_cursor_pos{0, 0};
     bool m_first_move_done = false;
-    double m_reveal_timer = 0;
+    LoopedExecutionWrapper m_reveal_loop;
     bool m_is_revealing = false;
 
     int m_x_spacing = 1;
     int m_y_spacing = 0;
 
     bool m_blink_mines = false;
-    double m_blink_timer = 0;
+    LoopedExecutionWrapper m_blink_loop;
 
     bool m_show_mines = false;
 

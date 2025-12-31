@@ -12,14 +12,22 @@ TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &end, const boo
     : m_start_widget(fade_in ? std::make_shared<Empty>() : end),
       m_end_widget(end),
       m_start_canvas(""),
-      m_end_canvas("") {
+      m_end_canvas(""),
+      m_transition_loop([this]() {
+          handle_next_transitions(1);
+          set_dirty();
+      }, 1.0) {
     if (!fade_in) {
         m_transition_finished = true;
     }
 }
 
 TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &start, const std::shared_ptr<Widget> &end) : m_start_widget(start),
-    m_end_widget(end), m_start_canvas(""), m_end_canvas("") {
+    m_end_widget(end), m_start_canvas(""), m_end_canvas(""),
+    m_transition_loop([this]() {
+        handle_next_transitions(1);
+        set_dirty();
+    }, 1.0) {
 }
 
 void TransitionWidget::set_new_end(const std::shared_ptr<Widget> &new_end) {
@@ -35,9 +43,9 @@ void TransitionWidget::set_new_end(const std::shared_ptr<Widget> &new_end) {
     m_cover_indices.clear();
     m_uncover_indices.clear();
     m_to_change = 0;
-    m_passed_time = 0;
     m_char_reveal_time = 0;
     m_transition_finished = false;
+    m_transition_loop.reset();
 
     m_start_canvas = m_cached_canvas;
     m_set_new_end = true;
@@ -50,6 +58,11 @@ bool TransitionWidget::is_transition_finished() const {
 
 void TransitionWidget::set_transition_time(const float transition_time) {
     m_transition_time = transition_time;
+}
+
+void TransitionWidget::set_transition_char_color_role(ColorRole role) {
+    m_transition_char_color_role = static_cast<uint8_t>(role);
+    set_dirty();
 }
 
 void TransitionWidget::set_transition_char(const char16_t transition_char) {
@@ -79,12 +92,7 @@ void TransitionWidget::update(const double delta_time) {
         return;
     }
 
-    m_passed_time += delta_time;
-
-    handle_next_transitions(static_cast<int>(std::floor(m_passed_time / m_char_reveal_time)));
-    m_passed_time = std::fmod(m_passed_time, m_char_reveal_time);
-
-    set_dirty();
+    m_transition_loop.update(delta_time);
 }
 
 
@@ -112,8 +120,8 @@ CanvasElement TransitionWidget::build_canvas_element(const Vector2D &size) {
         m_cover_indices.clear();
         m_uncover_indices.clear();
         m_to_change = 0;
-        m_passed_time = 0;
         m_transition_finished = false;
+        m_transition_loop.reset();
 
         init_transition(size);
     }
@@ -179,17 +187,18 @@ void TransitionWidget::init_transition(const Vector2D size) {
 
     m_char_reveal_time = m_transition_time / (2 * m_to_change);
     m_cached_canvas = m_start_canvas;
+
+    m_transition_loop.set_repeat_time(m_char_reveal_time);
 }
 
 void TransitionWidget::handle_next_transitions(const int count) {
     for (int i = 0; i < count; i++) {
-        m_passed_time -= m_char_reveal_time;
         if (!m_cover_indices.empty()) {
             const int index = m_cover_indices.back();
             m_cover_indices.pop_back();
 
             m_cached_canvas.get_mutable_canvas_element().at(index) = m_transition_char;
-            m_cached_canvas.get_mutable_color_roles().at(index) = static_cast<uint8_t>(ColorRole::Transition);
+            m_cached_canvas.get_mutable_color_roles().at(index) = m_transition_char_color_role;
         } else if (!m_uncover_indices.empty()) {
             const int index = m_uncover_indices.back();
             m_uncover_indices.pop_back();

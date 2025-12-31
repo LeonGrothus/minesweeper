@@ -5,6 +5,7 @@
 
 #include "api/game/board/board_2d.hpp"
 #include "api/ui/canvas/canvas_element.hpp"
+#include "api/helper/looped_execution_wrapper.hpp"
 
 ColorRole get_role_for_cell(const Cell &cell, const bool show_mines, const bool is_mine_position) {
     if (!cell.is_revealed()) {
@@ -34,36 +35,47 @@ ColorRole get_role_for_cell(const Cell &cell, const bool show_mines, const bool 
     }
 }
 
-Board2dWidget::Board2dWidget(const std::shared_ptr<Board2D> &board) : m_board(board) {
+Board2DWidget::Board2DWidget(const std::shared_ptr<Board2D> &board) : m_board(board),
+    m_reveal_loop([this]() {
+        if (const std::vector<Vector2D> revealed = m_board->reveal_step(1); revealed.empty()) {
+            m_is_revealing = false;
+        } else {
+            m_is_dirty = true;
+        }
+    }, REVEAL_INTERVAL),
+    m_blink_loop([this]() {
+        m_show_mines = !m_show_mines;
+        m_is_dirty = true;
+    }, BLINK_INTERVAL) {
 }
 
-void Board2dWidget::show_all_mines() {
+void Board2DWidget::show_all_mines() {
     m_show_mines = true;
 }
 
-void Board2dWidget::hide_all_mines() {
+void Board2DWidget::hide_all_mines() {
     m_show_mines = false;
 }
 
-void Board2dWidget::set_x_spacing(const int spacing) {
+void Board2DWidget::set_x_spacing(const int spacing) {
     m_x_spacing = spacing;
     m_is_dirty = true;
 }
 
-void Board2dWidget::set_y_spacing(const int spacing) {
+void Board2DWidget::set_y_spacing(const int spacing) {
     m_y_spacing = spacing;
     m_is_dirty = true;
 }
 
-void Board2dWidget::set_interactable(const bool interactable) {
+void Board2DWidget::set_interactable(const bool interactable) {
     m_interactable = interactable;
 }
 
-void Board2dWidget::set_blinking(const bool blinking) {
+void Board2DWidget::set_blinking(const bool blinking) {
     m_blink_mines = blinking;
 }
 
-void Board2dWidget::handle_reveal() {
+void Board2DWidget::handle_reveal() {
     if (m_board->is_won() || m_board->is_lost()) {
         return;
     }
@@ -76,17 +88,15 @@ void Board2dWidget::handle_reveal() {
         m_board->first_move(m_cursor_pos);
         m_first_move_done = true;
         m_is_revealing = true;
-        m_reveal_timer = 0.0;
     } else {
         m_board->reveal_next(m_cursor_pos);
         m_is_revealing = true;
-        m_reveal_timer = 0.0;
     }
 
     m_is_dirty = true;
 }
 
-void Board2dWidget::handle_flag() {
+void Board2DWidget::handle_flag() {
     if (m_board->is_won() || m_board->is_lost()) {
         return;
     }
@@ -97,7 +107,7 @@ void Board2dWidget::handle_flag() {
     }
 }
 
-Vector2D Board2dWidget::get_minimum_size() const {
+Vector2D Board2DWidget::get_minimum_size() const {
     const auto [board_x, board_y] = m_board->get_grid_size();
 
     const int grid_width = board_x + (board_x - 1) * m_x_spacing;
@@ -106,37 +116,21 @@ Vector2D Board2dWidget::get_minimum_size() const {
     return Vector2D{grid_width, grid_height};
 }
 
-void Board2dWidget::update(const double delta_time) {
+void Board2DWidget::update(const double delta_time) {
     if (m_blink_mines) {
-        m_blink_timer += delta_time;
-        if (m_blink_timer >= BLINK_INTERVAL) {
-            m_blink_timer -= BLINK_INTERVAL;
-            m_show_mines = !m_show_mines;
-            m_is_dirty = true;
-        }
+        m_blink_loop.update(delta_time);
     }
 
-    if (!m_is_revealing || !m_interactable) {
-        return;
-    }
-
-    m_reveal_timer += delta_time;
-    if (m_reveal_timer >= REVEAL_INTERVAL) {
-        m_reveal_timer -= REVEAL_INTERVAL;
-
-        if (const std::vector<Vector2D> revealed = m_board->reveal_step(1); revealed.empty()) {
-            m_is_revealing = false;
-        } else {
-            m_is_dirty = true;
-        }
+    if (m_is_revealing && m_interactable) {
+        m_reveal_loop.update(delta_time);
     }
 }
 
-bool Board2dWidget::is_dirty() const {
+bool Board2DWidget::is_dirty() const {
     return m_is_dirty;
 }
 
-CanvasElement Board2dWidget::build_canvas_element(const Vector2D &size) {
+CanvasElement Board2DWidget::build_canvas_element(const Vector2D &size) {
     const auto [board_x, board_y] = m_board->get_grid_size();
     const std::vector<Vector2D> mine_positions = m_board->get_all_mine_positions();
 
@@ -186,7 +180,7 @@ CanvasElement Board2dWidget::build_canvas_element(const Vector2D &size) {
     return CanvasElement(board_lines, color_roles, Vector2D{grid_width, grid_height});
 }
 
-void Board2dWidget::keyboard_press(const int key) {
+void Board2DWidget::keyboard_press(const int key) {
     if (!m_interactable) {
         return;
     }

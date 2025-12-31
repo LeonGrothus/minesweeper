@@ -8,7 +8,7 @@
 #include "api/ui/widget/widgets/padding.hpp"
 
 BoardWidget::BoardWidget(const std::shared_ptr<Board2D> &board)
-    : m_board_2d(board), m_board_widget(std::make_shared<Board2dWidget>(board)), m_mine_count(board->get_mine_count()) {
+    : m_board_2d(board), m_board_widget(std::make_shared<Board2DWidget>(board)), m_mine_count(board->get_mine_count()) {
     rebuild_layout();
 }
 
@@ -28,7 +28,7 @@ void BoardWidget::reset_game() {
     const Vector2D size = m_board_2d->get_grid_size();
     m_board_2d = std::make_shared<Board2D>(size, m_mine_count);
 
-    m_board_widget = std::make_shared<Board2dWidget>(m_board_2d);
+    m_board_widget = std::make_shared<Board2DWidget>(m_board_2d);
     m_board_widget->set_interactable(true);
     m_board_widget->set_x_spacing(m_x_spacing);
     m_board_widget->set_y_spacing(m_y_spacing);

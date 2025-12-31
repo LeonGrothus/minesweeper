@@ -1,6 +1,7 @@
 #pragma once
 #include "../widget.hpp"
 #include "../../canvas/canvas_element.hpp"
+#include "api/helper/looped_execution_wrapper.hpp"
 
 #include <functional>
 #include <string>
@@ -42,7 +43,7 @@ private:
     bool m_loop;
 
     bool m_blink_highlighted;
-    double m_current_millis = 0;
+    LoopedExecutionWrapper m_blink_loop;
     bool m_highlighted = false;
     bool m_selected = false;
     static constexpr double BLINK_INTERVAL_MS = 500.0; //ms

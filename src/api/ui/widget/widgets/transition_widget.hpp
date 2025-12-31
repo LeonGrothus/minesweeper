@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "api/ui/widget/widget.hpp"
+#include "api/helper/looped_execution_wrapper.hpp"
 
 class TransitionWidget : public Widget {
 public:
@@ -15,6 +16,8 @@ public:
     bool is_transition_finished() const;
 
     void set_transition_time(float transition_time);
+
+    void set_transition_char_color_role(ColorRole role);
 
     void set_transition_char(char16_t transition_char);
 
@@ -37,9 +40,10 @@ private:
     double m_transition_time = 500; //ms
     double m_char_reveal_time = 0;
 
-    double m_passed_time = 0;
+    LoopedExecutionWrapper m_transition_loop;
 
     char16_t m_transition_char = u'#';
+    uint8_t m_transition_char_color_role = static_cast<uint8_t>(ColorRole::Transition);
 
     bool m_transition_finished = false;
     bool m_set_new_end = false;
