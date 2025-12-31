@@ -35,6 +35,10 @@ void EnumerationWidget::set_label_spacing(const int spacing) {
     m_label_spacing = spacing;
 }
 
+void EnumerationWidget::set_color_role(ColorRole role) {
+    m_enumeration_color_role = static_cast<uint8_t>(role);
+}
+
 Vector2D EnumerationWidget::get_minimum_size() const {
     const auto [board_x, board_y] = m_child->get_minimum_size();
 
@@ -91,29 +95,29 @@ CanvasElement EnumerationWidget::build_canvas_element(const Vector2D &size) {
 
     if (m_enabled_label[0]) {
         x_labels.append(max_digits_y + m_label_spacing, u' ');
-        x_label_roles.insert(x_label_roles.end(), max_digits_y + m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+        x_label_roles.insert(x_label_roles.end(), max_digits_y + m_label_spacing, m_enumeration_color_role);
     }
     x_labels.append(m_skip_left, u' ');
-    x_label_roles.insert(x_label_roles.end(), m_skip_left, static_cast<uint8_t>(ColorRole::Text));
+    x_label_roles.insert(x_label_roles.end(), m_skip_left, m_enumeration_color_role);
     for (int x = 0; x < enumeration_size_x; x++) {
         if (x != 0) {
             x_labels.append(m_label_spacing, u' ');
-            x_label_roles.insert(x_label_roles.end(), m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+            x_label_roles.insert(x_label_roles.end(), m_label_spacing, m_enumeration_color_role);
         }
         const std::u16string number = utf8_to_utf16(std::to_string(x + 1));
         x_labels.append(number);
-        x_label_roles.insert(x_label_roles.end(), number.size(), static_cast<uint8_t>(ColorRole::Text));
+        x_label_roles.insert(x_label_roles.end(), number.size(), m_enumeration_color_role);
         x_labels.append(max_digits_x - static_cast<int>(number.size()), u' ');
-        x_label_roles.insert(x_label_roles.end(), max_digits_x - static_cast<int>(number.size()), static_cast<uint8_t>(ColorRole::Text));
+        x_label_roles.insert(x_label_roles.end(), max_digits_x - static_cast<int>(number.size()), m_enumeration_color_role);
     }
     x_labels.append(m_skip_right, u' ');
-    x_label_roles.insert(x_label_roles.end(), m_skip_right, static_cast<uint8_t>(ColorRole::Text));
+    x_label_roles.insert(x_label_roles.end(), m_skip_right, m_enumeration_color_role);
     if (m_enabled_label[1]) {
         x_labels.append(max_digits_y + m_label_spacing, u' ');
-        x_label_roles.insert(x_label_roles.end(), max_digits_y + m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+        x_label_roles.insert(x_label_roles.end(), max_digits_y + m_label_spacing, m_enumeration_color_role);
     }
     x_labels.resize(final_width, u' ');
-    x_label_roles.resize(static_cast<size_t>(final_width), static_cast<uint8_t>(ColorRole::Text));
+    x_label_roles.resize(static_cast<size_t>(final_width), m_enumeration_color_role);
     if (m_enabled_label[2]) {
         final_canvas.append(x_labels);
         final_roles.insert(final_roles.end(), x_label_roles.begin(), x_label_roles.end());
@@ -128,29 +132,31 @@ CanvasElement EnumerationWidget::build_canvas_element(const Vector2D &size) {
     for (int i = 0; i < m_skip_top; i++) {
         if (m_enabled_label[0]) {
             final_canvas.append(max_digits_y + m_label_spacing, u' ');
-            final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, m_enumeration_color_role);
         }
         final_canvas.append(std::u16string_view(bordered_lines.data() + current_line * bordered_width, bordered_width));
-        final_roles.insert(final_roles.end(), bordered_roles.begin() + current_line * bordered_width, bordered_roles.begin() + (current_line + 1) * bordered_width);
+        final_roles.insert(final_roles.end(), bordered_roles.begin() + current_line * bordered_width,
+                           bordered_roles.begin() + (current_line + 1) * bordered_width);
         if (m_enabled_label[1]) {
             final_canvas.append(max_digits_y + m_label_spacing, u' ');
-            final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, m_enumeration_color_role);
         }
         current_line++;
     }
 
     for (int y = 0; y < enumeration_size_y; y++) {
         std::u16string_view relevant_line(bordered_lines.data() + current_line * bordered_width, bordered_width);
-        const std::vector<uint8_t> relevant_roles(bordered_roles.begin() + current_line * bordered_width, bordered_roles.begin() + (current_line + 1) * bordered_width);
+        const std::vector<uint8_t> relevant_roles(bordered_roles.begin() + current_line * bordered_width,
+                                                  bordered_roles.begin() + (current_line + 1) * bordered_width);
         const std::u16string number = utf8_to_utf16(std::to_string(y + 1));
 
         if (m_enabled_label[0]) {
             final_canvas.append(max_digits_y - static_cast<int>(number.size()), u' ');
-            final_roles.insert(final_roles.end(), max_digits_y - static_cast<int>(number.size()), static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), max_digits_y - static_cast<int>(number.size()), m_enumeration_color_role);
             final_canvas.append(number);
-            final_roles.insert(final_roles.end(), number.size(), static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), number.size(), m_enumeration_color_role);
             final_canvas.append(m_label_spacing, u' ');
-            final_roles.insert(final_roles.end(), m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), m_label_spacing, m_enumeration_color_role);
         }
 
         final_canvas.append(relevant_line);
@@ -158,19 +164,20 @@ CanvasElement EnumerationWidget::build_canvas_element(const Vector2D &size) {
 
         if (m_enabled_label[1]) {
             final_canvas.append(m_label_spacing, u' ');
-            final_roles.insert(final_roles.end(), m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), m_label_spacing, m_enumeration_color_role);
             final_canvas.append(max_digits_y - static_cast<int>(number.size()), u' ');
-            final_roles.insert(final_roles.end(), max_digits_y - static_cast<int>(number.size()), static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), max_digits_y - static_cast<int>(number.size()), m_enumeration_color_role);
             final_canvas.append(number);
-            final_roles.insert(final_roles.end(), number.size(), static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), number.size(), m_enumeration_color_role);
         }
         current_line++;
         for (int i = 0; i < m_skip_to_next_label_y; i++) {
             std::u16string_view relevant_sub_line(bordered_lines.data() + current_line * bordered_width, bordered_width);
-            const std::vector<uint8_t> relevant_sub_roles(bordered_roles.begin() + current_line * bordered_width, bordered_roles.begin() + (current_line + 1) * bordered_width);
+            const std::vector<uint8_t> relevant_sub_roles(bordered_roles.begin() + current_line * bordered_width,
+                                                          bordered_roles.begin() + (current_line + 1) * bordered_width);
             if (m_enabled_label[0]) {
                 final_canvas.append(max_digits_y + m_label_spacing, u' ');
-                final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+                final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, m_enumeration_color_role);
             }
 
             final_canvas.append(relevant_sub_line);
@@ -178,7 +185,7 @@ CanvasElement EnumerationWidget::build_canvas_element(const Vector2D &size) {
 
             if (m_enabled_label[1]) {
                 final_canvas.append(max_digits_y + m_label_spacing, u' ');
-                final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+                final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, m_enumeration_color_role);
             }
             current_line++;
         }
@@ -187,13 +194,14 @@ CanvasElement EnumerationWidget::build_canvas_element(const Vector2D &size) {
     for (int i = 0; i < m_skip_bottom; i++) {
         if (m_enabled_label[0]) {
             final_canvas.append(max_digits_y + m_label_spacing, u' ');
-            final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, m_enumeration_color_role);
         }
         final_canvas.append(std::u16string_view(bordered_lines.data() + current_line * bordered_width, bordered_width));
-        final_roles.insert(final_roles.end(), bordered_roles.begin() + current_line * bordered_width, bordered_roles.begin() + (current_line + 1) * bordered_width);
+        final_roles.insert(final_roles.end(), bordered_roles.begin() + current_line * bordered_width,
+                           bordered_roles.begin() + (current_line + 1) * bordered_width);
         if (m_enabled_label[1]) {
             final_canvas.append(max_digits_y + m_label_spacing, u' ');
-            final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, static_cast<uint8_t>(ColorRole::Text));
+            final_roles.insert(final_roles.end(), max_digits_y + m_label_spacing, m_enumeration_color_role);
         }
         current_line++;
     }

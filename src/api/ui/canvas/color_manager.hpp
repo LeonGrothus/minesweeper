@@ -7,4 +7,4 @@ void init_terminal_colors();
 
 void set_terminal_colored();
 
-void switch_terminal_colors_to_role(int role);
+void set_terminal_monochrome(short role);

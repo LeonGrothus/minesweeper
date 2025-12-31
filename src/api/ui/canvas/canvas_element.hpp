@@ -61,8 +61,6 @@ public:
 
     static CanvasElement empty(Vector2D size, char16_t empty_char);
 
-    static CanvasElement wrap_with_border(const CanvasElement &element, const BorderStyle &style, std::bitset<4> enabled_borders = 0b1111);
-
     int get_width() const;
 
     int get_height() const;

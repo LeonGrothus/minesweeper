@@ -38,56 +38,6 @@ CanvasElement CanvasElement::empty(const Vector2D size, const char16_t empty_cha
     return CanvasElement(std::u16string(size.area(), empty_char), size, ColorRole::Default);
 }
 
-CanvasElement CanvasElement::wrap_with_border(const CanvasElement &element, const BorderStyle &style,
-                                              const std::bitset<4> enabled_borders) {
-    const Vector2D bordered_size = element.m_size + Vector2D(enabled_borders[2] + enabled_borders[3],
-                                                             enabled_borders[0] + enabled_borders[1]);
-    std::u16string border_canvas;
-    border_canvas.reserve(bordered_size.area());
-    std::vector<uint8_t> border_roles;
-    border_roles.reserve(bordered_size.area());
-
-    if (enabled_borders[0]) {
-        std::u16string top_line(bordered_size.x, style.top);
-        if (enabled_borders[2]) {
-            top_line[0] = style.top_left_corner;
-        }
-        if (enabled_borders[3]) {
-            top_line[bordered_size.x - 1] = style.top_right_corner;
-        }
-        border_canvas.append(top_line);
-        border_roles.insert(border_roles.end(), bordered_size.x, static_cast<uint8_t>(ColorRole::Default));
-    }
-
-    for (int i = 0; i < element.get_height(); i++) {
-        if (enabled_borders[2]) {
-            border_canvas += style.left;
-            border_roles.push_back(static_cast<uint8_t>(ColorRole::Default));
-        }
-        border_canvas.append(element.get_canvas_element().data() + i * element.get_width(), element.get_width());
-        border_roles.insert(border_roles.end(), element.get_color_roles().begin() + i * element.get_width(),
-                            element.get_color_roles().begin() + (i + 1) * element.get_width());
-        if (enabled_borders[3]) {
-            border_canvas += style.right;
-            border_roles.push_back(static_cast<uint8_t>(ColorRole::Default));
-        }
-    }
-
-    if (enabled_borders[1]) {
-        std::u16string bottom_line(bordered_size.x, style.bottom);
-        if (enabled_borders[2]) {
-            bottom_line[0] = style.bottom_left_corner;
-        }
-        if (enabled_borders[3]) {
-            bottom_line[bordered_size.x - 1] = style.bottom_right_corner;
-        }
-        border_canvas.append(bottom_line);
-        border_roles.insert(border_roles.end(), bordered_size.x, static_cast<uint8_t>(ColorRole::Default));
-    }
-
-    return CanvasElement(border_canvas, border_roles, bordered_size);
-}
-
 int CanvasElement::get_width() const {
     return m_size.x;
 }

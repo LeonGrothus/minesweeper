@@ -16,6 +16,8 @@ public:
 
     void set_label_spacing(int spacing);
 
+    void set_color_role(ColorRole role);
+
     Vector2D get_minimum_size() const override;
 
     void keyboard_press(int key) override;
@@ -31,6 +33,8 @@ private:
     std::shared_ptr<Widget> m_child;
 
     int m_label_spacing = 1;
+
+    uint8_t m_enumeration_color_role = static_cast<uint8_t>(ColorRole::Number1);
 
     int m_skip_to_next_label_x;
     int m_skip_to_next_label_y;

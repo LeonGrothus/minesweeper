@@ -37,7 +37,8 @@ void init_terminal_colors() {
     init_pair(12, COLOR_BLACK, -1); //7
     init_pair(13, COLOR_WHITE, -1); //8
 
-    switch_terminal_colors_to_role(1);
+    set_terminal_monochrome(1);
+    set_terminal_colored();
 }
 
 void set_terminal_colored() {
@@ -58,7 +59,7 @@ void set_terminal_colored() {
     g_color_pairs[static_cast<size_t>(ColorRole::Transition)] = 1;
 }
 
-void switch_terminal_colors_to_role(const int role) {
+void set_terminal_monochrome(const short role) {
     g_color_pairs[static_cast<size_t>(ColorRole::Default)] = role;
     g_color_pairs[static_cast<size_t>(ColorRole::Hidden)] = role;
     g_color_pairs[static_cast<size_t>(ColorRole::Mine)] = role;
