@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "empty.hpp"
+#include "api/ui/canvas/canvas_element.hpp"
 
 TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &end, const bool fade_in)
     : m_start_widget(fade_in ? std::make_shared<Empty>() : end),
@@ -188,11 +189,13 @@ void TransitionWidget::handle_next_transitions(const int count) {
             m_cover_indices.pop_back();
 
             m_cached_canvas.get_mutable_canvas_element().at(index) = m_transition_char;
+            m_cached_canvas.get_mutable_color_roles().at(index) = static_cast<uint8_t>(ColorRole::Transition);
         } else if (!m_uncover_indices.empty()) {
             const int index = m_uncover_indices.back();
             m_uncover_indices.pop_back();
 
             m_cached_canvas.get_mutable_canvas_element().at(index) = m_end_canvas.get_canvas_element().at(index);
+            m_cached_canvas.get_mutable_color_roles().at(index) = m_end_canvas.get_color_roles().at(index);
         } else {
             m_transition_finished = true;
             break;

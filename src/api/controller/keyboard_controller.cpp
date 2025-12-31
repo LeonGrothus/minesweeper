@@ -3,6 +3,7 @@
 #include <clocale>
 #include <ncurses.h>
 #include <cstdlib>
+#include "api/ui/canvas/terminal_helper.hpp"
 
 KeyboardController::KeyboardController() {
 	setlocale(LC_ALL, "");
@@ -11,7 +12,11 @@ KeyboardController::KeyboardController() {
 	}
 
 	initscr();
+
+	//remove cursor
 	curs_set(0);
+
+	init_terminal_colors();
 
 	cbreak();
 	noecho();

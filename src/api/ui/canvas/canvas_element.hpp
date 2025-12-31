@@ -1,7 +1,9 @@
 #pragma once
 
 #include <bitset>
+#include <cstdint>
 #include <string>
+#include <vector>
 
 struct BorderStyle;
 
@@ -28,13 +30,34 @@ struct Vector2D {
     }
 };
 
+enum class ColorRole : uint8_t {
+    Default = 0,
+    Hidden,
+    Mine,
+    Flag,
+    Cursor,
+    Number1,
+    Number2,
+    Number3,
+    Number4,
+    Number5,
+    Number6,
+    Number7,
+    Number8,
+    Text,
+    Transition,
+    Count
+};
+
 class CanvasElement {
 public:
-    explicit CanvasElement(std::u16string canvas_element, Vector2D size);
+    explicit CanvasElement(std::u16string canvas_element, Vector2D size, ColorRole role = ColorRole::Text);
 
-    explicit CanvasElement(std::u16string canvas_element, int width, int height);
+    explicit CanvasElement(std::u16string canvas_element, int width, int height, ColorRole role = ColorRole::Text);
 
-    explicit CanvasElement(const std::string &normal_string, char delimiter = '\n');
+    explicit CanvasElement(std::u16string canvas_element, std::vector<uint8_t> color_roles, Vector2D size);
+
+    explicit CanvasElement(const std::string &normal_string, char delimiter = '\n', ColorRole role = ColorRole::Text);
 
     static CanvasElement empty(Vector2D size, char16_t empty_char);
 
@@ -52,6 +75,10 @@ public:
 
     std::u16string &get_mutable_canvas_element();
 
+    const std::vector<uint8_t> &get_color_roles() const;
+
+    std::vector<uint8_t> &get_mutable_color_roles();
+
     CanvasElement fill_to_size(Vector2D size, char16_t fill_char) const;
 
     bool merge_below_with_other(const CanvasElement &other);
@@ -62,8 +89,6 @@ public:
 
     bool merge_left_with_other(const CanvasElement &other);
 
-    void wrap_with_border(const BorderStyle &style);
-
     friend std::ostream &operator<<(std::ostream &os, const CanvasElement &elem);
 
 private:
@@ -73,4 +98,5 @@ private:
     Vector2D m_size{};
 
     std::u16string m_canvas_element;
+    std::vector<uint8_t> m_color_roles;
 };

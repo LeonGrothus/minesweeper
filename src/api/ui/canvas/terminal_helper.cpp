@@ -1,5 +1,6 @@
 #include "terminal_helper.hpp"
 #include "api/ui/canvas/canvas_element.hpp"
+#include <array>
 #include <curses.h>
 #include <string>
 #include <string_view>
@@ -14,6 +15,8 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #endif
+
+static std::array<short, static_cast<size_t>(ColorRole::Count)> g_color_pairs{};
 
 Vector2D get_terminal_size() {
     if (stdscr != nullptr) {
@@ -60,46 +63,72 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
     const int repeat_bottom = (position >> 6) & 0b11;
 
     const std::u16string width_offset = std::u16string(canvas_size.x, blank_char);
+    const std::vector<uint8_t> width_roles(static_cast<size_t>(canvas_size.x), static_cast<uint8_t>(ColorRole::Default));
     const std::u16string half_width_offset = std::u16string((canvas_size.x - element_width) / 2, blank_char);
-
-    std::u16string vertical_string_line;
-    vertical_string_line.reserve(canvas_size.x);
+    const std::vector<uint8_t> half_roles(half_width_offset.size(), static_cast<uint8_t>(ColorRole::Default));
 
     std::u16string vertical_string;
+    std::vector<uint8_t> vertical_roles;
     vertical_string.reserve(static_cast<size_t>(canvas_size.x) * element_height);
+    vertical_roles.reserve(static_cast<size_t>(canvas_size.x) * element_height);
+
+    const auto &element_roles = element.get_color_roles();
 
     for (int i = 0; i < element_height; i++) {
-        const std::u16string::size_type current_pos = static_cast<std::u16string::size_type>(i) * element_width;
-        const std::u16string_view line(element.get_canvas_element().data() + current_pos, element_width);
+        std::u16string line;
+        std::vector<uint8_t> line_roles;
+        line.reserve(canvas_size.x);
+        line_roles.reserve(canvas_size.x);
 
-        vertical_string_line = repeat_string(repeat_left, half_width_offset);
-        vertical_string_line += line;
-        vertical_string_line += repeat_string(repeat_right, half_width_offset);
-        vertical_string_line += std::u16string(canvas_size.x - static_cast<int>(vertical_string_line.length()), blank_char);
-        vertical_string += vertical_string_line;
+        line.append(repeat_left * half_width_offset.size(), blank_char);
+        line_roles.insert(line_roles.end(), repeat_left * half_roles.size(), static_cast<uint8_t>(ColorRole::Default));
+
+        const auto current_pos = static_cast<std::u16string::size_type>(i) * element_width;
+        const std::u16string_view text_line(element.get_canvas_element().data() + current_pos, element_width);
+        line.append(text_line);
+        line_roles.insert(line_roles.end(), element_roles.begin() + current_pos, element_roles.begin() + current_pos + element_width);
+
+        line.append(repeat_right * half_width_offset.size(), blank_char);
+        line_roles.insert(line_roles.end(), repeat_right * half_roles.size(), static_cast<uint8_t>(ColorRole::Default));
+
+        if (static_cast<int>(line.length()) < canvas_size.x) {
+            const int remaining = canvas_size.x - static_cast<int>(line.length());
+            line.append(remaining, blank_char);
+            line_roles.insert(line_roles.end(), remaining, static_cast<uint8_t>(ColorRole::Default));
+        }
+
+        vertical_string += line;
+        vertical_roles.insert(vertical_roles.end(), line_roles.begin(), line_roles.end());
     }
 
     std::u16string full_string;
+    std::vector<uint8_t> full_roles;
     const int height_diff = (canvas_size.y - element_height) / 2;
     const int additional = (canvas_size.y - element_height) % 2;
     full_string.reserve(static_cast<size_t>(canvas_size.x) * canvas_size.y);
+    full_roles.reserve(static_cast<size_t>(canvas_size.x) * canvas_size.y);
 
     const bool extra_at_top = (repeat_bottom == 0);
 
     for (int i = 0; i < repeat_top * height_diff; i++) {
         full_string += width_offset;
+        full_roles.insert(full_roles.end(), width_roles.begin(), width_roles.end());
     }
     if (additional && extra_at_top) {
         full_string += width_offset;
+        full_roles.insert(full_roles.end(), width_roles.begin(), width_roles.end());
     }
     full_string += vertical_string;
+    full_roles.insert(full_roles.end(), vertical_roles.begin(), vertical_roles.end());
     for (int i = 0; i < repeat_bottom * height_diff; i++) {
         full_string += width_offset;
+        full_roles.insert(full_roles.end(), width_roles.begin(), width_roles.end());
     }
     if (additional && !extra_at_top) {
         full_string += width_offset;
+        full_roles.insert(full_roles.end(), width_roles.begin(), width_roles.end());
     }
-    return CanvasElement(full_string, canvas_size);
+    return CanvasElement(full_string, full_roles, canvas_size);
 }
 
 void position_string_on_canvas(const CanvasElement &element, const Position pos, CanvasElement &canvas) {
@@ -112,77 +141,187 @@ void position_string_on_canvas(const CanvasElement &element, const Position pos,
     }
 
     //'\x7F' is non printable delete char
-    const std::u16string alpha_canvas = position_canvas_element(element, pos, canvas_size, u'\x7F').get_canvas_element();
+    const CanvasElement alpha_canvas = position_canvas_element(element, pos, canvas_size, u'\x7F');
+    const std::u16string &alpha_chars = alpha_canvas.get_canvas_element();
+    const std::vector<uint8_t> &alpha_roles = alpha_canvas.get_color_roles();
     std::u16string &canvas_canvas = canvas.get_mutable_canvas_element();
+    std::vector<uint8_t> &canvas_roles = canvas.get_mutable_color_roles();
 
     for (int i = 0; i < canvas_width * canvas_height; i++) {
-        if (alpha_canvas[i] == u'\x7F') {
+        if (alpha_chars[i] == u'\x7F') {
             continue;
         }
-        canvas_canvas[i] = alpha_canvas[i];
+        canvas_canvas[i] = alpha_chars[i];
+        canvas_roles[i] = alpha_roles[i];
     }
 }
 
-void render_to_ncurses(const std::string &to_render, const Vector2D size) {
-    clear();
+// void render_to_ncurses(const std::u16string &to_render, const Vector2D size) {
+//     clear();
+//     for (int y = 0; y < size.y; y++) {
+//         const int offset = y * size.x;
+//         const std::u16string_view line(to_render.data() + offset, size.x);
+//         const std::string utf8 = utf16_to_utf8(std::u16string(line));
+//         mvaddnstr(y, 0, utf8.c_str(), static_cast<int>(utf8.size()));
+//     }
+//     refresh();
+// }
 
-    for (int y = 0; y < size.y; y++) {
-        const int offset = y * size.x;
-        mvaddnstr(y, 0, to_render.c_str() + offset, size.x);
+void render_to_ncurses(const CanvasElement &element, const Vector2D size) {
+    clear();
+    const std::u16string &chars = element.get_canvas_element();
+    const std::vector<uint8_t> &roles = element.get_color_roles();
+    const auto [render_size_x, render_size_y] = element.get_element_size();
+
+    short current_color = -1;
+    bool color_active = false;
+
+    for (int y = 0; y < render_size_y; y++) {
+        for (int x = 0; x < render_size_x; x++) {
+            const int idx = y * render_size_x + x;
+            const short color = get_color_for_role(roles[idx]);
+
+            if (color != current_color) {
+                if (color_active) {
+                    attroff(COLOR_PAIR(current_color));
+                }
+                attron(COLOR_PAIR(color));
+                current_color = color;
+                color_active = true;
+            }
+
+            const std::string utf8 = utf16_to_utf8(std::u16string(1, chars[idx]));
+            mvaddnstr(y, x, utf8.c_str(), static_cast<int>(utf8.size()));
+        }
     }
 
-    refresh();
-}
-
-void render_to_ncurses(const std::u16string &to_render, const Vector2D size) {
-    clear();
-    for (int y = 0; y < size.y; y++) {
-        const int offset = y * size.x;
-        const std::u16string_view line(to_render.data() + offset, size.x);
-        const std::string utf8 = utf16_to_utf8(std::u16string(line));
-        mvaddnstr(y, 0, utf8.c_str(), static_cast<int>(utf8.size()));
+    if (color_active) {
+        attroff(COLOR_PAIR(current_color));
     }
+
     refresh();
 }
 
 static std::u16string last_frame;
+static std::vector<uint8_t> last_roles;
 
-void render_to_ncurses_buffered(const std::string &to_render, const Vector2D size) {
-    static std::string last;
-    if (last.size() != to_render.size()) {
-        last.assign(to_render.size(), '\x7F');
+void render_to_ncurses_buffered(const CanvasElement &element, const Vector2D size) {
+    const std::u16string &chars = element.get_canvas_element();
+    const std::vector<uint8_t> &roles = element.get_color_roles();
+    const auto [render_size_x, render_size_y] = element.get_element_size();
+
+    const size_t total_size = render_size_x * render_size_y;
+
+    if (last_frame.size() != total_size) {
+        last_frame.assign(total_size, u'\x7F');
+        last_roles.assign(total_size, 0xFF);
     }
-    for (int i = 0; i < static_cast<int>(to_render.size()); i++) {
-        if (last[i] == to_render[i]) {
+
+    short current_color = -1;
+    bool color_active = false;
+
+    for (int i = 0; i < static_cast<int>(total_size); i++) {
+        if (last_frame[i] == chars[i] && last_roles[i] == roles[i]) {
+            if (color_active) {
+                attroff(COLOR_PAIR(current_color));
+                color_active = false;
+            }
             continue;
         }
-        const int x = i % size.x;
-        const int y = i / size.x;
-        mvaddch(y, x, to_render[i]);
+
+        const int x = i % render_size_x;
+        const int y = i / render_size_x;
+        const short color = get_color_for_role(roles[i]);
+
+        if (color != current_color) {
+            if (color_active) {
+                attroff(COLOR_PAIR(current_color));
+            }
+            attron(COLOR_PAIR(color));
+            current_color = color;
+            color_active = true;
+        }
+
+        const std::string utf8 = utf16_to_utf8(std::u16string(1, chars[i]));
+        mvaddnstr(y, x, utf8.c_str(), static_cast<int>(utf8.size()));
     }
-    last = to_render;
+
+    if (color_active) {
+        attroff(COLOR_PAIR(current_color));
+    }
+
+    last_frame = chars;
+    last_roles = roles;
+
     wnoutrefresh(stdscr);
     doupdate();
 }
 
-void render_to_ncurses_buffered(const std::u16string &to_render, const Vector2D size) {
-    if (last_frame.size() != to_render.size()) {
-        last_frame.assign(to_render.size(), u'\x7F');
+short get_color_for_role(const uint8_t role) {
+    if (const size_t idx = role; idx < g_color_pairs.size()) {
+        return g_color_pairs[idx];
+    }
+    return g_color_pairs[static_cast<size_t>(ColorRole::Default)];
+}
+
+void init_terminal_colors() {
+    if (!has_colors()) {
+        return;
     }
 
-    for (int i = 0; i < static_cast<int>(to_render.size()); i++) {
-        if (last_frame[i] == to_render[i]) {
-            continue;
-        }
-        const int x = i % size.x;
-        const int y = i / size.x;
-        const std::string utf8 = utf16_to_utf8(std::u16string(1, to_render[i]));
-        mvaddnstr(y, x, utf8.c_str(), static_cast<int>(utf8.size()));
-    }
-    last_frame = to_render;
+    start_color();
+    use_default_colors();
 
-    wnoutrefresh(stdscr);
-    doupdate();
+    init_pair(1, COLOR_WHITE, -1); //default white
+    init_pair(2, COLOR_WHITE, -1); //hidden
+    init_pair(3, COLOR_RED, -1); //mine
+    init_pair(4, COLOR_YELLOW, -1); //flag
+    init_pair(5, COLOR_YELLOW, -1); //cursor
+
+    init_pair(6, COLOR_CYAN, -1); //1
+    init_pair(7, COLOR_GREEN, -1); //2
+    init_pair(8, COLOR_RED, -1); //3
+    init_pair(9, COLOR_BLUE, -1); //4
+    init_pair(10, COLOR_MAGENTA, -1); //5
+    init_pair(11, COLOR_CYAN, -1); //6
+    init_pair(12, COLOR_BLACK, -1); //7
+    init_pair(13, COLOR_WHITE, -1); //8
+
+    g_color_pairs[static_cast<size_t>(ColorRole::Default)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Hidden)] = 2;
+    g_color_pairs[static_cast<size_t>(ColorRole::Mine)] = 3;
+    g_color_pairs[static_cast<size_t>(ColorRole::Flag)] = 4;
+    g_color_pairs[static_cast<size_t>(ColorRole::Cursor)] = 5;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number1)] = 6;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number2)] = 7;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number3)] = 8;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number4)] = 9;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number5)] = 10;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number6)] = 11;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number7)] = 12;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number8)] = 13;
+    g_color_pairs[static_cast<size_t>(ColorRole::Text)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Transition)] = 1;
+
+    switch_terminal_colors_to_white();
+}
+
+void switch_terminal_colors_to_white() {
+    g_color_pairs[static_cast<size_t>(ColorRole::Default)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Hidden)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Mine)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Flag)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Cursor)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number1)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number2)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number3)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number4)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number5)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number6)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number7)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Number8)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Text)] = 1;
+    g_color_pairs[static_cast<size_t>(ColorRole::Transition)] = 1;
 }
 
 void show_temporary_message(const std::string &message, const int duration_ms) {

@@ -34,13 +34,15 @@ CanvasElement position_canvas_element(const CanvasElement &element, Position pos
 
 void position_string_on_canvas(const CanvasElement &element, Position pos, CanvasElement &canvas);
 
-void render_to_ncurses(const std::string &to_render, Vector2D size);
+void render_to_ncurses(const CanvasElement &element, Vector2D size);
 
-void render_to_ncurses(const std::u16string &to_render, Vector2D size);
+void render_to_ncurses_buffered(const CanvasElement &element, Vector2D size);
 
-void render_to_ncurses_buffered(const std::string &to_render, Vector2D size);
+short get_color_for_role(uint8_t role);
 
-void render_to_ncurses_buffered(const std::u16string &to_render, Vector2D size);
+void init_terminal_colors();
+
+void switch_terminal_colors_to_white();
 
 void show_temporary_message(const std::string &message, int duration_ms = 2000);
 
