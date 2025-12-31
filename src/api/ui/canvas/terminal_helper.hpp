@@ -38,12 +38,6 @@ void render_to_ncurses(const CanvasElement &element, Vector2D size);
 
 void render_to_ncurses_buffered(const CanvasElement &element, Vector2D size);
 
-short get_color_for_role(uint8_t role);
-
-void init_terminal_colors();
-
-void switch_terminal_colors_to_white();
-
 void show_temporary_message(const std::string &message, int duration_ms = 2000);
 
 void show_temporary_message(const std::u16string &message, int duration_ms = 2000);

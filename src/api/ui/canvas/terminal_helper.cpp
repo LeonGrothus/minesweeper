@@ -5,6 +5,7 @@
 #include <string>
 #include <string_view>
 
+#include "color_manager.hpp"
 #include "api/helper/conversion_helper.hpp"
 
 #if defined(_WIN32)
@@ -15,8 +16,6 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #endif
-
-static std::array<short, static_cast<size_t>(ColorRole::Count)> g_color_pairs{};
 
 Vector2D get_terminal_size() {
     if (stdscr != nullptr) {
@@ -179,9 +178,8 @@ void render_to_ncurses(const CanvasElement &element, const Vector2D size) {
     for (int y = 0; y < render_size_y; y++) {
         for (int x = 0; x < render_size_x; x++) {
             const int idx = y * render_size_x + x;
-            const short color = get_color_for_role(roles[idx]);
 
-            if (color != current_color) {
+            if (const short color = get_color_for_role(roles[idx]); color != current_color) {
                 if (color_active) {
                     attroff(COLOR_PAIR(current_color));
                 }
@@ -231,9 +229,8 @@ void render_to_ncurses_buffered(const CanvasElement &element, const Vector2D siz
 
         const int x = i % render_size_x;
         const int y = i / render_size_x;
-        const short color = get_color_for_role(roles[i]);
 
-        if (color != current_color) {
+        if (const short color = get_color_for_role(roles[i]); color != current_color) {
             if (color_active) {
                 attroff(COLOR_PAIR(current_color));
             }
@@ -255,73 +252,6 @@ void render_to_ncurses_buffered(const CanvasElement &element, const Vector2D siz
 
     wnoutrefresh(stdscr);
     doupdate();
-}
-
-short get_color_for_role(const uint8_t role) {
-    if (const size_t idx = role; idx < g_color_pairs.size()) {
-        return g_color_pairs[idx];
-    }
-    return g_color_pairs[static_cast<size_t>(ColorRole::Default)];
-}
-
-void init_terminal_colors() {
-    if (!has_colors()) {
-        return;
-    }
-
-    start_color();
-    use_default_colors();
-
-    init_pair(1, COLOR_WHITE, -1); //default white
-    init_pair(2, COLOR_WHITE, -1); //hidden
-    init_pair(3, COLOR_RED, -1); //mine
-    init_pair(4, COLOR_YELLOW, -1); //flag
-    init_pair(5, COLOR_YELLOW, -1); //cursor
-
-    init_pair(6, COLOR_CYAN, -1); //1
-    init_pair(7, COLOR_GREEN, -1); //2
-    init_pair(8, COLOR_RED, -1); //3
-    init_pair(9, COLOR_BLUE, -1); //4
-    init_pair(10, COLOR_MAGENTA, -1); //5
-    init_pair(11, COLOR_CYAN, -1); //6
-    init_pair(12, COLOR_BLACK, -1); //7
-    init_pair(13, COLOR_WHITE, -1); //8
-
-    g_color_pairs[static_cast<size_t>(ColorRole::Default)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Hidden)] = 2;
-    g_color_pairs[static_cast<size_t>(ColorRole::Mine)] = 3;
-    g_color_pairs[static_cast<size_t>(ColorRole::Flag)] = 4;
-    g_color_pairs[static_cast<size_t>(ColorRole::Cursor)] = 5;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number1)] = 6;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number2)] = 7;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number3)] = 8;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number4)] = 9;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number5)] = 10;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number6)] = 11;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number7)] = 12;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number8)] = 13;
-    g_color_pairs[static_cast<size_t>(ColorRole::Text)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Transition)] = 1;
-
-    switch_terminal_colors_to_white();
-}
-
-void switch_terminal_colors_to_white() {
-    g_color_pairs[static_cast<size_t>(ColorRole::Default)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Hidden)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Mine)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Flag)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Cursor)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number1)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number2)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number3)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number4)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number5)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number6)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number7)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Number8)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Text)] = 1;
-    g_color_pairs[static_cast<size_t>(ColorRole::Transition)] = 1;
 }
 
 void show_temporary_message(const std::string &message, const int duration_ms) {
