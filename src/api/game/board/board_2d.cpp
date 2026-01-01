@@ -1,13 +1,8 @@
 #include "board_2d.hpp"
 
 #include <cassert>
-#include <random>
 
-static std::mt19937 &get_rng() {
-    static std::random_device rd;
-    static std::mt19937 rng(rd());
-    return rng;
-}
+#include "api/helper/random_helper.hpp"
 
 Board2D::Board2D(const Vector2D size, const int mines, const bool force_mines) : m_grid(Grid2D<Cell>(size)), m_mine_count(mines),
                                                                                  m_flagged_count(0),

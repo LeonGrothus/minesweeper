@@ -9,14 +9,14 @@
 #include "api/ui/canvas/canvas_element.hpp"
 
 TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &end, const bool fade_in)
-    : m_start_widget(fade_in ? std::make_shared<Empty>() : end),
-      m_end_widget(end),
-      m_start_canvas(""),
-      m_end_canvas(""),
-      m_transition_loop([this]() {
+    : m_transition_loop([this]() {
           handle_next_transitions(1);
           set_dirty();
-      }, 1.0) {
+      }, 1.0),
+      m_start_widget(fade_in ? std::make_shared<Empty>() : end),
+      m_end_widget(end),
+      m_start_canvas(""),
+      m_end_canvas("") {
     if (!fade_in) {
         m_transition_finished = true;
     }

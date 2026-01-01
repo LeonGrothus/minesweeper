@@ -76,3 +76,17 @@ void set_terminal_monochrome(const short role) {
     g_color_pairs[static_cast<size_t>(ColorRole::Text)] = role;
     g_color_pairs[static_cast<size_t>(ColorRole::Transition)] = role;
 }
+
+std::vector<ColorRole> get_all_colors() {
+    return std::vector<ColorRole>{
+        ColorRole::Default,
+        ColorRole::Mine, //red
+        ColorRole::Flag, //yellow
+        ColorRole::Number2, //green
+        ColorRole::Number1, //cyan
+        ColorRole::Number4, //blue
+        ColorRole::Number5, //magenta
+        ColorRole::Number7, //black
+        ColorRole::Hidden //white
+    };
+}

@@ -4,6 +4,7 @@
 #include "cell.hpp"
 #include "grid_2d.hpp"
 
+
 class Board2D {
 public:
     explicit Board2D(Vector2D size, int mines, bool force_mines = false);

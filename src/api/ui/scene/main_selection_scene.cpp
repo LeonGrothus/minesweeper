@@ -16,14 +16,20 @@
 #include "api/ui/widget/widgets/border/border_style.hpp"
 #include "api/game/board/board_2d.hpp"
 #include "../widget/widgets/boards/board_widget.hpp"
+#include "api/ui/canvas/color_manager.hpp"
 #include "api/ui/widget/widgets/banner_widget.hpp"
+#include "api/ui/widget/widgets/rainbow_switcher.hpp"
 #include "api/ui/widget/widgets/boards/board_showcase_widget.hpp"
 
 MainSelectionScene::MainSelectionScene() {
     FileReader reader("assets/banner.txt");
     std::string content;
     reader.read_string_content(content);
-    m_aligned_banner_widget = wrap_with_alignment(std::make_shared<BannerWidget>(content));
+
+    std::shared_ptr<RainbowSwitcher> banner_rainbow = std::make_shared<RainbowSwitcher>(
+        std::make_shared<BannerWidget>(content), get_all_colors(), true);
+
+    m_aligned_banner_widget = wrap_with_alignment(banner_rainbow);
 
     m_display_widget = std::make_shared<TransitionWidget>(m_aligned_banner_widget, true);
 
