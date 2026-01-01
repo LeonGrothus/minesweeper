@@ -3,6 +3,9 @@
 
 #include <memory>
 
+#include "api/ui/widget/widgets/alignment.hpp"
+#include "api/ui/widget/widgets/custom_drawer.hpp"
+#include "api/ui/widget/widgets/timer.hpp"
 #include "api/ui/widget/widgets/boards/board_2d_widget.hpp"
 #include "api/ui/widget/widgets/boards/board_widget.hpp"
 
@@ -19,8 +22,10 @@ TestScene::TestScene() {
     // m_base_widget = std::make_shared<Border>(std::make_shared<Alignment>(enumerated_widget, MIDDLE_CENTER),
     //                                          BorderStyle::double_line_border());
 
-    const std::shared_ptr<BoardWidget> board_widget = std::make_shared<BoardWidget>(
-        std::make_shared<Board2D>(Vector2D{30, 16}, 30, false));
+    // const std::shared_ptr<Alignment> board_widget = std::make_shared<Alignment>(std::make_shared<Timer>(true, true), MIDDLE_CENTER);
+
+    const std::shared_ptr<Alignment> board_widget = std::make_shared<Alignment>(
+        std::make_shared<CustomDrawer>(u"test test\\dinkelnudeln", u'\\', TextAlignment::Right), MIDDLE_CENTER);
 
     m_base_widget = board_widget;
 }

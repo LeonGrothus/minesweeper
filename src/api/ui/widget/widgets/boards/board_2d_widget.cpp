@@ -36,17 +36,18 @@ ColorRole get_role_for_cell(const Cell &cell, const bool show_mines, const bool 
 }
 
 Board2DWidget::Board2DWidget(const std::shared_ptr<Board2D> &board) : m_board(board),
-    m_reveal_loop([this]() {
-        if (const std::vector<Vector2D> revealed = m_board->reveal_step(1); revealed.empty()) {
-            m_is_revealing = false;
-        } else {
-            m_is_dirty = true;
-        }
-    }, REVEAL_INTERVAL),
-    m_blink_loop([this]() {
-        m_show_mines = !m_show_mines;
-        m_is_dirty = true;
-    }, BLINK_INTERVAL) {
+                                                                      m_reveal_loop([this]() {
+                                                                          if (const std::vector<Vector2D> revealed = m_board->reveal_step(1)
+                                                                              ; revealed.empty()) {
+                                                                              m_is_revealing = false;
+                                                                          } else {
+                                                                              m_is_dirty = true;
+                                                                          }
+                                                                      }, REVEAL_INTERVAL),
+                                                                      m_blink_loop([this]() {
+                                                                          m_show_mines = !m_show_mines;
+                                                                          m_is_dirty = true;
+                                                                      }, BLINK_INTERVAL) {
 }
 
 void Board2DWidget::show_all_mines() {
@@ -155,7 +156,7 @@ CanvasElement Board2DWidget::build_canvas_element(const Vector2D &size) {
                 }
             }
 
-            ColorRole role = ColorRole::Hidden;
+            ColorRole role;
             if (m_interactable && (x == m_cursor_pos.x && y == m_cursor_pos.y)) {
                 line += u'C';
                 role = ColorRole::Cursor;

@@ -7,6 +7,12 @@
 
 struct BorderStyle;
 
+enum class TextAlignment : uint8_t {
+    Left = 0b00000010, // 0 left, 2 right
+    Center = 0b00000101, // 1 left, 1 right
+    Right = 0b00001000 // 2 left, 0 right
+};
+
 struct Vector2D {
     int x;
     int y;
@@ -57,7 +63,11 @@ public:
 
     explicit CanvasElement(std::u16string canvas_element, std::vector<uint8_t> color_roles, Vector2D size);
 
-    explicit CanvasElement(const std::string &normal_string, char delimiter = '\n', ColorRole role = ColorRole::Text);
+    explicit CanvasElement(const std::string &normal_string, char delimiter = '\n', ColorRole role = ColorRole::Text,
+                           TextAlignment alignment = TextAlignment::Left);
+
+    explicit CanvasElement(const std::u16string &normal_string, char16_t delimiter = u'\n', ColorRole role = ColorRole::Text,
+                           TextAlignment alignment = TextAlignment::Left);
 
     static CanvasElement empty(Vector2D size, char16_t empty_char);
 
@@ -90,8 +100,8 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const CanvasElement &elem);
 
 private:
-    static CanvasElement transform_to_canvas_element_utf8(const std::string &to_canvas_element, char delimiter,
-                                                          char16_t fill_char);
+    static CanvasElement transform_to_canvas_element(const std::u16string &to_canvas_element, char16_t delimiter,
+                                                     char16_t fill_char, TextAlignment alignment);
 
     Vector2D m_size{};
 

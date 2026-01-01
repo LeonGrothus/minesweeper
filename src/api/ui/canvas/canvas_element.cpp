@@ -6,6 +6,8 @@
 #include <utility>
 #include <vector>
 #include <string_view>
+
+#include "terminal_helper.hpp"
 #include "api/helper/conversion_helper.hpp"
 #include "api/ui/widget/widgets/border/border_style.hpp"
 
@@ -27,8 +29,17 @@ CanvasElement::CanvasElement(std::u16string canvas_element, std::vector<uint8_t>
     m_color_roles = std::move(color_roles);
 }
 
-CanvasElement::CanvasElement(const std::string &normal_string, const char delimiter, const ColorRole role) {
-    const CanvasElement canvas = transform_to_canvas_element_utf8(normal_string, delimiter, u' ');
+CanvasElement::CanvasElement(const std::string &normal_string, const char delimiter, ColorRole role, const TextAlignment alignment) {
+    const std::u16string wide_normal_string = utf8_to_utf16(normal_string);
+    const char16_t wide_delimiter = utf8_to_utf16(std::string(1, delimiter))[0];
+    const CanvasElement canvas = transform_to_canvas_element(wide_normal_string, wide_delimiter, u' ', alignment);
+    m_canvas_element = canvas.get_canvas_element();
+    m_size = canvas.m_size;
+    m_color_roles.assign(m_size.area(), static_cast<uint8_t>(role));
+}
+
+CanvasElement::CanvasElement(const std::u16string &normal_string, const char16_t delimiter, ColorRole role, const TextAlignment alignment) {
+    const CanvasElement canvas = transform_to_canvas_element(normal_string, delimiter, u' ', alignment);
     m_canvas_element = canvas.get_canvas_element();
     m_size = canvas.m_size;
     m_color_roles.assign(m_size.area(), static_cast<uint8_t>(role));
@@ -189,8 +200,8 @@ bool CanvasElement::merge_left_with_other(const CanvasElement &other) {
     return true;
 }
 
-CanvasElement CanvasElement::transform_to_canvas_element_utf8(const std::string &to_canvas_element, const char delimiter,
-                                                              const char16_t fill_char) {
+CanvasElement CanvasElement::transform_to_canvas_element(const std::u16string &to_canvas_element, const char16_t delimiter,
+                                                         const char16_t fill_char, TextAlignment alignment) {
     if (to_canvas_element.empty()) {
         constexpr Vector2D size(0, 0);
         return CanvasElement(std::u16string(), size);
@@ -203,15 +214,15 @@ CanvasElement CanvasElement::transform_to_canvas_element_utf8(const std::string 
     std::string::size_type current_pos;
 
     while ((current_pos = to_canvas_element.find(delimiter, prev_pos)) != std::string::npos) {
-        std::string_view line_view(to_canvas_element.data() + prev_pos, current_pos - prev_pos);
-        const std::u16string line_u16 = utf8_to_utf16(std::string(line_view));
+        std::u16string_view line_view(to_canvas_element.data() + prev_pos, current_pos - prev_pos);
+        const std::u16string line_u16 = std::u16string(line_view);
         lines.push_back(line_u16);
         longest = std::max(longest, line_u16.length());
         prev_pos = current_pos + 1;
     }
 
-    const std::string_view last_line_view(to_canvas_element.data() + prev_pos, to_canvas_element.length() - prev_pos);
-    const std::u16string last_line_u16 = utf8_to_utf16(std::string(last_line_view));
+    const std::u16string_view last_line_view(to_canvas_element.data() + prev_pos, to_canvas_element.length() - prev_pos);
+    const std::u16string last_line_u16 = std::u16string(last_line_view);
     lines.push_back(last_line_u16);
     longest = std::max(longest, last_line_u16.length());
 
@@ -225,10 +236,21 @@ CanvasElement CanvasElement::transform_to_canvas_element_utf8(const std::string 
     const Vector2D size(box_width, box_height);
 
     for (const std::u16string &line: lines) {
+        const int total_difference = static_cast<int>(longest - line.length());
+        const int half_difference = total_difference / 2;
+
+        const int left_padding = ((static_cast<uint8_t>(alignment) >> 2) & 0b11) * half_difference;
+        const int right_padding = ((static_cast<uint8_t>(alignment) >> 0) & 0b11) * half_difference;
+
+        const int extra_padding_left = ((total_difference % 2 != 0 && right_padding == 0) ? 1 : 0);
+        const int extra_padding_right = ((total_difference % 2 != 0 && right_padding != 0) ? 1 : 0);
+
+        result.append(left_padding + extra_padding_left, fill_char);
         result += line;
-        result.append(longest - line.length(), fill_char);
+        result.append(right_padding + extra_padding_right, fill_char);
+        roles.insert(roles.end(), left_padding + extra_padding_left, static_cast<uint8_t>(ColorRole::Default));
         roles.insert(roles.end(), line.size(), static_cast<uint8_t>(ColorRole::Text));
-        roles.insert(roles.end(), longest - line.length(), static_cast<uint8_t>(ColorRole::Default));
+        roles.insert(roles.end(), right_padding + extra_padding_right, static_cast<uint8_t>(ColorRole::Default));
     }
 
     return CanvasElement(result, roles, size);
