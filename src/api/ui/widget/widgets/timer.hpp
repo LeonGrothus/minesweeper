@@ -8,6 +8,8 @@ class Timer : public Widget {
 public:
     explicit Timer(bool blink = true, bool show_millis = false);
 
+    void set_description_text(const std::u16string &text);
+
     void reset();
 
     void stop();
@@ -39,4 +41,6 @@ private:
     bool m_running = true;
 
     double m_blink_time = 1000; //ms
+
+    std::u16string m_description_text = u"";
 };

@@ -9,6 +9,11 @@
 Timer::Timer(const bool blink, const bool show_millis) : m_blink(blink), m_show_millis(show_millis) {
 }
 
+void Timer::set_description_text(const std::u16string &text) {
+    m_description_text = text;
+    set_dirty();
+}
+
 void Timer::reset() {
     m_current_millis = 0;
     m_current_seconds = 0;
@@ -34,7 +39,7 @@ Vector2D Timer::get_minimum_size() const {
     if (m_show_millis) {
         x_size += 4;
     }
-    return Vector2D{x_size, 1};
+    return Vector2D{x_size + static_cast<int>(m_description_text.length()), 1};
 }
 
 void Timer::keyboard_press(int key) {
@@ -80,6 +85,7 @@ CanvasElement Timer::build_canvas_element(const Vector2D &size) {
     const Vector2D minimum_size = get_minimum_size();
     std::u16string full_canvas;
     full_canvas.reserve(minimum_size.area());
+    full_canvas += m_description_text;
 
     const std::u16string minutes = utf8_to_utf16(std::to_string(m_current_minutes));
     const std::u16string seconds = utf8_to_utf16(std::to_string(m_current_seconds));

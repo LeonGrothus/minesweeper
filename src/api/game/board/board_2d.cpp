@@ -42,6 +42,7 @@ std::vector<Vector2D> Board2D::reveal_next(const Vector2D &pos) {
     if (cell.is_flagged() || cell.is_revealed()) {
         return revealed_positions;
     }
+    m_moves_count++;
 
     cell.reveal();
     revealed_positions.push_back(pos);
@@ -51,9 +52,7 @@ std::vector<Vector2D> Board2D::reveal_next(const Vector2D &pos) {
     } else {
         if (m_safe_cells_remaining > 0) {
             m_safe_cells_remaining--;
-            if (m_safe_cells_remaining == 0) {
-                m_is_won = true;
-            }
+            check_win();
         }
     }
 
@@ -148,6 +147,7 @@ void Board2D::toggle_flag(const Vector2D &pos) {
         m_flagged_count--;
     } else {
         m_flagged_count++;
+        check_win();
     }
 }
 
@@ -197,6 +197,12 @@ void Board2D::place_mines(const int count, const int start_index) {
     }
 }
 
+void Board2D::check_win() {
+    if (m_safe_cells_remaining == 0 && m_flagged_count == m_mine_count) {
+        m_is_won = true;
+    }
+}
+
 void Board2D::calculate_all_adjacent_mines() {
     for (int i = 0; i < m_grid.get_grid_size().area(); i++) {
         Vector2D pos = m_grid.get_index_position(i);
@@ -229,6 +235,10 @@ int Board2D::get_flagged_count() const {
 
 int Board2D::get_mine_count() const {
     return m_mine_count;
+}
+
+int Board2D::get_total_moves_count() const {
+    return m_moves_count;
 }
 
 Vector2D Board2D::get_grid_size() const {

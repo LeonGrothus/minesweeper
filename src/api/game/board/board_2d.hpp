@@ -31,6 +31,8 @@ public:
 
     int get_mine_count() const;
 
+    int get_total_moves_count() const;
+
     Vector2D get_grid_size() const;
 
     std::vector<Vector2D> get_all_mine_positions() const;
@@ -39,6 +41,7 @@ private:
     Grid2D<Cell> m_grid;
     int m_mine_count;
     int m_flagged_count;
+    int m_moves_count = 0;
 
     bool m_is_lost;
     bool m_is_won;
@@ -51,6 +54,8 @@ private:
     void place_mines(int count, const Vector2D &start_pos);
 
     void place_mines(int count, int start_index);
+
+    void check_win();
 
     void calculate_all_adjacent_mines();
 

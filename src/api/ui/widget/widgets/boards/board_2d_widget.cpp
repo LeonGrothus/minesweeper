@@ -76,6 +76,10 @@ void Board2DWidget::set_blinking(const bool blinking) {
     m_blink_mines = blinking;
 }
 
+const Board2D &Board2DWidget::get_board() const {
+    return *m_board;
+}
+
 void Board2DWidget::handle_reveal() {
     if (m_board->is_won() || m_board->is_lost()) {
         return;
@@ -124,6 +128,10 @@ void Board2DWidget::update(const double delta_time) {
 
     if (m_is_revealing && m_interactable) {
         m_reveal_loop.update(delta_time);
+    }
+
+    if (m_board->is_won() || m_board->is_lost()) {
+        set_blinking(true);
     }
 }
 

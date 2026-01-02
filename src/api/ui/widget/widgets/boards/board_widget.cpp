@@ -51,6 +51,10 @@ void BoardWidget::set_border_style(const BorderStyle &style) {
     rebuild_layout();
 }
 
+const Board2D &BoardWidget::get_board() const {
+    return *m_board_2d;
+}
+
 CanvasElement BoardWidget::build_canvas_element(const Vector2D &size) {
     return m_layout_widget->build_widget(size);
 }

@@ -18,6 +18,8 @@ public:
 
     void set_border_style(const BorderStyle &style);
 
+    const Board2D &get_board() const;
+
     Vector2D get_minimum_size() const override;
 
     void keyboard_press(int key) override;
