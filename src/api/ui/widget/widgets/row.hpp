@@ -10,6 +10,8 @@ public:
 
     void set_spacing(int spacing);
 
+    void set_alignment(TextAlignment alignment);
+
     bool is_dirty() const override;
 
     void keyboard_press(int key) override;
@@ -24,5 +26,6 @@ protected:
 private:
     std::vector<std::shared_ptr<Widget> > m_children;
     int m_spacing = 0;
+    TextAlignment m_alignment = TextAlignment::Left;
 };
 
