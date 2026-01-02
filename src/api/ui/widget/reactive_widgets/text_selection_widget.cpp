@@ -73,7 +73,7 @@ CanvasElement TextSelectionWidget::build_canvas_element(const Vector2D &size) {
 
         result += line;
     }
-    return CanvasElement(result, size);;
+    return CanvasElement(result, size);
 }
 
 void TextSelectionWidget::select() {

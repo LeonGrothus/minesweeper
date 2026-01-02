@@ -22,12 +22,12 @@ TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &end, const boo
     }
 }
 
-TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &start, const std::shared_ptr<Widget> &end) : m_start_widget(start),
-    m_end_widget(end), m_start_canvas(""), m_end_canvas(""),
-    m_transition_loop([this]() {
+TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &start, const std::shared_ptr<Widget> &end) : m_transition_loop([this]() {
         handle_next_transitions(1);
         set_dirty();
-    }, 1.0) {
+    }, 1.0),
+    m_start_widget(start), m_end_widget(end), m_start_canvas(""),
+    m_end_canvas("") {
 }
 
 void TransitionWidget::set_new_end(const std::shared_ptr<Widget> &new_end) {

@@ -85,7 +85,8 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
         const auto current_pos = static_cast<std::u16string::size_type>(i) * element_width;
         const std::u16string_view text_line(element.get_canvas_element().data() + current_pos, element_width);
         line.append(text_line);
-        line_roles.insert(line_roles.end(), element_roles.begin() + current_pos, element_roles.begin() + current_pos + element_width);
+        line_roles.insert(line_roles.end(), element_roles.begin() + static_cast<long>(current_pos),
+                          element_roles.begin() + static_cast<long>(current_pos) + element_width);
 
         line.append(repeat_right * half_width_offset.size(), blank_char);
         line_roles.insert(line_roles.end(), repeat_right * half_roles.size(), static_cast<uint8_t>(ColorRole::Default));

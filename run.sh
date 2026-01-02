@@ -1,11 +1,8 @@
 #!/bin/bash
 # Build and run script for Minesweeper
 
-# Build the project
-cmake --build build
-
-# Check if build was successful
-if [ $? -eq 0 ]; then
+# Build project and check if build was successful
+if cmake --build build; then
     # Run the executable
     ./build/minesweeper
 else

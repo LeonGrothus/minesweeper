@@ -2,7 +2,7 @@
 
 #include "empty.hpp"
 
-Visibility::Visibility(std::shared_ptr<Widget> child, bool visible, bool transition)
+Visibility::Visibility(std::shared_ptr<Widget> child, const bool visible, const bool transition)
     : m_child(std::move(child)), m_visible(visible), m_transition(transition) {
     if (m_transition) {
         const auto empty = std::make_shared<Empty>();

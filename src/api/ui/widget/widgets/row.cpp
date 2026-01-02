@@ -96,7 +96,7 @@ CanvasElement Row::build_canvas_element(const Vector2D &size) {
 bool Row::is_dirty() const {
     for (const std::shared_ptr<Widget> &child: m_children) {
         if (child->is_dirty()) {
-            return true;;
+            return true;
         }
     }
     if (m_is_dirty) {

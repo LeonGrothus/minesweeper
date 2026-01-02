@@ -1,6 +1,6 @@
 #include "looped_execution_wrapper.hpp"
 
-#include <assert.h>
+#include <cassert>
 
 LoopedExecutionWrapper::LoopedExecutionWrapper(std::function<void()> runnable,
                                                const double time_to_repeat) : m_runnable(std::move(runnable)),
