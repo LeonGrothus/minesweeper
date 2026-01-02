@@ -24,6 +24,7 @@ void Timer::reset() {
 void Timer::stop() {
     m_running = false;
     m_show_column = true;
+    set_dirty();
 }
 
 void Timer::resume() {

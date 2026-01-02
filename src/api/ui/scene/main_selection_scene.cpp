@@ -124,7 +124,10 @@ MainSelectionScene::MainSelectionScene() {
     std::vector<std::shared_ptr<Widget> > layout;
     layout.push_back(m_display_widget);
     layout.push_back(selection_widget);
-    m_base_widget = std::make_shared<Border>(std::make_shared<Column>(layout), BorderStyle::double_line_border());
+ std::shared_ptr<Column> main_column = std::make_shared<Column>(layout);
+    main_column->set_alignment(TextAlignment::Center);
+
+    m_base_widget = std::make_shared<Border>(main_column, BorderStyle::double_line_border());
 
     go_to_stage(Stage::Main);
 }
