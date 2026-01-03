@@ -15,9 +15,9 @@ class MainSelectionScene final : public Scene {
 public:
     MainSelectionScene();
 
-    void keyboard_press(int key) override;
+    void handle_key(int key) override;
 
-    void update(double delta_time) override;
+    void handle_update(double delta_time) override;
 
 private:
     enum class Stage {

@@ -50,9 +50,7 @@ GameScene::GameScene(const std::shared_ptr<BoardWidget> &to_play) : m_board_widg
     m_base_widget = std::make_shared<Border>(game_column, BorderStyle::double_line_border());
 }
 
-void GameScene::update(const double delta_time) {
-    Scene::update(delta_time);
-
+void GameScene::handle_update(const double delta_time) {
     update_displayed_values();
     handle_win_lost();
 }

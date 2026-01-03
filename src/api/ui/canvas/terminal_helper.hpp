@@ -12,7 +12,7 @@
 #include <unistd.h>
 #endif
 
-enum Position {
+enum Position : uint8_t {
     // bottom, top, right, left
     TOP_LEFT = 0b10001000,
     TOP_CENTER = 0b10000101,
@@ -32,7 +32,7 @@ std::u16string repeat_string(unsigned int k, const std::u16string &s);
 CanvasElement position_canvas_element(const CanvasElement &element, Position position, Vector2D canvas_size,
                                       char16_t blank_char);
 
-void position_string_on_canvas(const CanvasElement &element, Position pos, CanvasElement &canvas);
+void position_element_on_canvas(const CanvasElement &element, Position pos, CanvasElement &canvas);
 
 void render_to_ncurses(const CanvasElement &element, Vector2D size);
 

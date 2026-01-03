@@ -6,7 +6,7 @@
 
 class GameScene : public Scene {
 public:
-    void update(double delta_time) override;
+    void handle_update(double delta_time) override;
 
     explicit GameScene(const std::shared_ptr<BoardWidget> &to_play);
 

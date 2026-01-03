@@ -131,7 +131,7 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
     return CanvasElement(full_string, full_roles, canvas_size);
 }
 
-void position_string_on_canvas(const CanvasElement &element, const Position pos, CanvasElement &canvas) {
+void position_element_on_canvas(const CanvasElement &element, const Position pos, CanvasElement &canvas) {
     const Vector2D canvas_size = canvas.get_element_size();
     const int canvas_width = canvas_size.x;
     const int canvas_height = canvas_size.y;

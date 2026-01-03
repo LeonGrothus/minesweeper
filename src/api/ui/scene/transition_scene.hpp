@@ -8,7 +8,7 @@ public:
 
     explicit TransitionScene(const std::shared_ptr<Widget> &start_widget, std::unique_ptr<Scene> end_scene);
 
-    void update(double delta_time) override;
+    void handle_update(double delta_time) override;
 
 private:
     std::shared_ptr<TransitionWidget> m_transition_widget;

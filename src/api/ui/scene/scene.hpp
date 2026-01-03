@@ -4,7 +4,7 @@
 
 class Scene {
 public:
-    virtual ~Scene() = 0;
+    virtual ~Scene() = default;
 
     void request_scene_change(std::unique_ptr<Scene> next_scene) {
         m_pending_scene = std::move(next_scene);
@@ -51,6 +51,14 @@ public:
     }
 
 protected:
+    virtual void handle_key(const int key) {
+        m_base_widget->keyboard_press(key);
+    }
+
+    virtual void handle_update(const double delta_time) {
+        m_base_widget->update(delta_time);
+    }
+
     std::shared_ptr<Widget> m_base_widget;
     std::unique_ptr<Scene> m_pending_scene;
     bool m_use_transition = false;

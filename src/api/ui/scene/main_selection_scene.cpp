@@ -22,11 +22,11 @@
 #include "api/ui/widget/widgets/boards/board_showcase_widget.hpp"
 
 MainSelectionScene::MainSelectionScene() {
-    FileReader reader("assets/banner.txt");
+    const FileReader reader("assets/banner.txt");
     std::string content;
     reader.read_string_content(content);
 
-    std::shared_ptr<RainbowSwitcher> banner_rainbow = std::make_shared<RainbowSwitcher>(
+    const std::shared_ptr<RainbowSwitcher> banner_rainbow = std::make_shared<RainbowSwitcher>(
         std::make_shared<BannerWidget>(content), get_all_colors(), true);
 
     m_aligned_banner_widget = wrap_with_alignment(banner_rainbow);
@@ -118,7 +118,7 @@ MainSelectionScene::MainSelectionScene() {
     row->set_spacing(3);
 
     std::shared_ptr<Padding> padded_row = std::make_shared<Padding>(row, 1, 1, 0, 0);
-    std::shared_ptr<Widget> selection_widget = std::make_shared<Alignment>(padded_row, BOTTOM_LEFT);
+    const std::shared_ptr<Widget> selection_widget = std::make_shared<Alignment>(padded_row, BOTTOM_LEFT);
     selection_widget->m_flex = NO_FLEX;
 
     std::vector<std::shared_ptr<Widget> > layout;
@@ -174,7 +174,7 @@ void MainSelectionScene::go_to_stage(const Stage stage) {
     m_confirm_menu->set_dirty();
 }
 
-void MainSelectionScene::keyboard_press(const int key) {
+void MainSelectionScene::handle_key(const int key) {
     //esc
     if (key == 27 || key == KEY_LEFT) {
         switch (m_stage) {
@@ -196,7 +196,7 @@ void MainSelectionScene::keyboard_press(const int key) {
     active_menu()->keyboard_press(key);
 }
 
-void MainSelectionScene::update(const double delta_time) {
+void MainSelectionScene::handle_update(const double delta_time) {
     m_main_menu->update(delta_time);
     m_size_visible->update(delta_time);
     m_difficulty_visible->update(delta_time);

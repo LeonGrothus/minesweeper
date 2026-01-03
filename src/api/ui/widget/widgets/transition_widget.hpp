@@ -15,7 +15,7 @@ public:
 
     bool is_transition_finished() const;
 
-    void set_transition_time(float transition_time);
+    void set_transition_time(double transition_time);
 
     void set_transition_char_color_role(ColorRole role);
 
@@ -33,6 +33,8 @@ protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
 
 private:
+    bool m_is_transition_initialized = false;
+
     void init_transition(Vector2D size);
 
     void handle_next_transitions(int count);

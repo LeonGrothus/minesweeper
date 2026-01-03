@@ -7,6 +7,7 @@
 
 #include "empty.hpp"
 #include "api/ui/canvas/canvas_element.hpp"
+#include "api/ui/canvas/terminal_helper.hpp"
 
 TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &end, const bool fade_in)
     : m_transition_loop([this]() {
@@ -39,6 +40,7 @@ void TransitionWidget::set_new_end(const std::shared_ptr<Widget> &new_end) {
         m_break_between_transition = true;
     }
 
+    m_is_transition_initialized = false;
     m_end_widget = new_end;
     m_cover_indices.clear();
     m_uncover_indices.clear();
@@ -56,7 +58,7 @@ bool TransitionWidget::is_transition_finished() const {
     return m_transition_finished;
 }
 
-void TransitionWidget::set_transition_time(const float transition_time) {
+void TransitionWidget::set_transition_time(const double transition_time) {
     m_transition_time = transition_time;
 }
 
@@ -91,7 +93,7 @@ void TransitionWidget::update(const double delta_time) {
     if (m_to_change == 0 || m_char_reveal_time == 0) {
         return;
     }
-
+    
     m_transition_loop.update(delta_time);
 }
 
@@ -140,6 +142,7 @@ CanvasElement TransitionWidget::build_canvas_element(const Vector2D &size) {
 }
 
 void TransitionWidget::init_transition(const Vector2D size) {
+    m_is_transition_initialized = true;
     m_canvas_size = size;
     const std::u16string &start_canvas = m_start_canvas.get_canvas_element();
     const std::u16string &end_canvas = m_end_canvas.get_canvas_element();
@@ -192,6 +195,9 @@ void TransitionWidget::init_transition(const Vector2D size) {
 }
 
 void TransitionWidget::handle_next_transitions(const int count) {
+    if (!m_is_transition_initialized) {
+        return;
+    }
     for (int i = 0; i < count; i++) {
         if (!m_cover_indices.empty()) {
             const int index = m_cover_indices.back();
