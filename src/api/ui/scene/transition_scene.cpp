@@ -17,6 +17,7 @@ TransitionScene::TransitionScene(const std::shared_ptr<Widget> &start_widget, st
 }
 
 void TransitionScene::handle_update(const double delta_time) {
+    Scene::handle_update(delta_time);
     if (m_transition_widget->is_transition_finished()) {
         request_scene_change(std::move(m_end_scene));
     }

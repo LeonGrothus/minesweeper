@@ -98,9 +98,7 @@ std::vector<Vector2D> Board2D::reveal_step(const int max_count) {
         } else {
             if (m_safe_cells_remaining > 0) {
                 m_safe_cells_remaining--;
-                if (m_safe_cells_remaining == 0) {
-                    m_is_won = true;
-                }
+                check_win();
             }
         }
 

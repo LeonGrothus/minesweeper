@@ -51,6 +51,7 @@ GameScene::GameScene(const std::shared_ptr<BoardWidget> &to_play) : m_board_widg
 }
 
 void GameScene::handle_update(const double delta_time) {
+    Scene::handle_update(delta_time);
     update_displayed_values();
     handle_win_lost();
 }
