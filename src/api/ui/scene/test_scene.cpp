@@ -24,8 +24,16 @@ TestScene::TestScene() {
 
     // const std::shared_ptr<Alignment> board_widget = std::make_shared<Alignment>(std::make_shared<Timer>(true, true), MIDDLE_CENTER);
 
-    const std::shared_ptr<Alignment> board_widget = std::make_shared<Alignment>(
-        std::make_shared<CustomDrawer>(u"test test\\dinkelnudeln", u'\\', TextAlignment::Right), MIDDLE_CENTER);
+    m_base_widget = std::make_shared<Empty>();
 
-    m_base_widget = board_widget;
+    const std::shared_ptr<Widget> settings_widget = std::make_shared<Border>(
+        std::make_shared<Padding>(std::make_shared<Empty>(Vector2D{4, 4}, u'#'), 1),
+        BorderStyle::double_line_border());
+    DialogueOptions options;
+    options.use_transition = true;
+    StackInfo info;
+    info.height_percentage = 0.5;
+    info.width_percentage = 0.5;
+    info.absolute_size = settings_widget->get_minimum_size();
+    show_dialogue(settings_widget, options, info);
 }

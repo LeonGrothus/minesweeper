@@ -95,6 +95,7 @@ void TextSelectionWidget::keyboard_press(const int key) {
         case KEY_ENTER:
         case KEY_RIGHT:
             select();
+            set_dirty();
             break;
         default:
             break;

@@ -4,6 +4,7 @@
 #include <ncurses.h>
 #include <utility>
 
+#include "api/ui/widget/widgets/empty.hpp"
 #include "transition_scene.hpp"
 #include "api/helper/file_reader.hpp"
 #include "api/ui/canvas/terminal_helper.hpp"
@@ -42,7 +43,17 @@ MainSelectionScene::MainSelectionScene() {
         go_to_stage(Stage::Size);
     });
     m_main_menu->add_option(u"Settings", [this]() {
-        go_to_stage(Stage::Main);
+        const std::shared_ptr<Widget> settings_widget = std::make_shared<Border>(
+            std::make_shared<Padding>(std::make_shared<Empty>(Vector2D{4, 4}, u'#'), 1),
+            BorderStyle::double_line_border());
+        DialogueOptions options;
+        options.use_transition = true;
+        options.update_background = true;
+        StackInfo info;
+        info.height_percentage = 0.5;
+        info.width_percentage = 0.5;
+        info.absolute_size = settings_widget->get_minimum_size();
+        show_dialogue(settings_widget, options, info);
     });
     m_main_menu->add_option(u"Exit", []() {
     });
@@ -124,7 +135,7 @@ MainSelectionScene::MainSelectionScene() {
     std::vector<std::shared_ptr<Widget> > layout;
     layout.push_back(m_display_widget);
     layout.push_back(selection_widget);
- std::shared_ptr<Column> main_column = std::make_shared<Column>(layout);
+    std::shared_ptr<Column> main_column = std::make_shared<Column>(layout);
     main_column->set_alignment(TextAlignment::Center);
 
     m_base_widget = std::make_shared<Border>(main_column, BorderStyle::double_line_border());
