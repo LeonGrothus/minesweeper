@@ -23,6 +23,14 @@ public:
         m_use_transition = true;
     }
 
+    void request_exit() {
+        m_exit_requested = true;
+    }
+
+    bool is_exit_requested() const {
+        return m_exit_requested;
+    }
+
     std::unique_ptr<Scene> take_pending_scene() {
         return std::move(m_pending_scene);
     }
@@ -130,6 +138,7 @@ protected:
     std::shared_ptr<Widget> m_base_widget;
     std::unique_ptr<Scene> m_pending_scene;
     bool m_use_transition = false;
+    bool m_exit_requested = false;
 
 private:
     std::vector<std::shared_ptr<Dialogue> > m_dialogue_stack;

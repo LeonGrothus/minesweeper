@@ -61,7 +61,8 @@ MainSelectionScene::MainSelectionScene() {
         info.absolute_size = settings_widget->get_minimum_size();
         show_dialogue(dialogue, info);
     });
-    m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Exit"), []() {
+    m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Exit"), [this]() {
+        request_exit();
     });
 
     m_size_menu->add_option(std::make_shared<CustomDrawer>(u"Small"), [this]() {
@@ -142,7 +143,7 @@ MainSelectionScene::MainSelectionScene() {
     layout.push_back(m_display_widget);
     layout.push_back(selection_widget);
     std::shared_ptr<Column> main_column = std::make_shared<Column>(layout);
-    main_column->set_alignment(TextAlignment::Center);
+    main_column->main_axis_alignment(ListAlignment::Center);
 
     m_base_widget = std::make_shared<Border>(main_column, BorderStyle::double_line_border());
 

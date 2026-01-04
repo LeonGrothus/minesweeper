@@ -4,7 +4,12 @@
 #include "api/ui/widget/widgets/custom_drawer.hpp"
 #include "api/ui/widget/widgets/timer.hpp"
 
+class Column;
+
 class GameScene : public Scene {
+protected:
+    void handle_key(int key) override;
+
 public:
     void handle_update(double delta_time) override;
 
@@ -13,10 +18,13 @@ public:
 private:
     void update_displayed_values();
 
-    void handle_win_lost() const;
+    void handle_win_lost();
+
+    bool m_game_finished = false;
 
     std::shared_ptr<BoardWidget> m_board_widget;
     std::shared_ptr<Timer> m_timer_widget;
+    std::shared_ptr<Column> m_game_column;
 
     std::shared_ptr<CustomDrawer> m_flagged_counter_widget;
     std::shared_ptr<CustomDrawer> m_played_moves_widget;

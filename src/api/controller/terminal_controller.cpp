@@ -7,8 +7,8 @@
 
 #include "api/ui/scene/transition_scene.hpp"
 
-constexpr double FRAME_RATE = 60.0;
-constexpr double FRAME_TIME = 1000.0 / FRAME_RATE;
+constexpr double UPDATE_RATE = 60.0;
+constexpr double FRAME_TIME = 1000.0 / UPDATE_RATE;
 
 TerminalController::TerminalController(std::unique_ptr<Scene> default_scene)
     : m_running(true),
@@ -32,6 +32,11 @@ void TerminalController::run() {
             m_current_millis = std::max(m_current_millis - FRAME_TIME, 0.0);
 
             update_scene(delta_time);
+
+            if (m_current_scene->is_exit_requested()) {
+                m_running = false;
+                return;
+            }
 
             if (std::unique_ptr<Scene> next_scene = m_current_scene->take_pending_scene()) {
                 if (m_current_scene->should_use_transition()) {

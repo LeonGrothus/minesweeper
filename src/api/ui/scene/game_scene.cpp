@@ -1,5 +1,8 @@
 #include "game_scene.hpp"
 
+#include <ncurses.h>
+
+#include "main_selection_scene.hpp"
 #include "api/helper/conversion_helper.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
 #include "api/ui/widget/widgets/column.hpp"
@@ -7,6 +10,7 @@
 #include "api/ui/widget/widgets/row.hpp"
 #include "api/ui/widget/widgets/timer.hpp"
 #include "api/ui/widget/widgets/border/border.hpp"
+#include "api/ui/widget/widgets/dialogues/inform_dialogue.hpp"
 
 GameScene::GameScene(const std::shared_ptr<BoardWidget> &to_play) : m_board_widget(to_play) {
     m_total_flagged_builder = [](const int placed_flags, const int total_mine_count) {
@@ -34,7 +38,7 @@ GameScene::GameScene(const std::shared_ptr<BoardWidget> &to_play) : m_board_widg
     std::vector<std::shared_ptr<Widget> > column_content;
 
     const std::shared_ptr<Row> display_row = std::make_shared<Row>(row_content);
-    display_row->set_alignment(TextAlignment::Center);
+    display_row->main_axis_alignment(ListAlignment::Center);
 
     const std::shared_ptr<Padding> padded_row = std::make_shared<Padding>(
         std::make_shared<Border>(display_row, BorderStyle::single_line_border()), 3, 3, 1, 1);
@@ -45,9 +49,24 @@ GameScene::GameScene(const std::shared_ptr<BoardWidget> &to_play) : m_board_widg
     column_content.push_back(padded_row);
     column_content.push_back(aligned_board);
 
-    std::shared_ptr<Column> game_column = std::make_shared<Column>(column_content);
-    game_column->set_alignment(TextAlignment::Center);
-    m_base_widget = std::make_shared<Border>(game_column, BorderStyle::double_line_border());
+    m_game_column = std::make_shared<Column>(column_content);
+    m_game_column->main_axis_alignment(ListAlignment::Center);
+    m_base_widget = std::make_shared<Border>(m_game_column, BorderStyle::double_line_border());
+}
+
+void GameScene::handle_key(const int key) {
+    Scene::handle_key(key);
+    switch (key) {
+        case 10:
+        case 13:
+        case KEY_ENTER:
+            if (m_game_finished) {
+                request_scene_change_with_transition(std::make_unique<MainSelectionScene>());
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 void GameScene::handle_update(const double delta_time) {
@@ -70,11 +89,50 @@ void GameScene::update_displayed_values() {
     }
 }
 
-void GameScene::handle_win_lost() const {
+void GameScene::handle_win_lost() {
     const bool is_game_lost = m_board_widget->get_board().is_lost();
     const bool is_game_won = m_board_widget->get_board().is_won();
 
-    if (is_game_lost || is_game_won) {
-        m_timer_widget->stop();
+    if (m_game_finished || (!is_game_won && !is_game_lost)) {
+        return;
     }
+    m_timer_widget->stop();
+    m_game_finished = true;
+
+    const std::u16string time = m_timer_widget->build_widget(m_timer_widget->get_minimum_size()).get_canvas_element();
+
+    std::function<void()> return_to_menu = [this]() {
+        request_scene_change_with_transition(std::make_unique<MainSelectionScene>());
+    };
+
+    std::function<void()> view_board = [this]() {
+        pop_dialogue();
+    };
+
+    std::u16string dialogue_text;
+    if (is_game_won) {
+        dialogue_text = u"You Won!\nIt took " + time;
+    } else {
+        dialogue_text = u"You lost after " + time;
+    }
+
+    std::shared_ptr<Widget> main_dialogue = std::make_shared<CustomDrawer>(dialogue_text, u'\n');
+
+    std::shared_ptr<InformDialogue> dialogue_widget = std::make_shared<InformDialogue>(
+        main_dialogue, u"Return to Menu", u"View Board", return_to_menu, view_board);
+
+    DialogueOptions dialogue_options;
+    const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(dialogue_widget, dialogue_options);
+    dialogue->set_on_dismiss([this]() {
+        m_game_column->push_child(std::make_shared<Alignment>(std::make_shared<CustomDrawer>(u"Press 'enter' to return to the menu!"),
+                                                              MIDDLE_CENTER));
+        set_dirty();
+    });
+
+    StackInfo stack_info;
+    stack_info.height_percentage = 0.3;
+    stack_info.width_percentage = 0.3;
+    stack_info.absolute_size = dialogue_widget->get_minimum_size();
+    stack_info.take_focus = true;
+    show_dialogue(dialogue, stack_info);
 }

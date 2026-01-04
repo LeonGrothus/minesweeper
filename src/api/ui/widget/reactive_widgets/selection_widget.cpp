@@ -106,7 +106,7 @@ CanvasElement SelectionWidget::build_canvas_element(const Vector2D &size) {
             if (m_options.is_vertical) {
                 final_canvas.merge_below_with_other(widget_canvas);
             } else {
-                final_canvas.merge_right_with_other(widget_canvas);
+                final_canvas.merge_left_with_other(widget_canvas);
             }
         }
 
