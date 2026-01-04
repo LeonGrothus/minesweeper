@@ -9,8 +9,25 @@ void Column::set_spacing(const int spacing) {
     m_spacing = spacing;
 }
 
-void Column::set_alignment(const TextAlignment alignment) {
+void Column::main_axis_alignment(const ListAlignment alignment) {
     m_alignment = alignment;
+    m_is_dirty = true;
+}
+
+int Column::get_child_count() const {
+    return static_cast<int>(m_children.size());
+}
+
+void Column::push_child_at(const std::shared_ptr<Widget> &child, const int position) {
+    if (position < 0 || position > static_cast<int>(m_children.size())) {
+        return;
+    }
+    m_children.insert(m_children.begin() + position, child);
+    m_is_dirty = true;
+}
+
+void Column::push_child(const std::shared_ptr<Widget> &child) {
+    m_children.push_back(child);
     m_is_dirty = true;
 }
 

@@ -9,8 +9,25 @@ void Row::set_spacing(const int spacing) {
     m_spacing = spacing;
 }
 
-void Row::set_alignment(const TextAlignment alignment) {
+void Row::main_axis_alignment(const ListAlignment alignment) {
     m_alignment = alignment;
+    m_is_dirty = true;
+}
+
+int Row::get_child_count() const {
+    return static_cast<int>(m_children.size());
+}
+
+void Row::push_child_at(const std::shared_ptr<Widget> &child, const int position) {
+    if (position < 0 || position > static_cast<int>(m_children.size())) {
+        return;
+    }
+    m_children.insert(m_children.begin() + position, child);
+    m_is_dirty = true;
+}
+
+void Row::push_child(const std::shared_ptr<Widget> &child) {
+    m_children.push_back(child);
     m_is_dirty = true;
 }
 

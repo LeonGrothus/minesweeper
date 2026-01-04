@@ -3,13 +3,21 @@
 #include <vector>
 #include <memory>
 
+#include "row.hpp"
+
 class Column final : public Widget {
 public:
     explicit Column(std::vector<std::shared_ptr<Widget> > children);
 
     void set_spacing(int spacing);
 
-    void set_alignment(TextAlignment alignment);
+    void main_axis_alignment(ListAlignment alignment);
+
+    int get_child_count() const;
+
+    void push_child_at(const std::shared_ptr<Widget> &child, int position);
+
+    void push_child(const std::shared_ptr<Widget> &child);
 
     bool is_dirty() const override;
 
@@ -25,6 +33,6 @@ protected:
 private:
     std::vector<std::shared_ptr<Widget> > m_children;
     int m_spacing = 0;
-    TextAlignment m_alignment = TextAlignment::Left;
+    ListAlignment m_alignment = ListAlignment::Start;
 };
 
