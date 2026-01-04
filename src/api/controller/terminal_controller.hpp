@@ -4,6 +4,10 @@
 #include "api/ui/scene/scene.hpp"
 #include <memory>
 
+
+constexpr static double UPDATE_RATE = 60.0;
+constexpr static double FRAME_TIME = 1000.0 / UPDATE_RATE;
+
 constexpr static char16_t EMPTY_CHAR = u' ';
 constexpr static char16_t ALPHA_CHAR = u'\x7F';
 

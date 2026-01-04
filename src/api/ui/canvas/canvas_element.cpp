@@ -7,9 +7,7 @@
 #include <vector>
 #include <string_view>
 
-#include "terminal_helper.hpp"
 #include "api/helper/conversion_helper.hpp"
-#include "api/ui/widget/widgets/border/border_style.hpp"
 
 CanvasElement::CanvasElement(std::u16string canvas_element, const Vector2D size, const ColorRole role) {
     m_size = size;

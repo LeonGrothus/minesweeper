@@ -1,14 +1,12 @@
 #include "terminal_controller.hpp"
 
+#include "api/ui/scene/scene.hpp"
 #include "api/ui/canvas/terminal_helper.hpp"
 
 #include <curses.h>
 #include <memory>
 
 #include "api/ui/scene/transition_scene.hpp"
-
-constexpr double UPDATE_RATE = 60.0;
-constexpr double FRAME_TIME = 1000.0 / UPDATE_RATE;
 
 TerminalController::TerminalController(std::unique_ptr<Scene> default_scene)
     : m_running(true),

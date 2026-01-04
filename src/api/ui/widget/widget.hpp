@@ -1,5 +1,6 @@
 #pragma once
 #include "../canvas/canvas_element.hpp"
+#include "api/ui/canvas/terminal_helper.hpp"
 
 enum Flex {
     NO_FLEX = 0,
@@ -12,6 +13,7 @@ public:
 
     const CanvasElement &build_widget(const Vector2D &size) {
         if (size < get_minimum_size()) {
+            show_temporary_message("INCREASE SCREEN SIZE", 200);
             if (m_cached_canvas.get_element_size() != size) {
                 m_cached_canvas = CanvasElement::empty(size, u' ');
             }

@@ -19,6 +19,22 @@ struct Vector2D {
 
     auto operator<=>(const Vector2D &a) const = default;
 
+    bool operator<(const Vector2D &other) const {
+        return x < other.x || y < other.y;
+    }
+
+    bool operator<=(const Vector2D &other) const {
+        return x <= other.x || y <= other.y;
+    }
+
+    bool operator>(const Vector2D &other) const {
+        return x > other.x || y > other.y;
+    }
+
+    bool operator>=(const Vector2D &other) const {
+        return x >= other.x || y >= other.y;
+    }
+
     Vector2D operator +(const Vector2D &other) const {
         return Vector2D(x + other.x, y + other.y);
     }
