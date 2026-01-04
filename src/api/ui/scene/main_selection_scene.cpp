@@ -34,15 +34,17 @@ MainSelectionScene::MainSelectionScene() {
 
     m_display_widget = std::make_shared<TransitionWidget>(m_aligned_banner_widget, true);
 
-    m_main_menu = std::make_shared<TextSelectionWidget>(true, true);
-    m_size_menu = std::make_shared<TextSelectionWidget>(true, true);
-    m_difficulty_menu = std::make_shared<TextSelectionWidget>(true, true);
-    m_confirm_menu = std::make_shared<TextSelectionWidget>(false, true);
+    SelectionWidgetOptions selection_options;
+    selection_options.make_all_same_size = false;
+    m_main_menu = std::make_shared<SelectionWidget>(selection_options);
+    m_size_menu = std::make_shared<SelectionWidget>(selection_options);
+    m_difficulty_menu = std::make_shared<SelectionWidget>(selection_options);
+    m_confirm_menu = std::make_shared<SelectionWidget>(selection_options);
 
-    m_main_menu->add_option(u"Play", [this]() {
+    m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Play"), [this]() {
         go_to_stage(Stage::Size);
     });
-    m_main_menu->add_option(u"Settings", [this]() {
+    m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Settings"), [this]() {
         const std::shared_ptr<Widget> settings_widget = std::make_shared<Border>(
             std::make_shared<Padding>(std::make_shared<Empty>(Vector2D{4, 4}, u'#'), 1),
             BorderStyle::double_line_border());
@@ -57,49 +59,49 @@ MainSelectionScene::MainSelectionScene() {
         info.height_percentage = 0.5;
         info.width_percentage = 0.5;
         info.absolute_size = settings_widget->get_minimum_size();
-        show_dialogue(settings_widget, options, info);
+        show_dialogue(dialogue, info);
     });
-    m_main_menu->add_option(u"Exit", []() {
+    m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Exit"), []() {
     });
 
-    m_size_menu->add_option(u"Small", [this]() {
+    m_size_menu->add_option(std::make_shared<CustomDrawer>(u"Small"), [this]() {
         m_selected_size = Size::Small;
         update_display_widget();
         go_to_stage(Stage::Difficulty);
     });
-    m_size_menu->add_option(u"Medium", [this]() {
+    m_size_menu->add_option(std::make_shared<CustomDrawer>(u"Medium"), [this]() {
         m_selected_size = Size::Medium;
         update_display_widget();
         go_to_stage(Stage::Difficulty);
     });
-    m_size_menu->add_option(u"Large", [this]() {
+    m_size_menu->add_option(std::make_shared<CustomDrawer>(u"Large"), [this]() {
         m_selected_size = Size::Large;
         update_display_widget();
         go_to_stage(Stage::Difficulty);
     });
 
-    m_difficulty_menu->add_option(u"Very Easy", [this]() {
+    m_difficulty_menu->add_option(std::make_shared<CustomDrawer>(u"Very Easy"), [this]() {
         m_selected_difficulty = Difficulty::VeryEasy;
         update_display_widget();
         go_to_stage(Stage::Confirm);
     });
-    m_difficulty_menu->add_option(u"Easy", [this]() {
+    m_difficulty_menu->add_option(std::make_shared<CustomDrawer>(u"Easy"), [this]() {
         m_selected_difficulty = Difficulty::Easy;
         update_display_widget();
         go_to_stage(Stage::Confirm);
     });
-    m_difficulty_menu->add_option(u"Medium", [this]() {
+    m_difficulty_menu->add_option(std::make_shared<CustomDrawer>(u"Medium"), [this]() {
         m_selected_difficulty = Difficulty::Medium;
         update_display_widget();
         go_to_stage(Stage::Confirm);
     });
-    m_difficulty_menu->add_option(u"Hard", [this]() {
+    m_difficulty_menu->add_option(std::make_shared<CustomDrawer>(u"Hard"), [this]() {
         m_selected_difficulty = Difficulty::Hard;
         update_display_widget();
         go_to_stage(Stage::Confirm);
     });
 
-    m_confirm_menu->add_option(u"Play", [this]() {
+    m_confirm_menu->add_option(std::make_shared<CustomDrawer>(u"Play"), [this]() {
         std::shared_ptr<BoardWidget> board = create_board(m_selected_size, m_selected_difficulty);
         std::unique_ptr<Scene> game_scene = std::make_unique<GameScene>(board);
 
@@ -147,7 +149,7 @@ MainSelectionScene::MainSelectionScene() {
     go_to_stage(Stage::Main);
 }
 
-std::shared_ptr<TextSelectionWidget> MainSelectionScene::active_menu() const {
+std::shared_ptr<SelectionWidget> MainSelectionScene::active_menu() const {
     switch (m_stage) {
         case Stage::Main:
             return m_main_menu;
@@ -205,6 +207,11 @@ void MainSelectionScene::handle_key(const int key) {
                 go_to_stage(Stage::Difficulty);
                 break;
         }
+        return;
+    }
+
+    if (key == KEY_RIGHT) {
+        active_menu()->select();
         return;
     }
 

@@ -2,7 +2,7 @@
 
 #include "scene.hpp"
 
-#include "api/ui/widget/reactive_widgets/text_selection_widget.hpp"
+#include "api/ui/widget/reactive_widgets/selection_widget.hpp"
 #include "api/ui/widget/widgets/visibility.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
 
@@ -48,16 +48,16 @@ private:
     std::shared_ptr<Alignment> m_aligned_banner_widget;
     std::shared_ptr<TransitionWidget> m_display_widget;
 
-    std::shared_ptr<TextSelectionWidget> m_main_menu;
-    std::shared_ptr<TextSelectionWidget> m_size_menu;
-    std::shared_ptr<TextSelectionWidget> m_difficulty_menu;
-    std::shared_ptr<TextSelectionWidget> m_confirm_menu;
+    std::shared_ptr<SelectionWidget> m_main_menu;
+    std::shared_ptr<SelectionWidget> m_size_menu;
+    std::shared_ptr<SelectionWidget> m_difficulty_menu;
+    std::shared_ptr<SelectionWidget> m_confirm_menu;
 
     std::shared_ptr<Visibility> m_size_visible;
     std::shared_ptr<Visibility> m_difficulty_visible;
     std::shared_ptr<Visibility> m_confirm_visible;
 
-    std::shared_ptr<TextSelectionWidget> active_menu() const;
+    std::shared_ptr<SelectionWidget> active_menu() const;
 
     void go_to_stage(Stage stage);
 
