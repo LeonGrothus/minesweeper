@@ -40,6 +40,7 @@ void TransitionWidget::set_new_end(const std::shared_ptr<Widget> &new_end) {
     }
 
     m_is_transition_initialized = false;
+    m_start_widget = m_end_widget;
     m_end_widget = new_end;
     m_cover_indices.clear();
     m_uncover_indices.clear();

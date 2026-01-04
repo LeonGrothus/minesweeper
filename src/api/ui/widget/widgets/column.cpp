@@ -32,9 +32,10 @@ void Column::push_child(const std::shared_ptr<Widget> &child) {
 }
 
 CanvasElement Column::build_canvas_element(const Vector2D &size) {
-    if (const Vector2D min_size = get_minimum_size(); size < min_size || m_children.empty()) {
+    if (m_children.empty()) {
         return CanvasElement::empty(size, u' ');
     }
+
     const int spacing_total = m_spacing * (static_cast<int>(m_children.size()) - 1);
 
     int total_flex = 0;
@@ -75,15 +76,22 @@ CanvasElement Column::build_canvas_element(const Vector2D &size) {
             distributed_extra += flex_space_for_child;
         }
 
-        const Vector2D minimum_size{size.x, child_min_height};
-        const CanvasElement &child_element = child->build_widget(minimum_size);
-
+        Vector2D minimum_size{size.x, child_min_height};
+        
         const int padding = std::max(0, flex_space_for_child);
         const int half_difference = padding / 2;
         const int top_padding = ((static_cast<uint8_t>(m_alignment) >> 2) & 0b11) * half_difference;
         const int bottom_padding = ((static_cast<uint8_t>(m_alignment) >> 0) & 0b11) * half_difference;
-        const int extra_padding_top = ((padding % 2 != 0 && bottom_padding == 0) ? 1 : 0);
-        const int extra_padding_bottom = ((padding % 2 != 0 && bottom_padding != 0) ? 1 : 0);
+        int extra_padding_top = ((padding % 2 != 0 && bottom_padding == 0) ? 1 : 0);
+        int extra_padding_bottom = ((padding % 2 != 0 && bottom_padding != 0) ? 1 : 0);
+        
+        if(top_padding == 0 && bottom_padding == 0) {
+            extra_padding_top = 0;
+            extra_padding_bottom = 0;
+            minimum_size.y += padding;
+        }
+
+        const CanvasElement &child_element = child->build_widget(minimum_size);
 
         CanvasElement padded_child = child_element;
         const int total_top_padding = top_padding + extra_padding_top;

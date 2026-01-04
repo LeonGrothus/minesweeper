@@ -76,15 +76,21 @@ CanvasElement Row::build_canvas_element(const Vector2D &size) {
             distributed_extra += flex_space_for_child;
         }
 
-        const Vector2D minimum_size{child_min_width, size.y};
-        const CanvasElement &child_element = child->build_widget(minimum_size);
+        Vector2D minimum_size{child_min_width, size.y};
 
         const int padding = std::max(0, flex_space_for_child);
         const int half_difference = padding / 2;
         const int left_padding = ((static_cast<uint8_t>(m_alignment) >> 2) & 0b11) * half_difference;
         const int right_padding = ((static_cast<uint8_t>(m_alignment) >> 0) & 0b11) * half_difference;
-        const int extra_padding_left = ((padding % 2 != 0 && right_padding == 0) ? 1 : 0);
-        const int extra_padding_right = ((padding % 2 != 0 && right_padding != 0) ? 1 : 0);
+        int extra_padding_left = ((padding % 2 != 0 && right_padding == 0) ? 1 : 0);
+        int extra_padding_right = ((padding % 2 != 0 && right_padding != 0) ? 1 : 0);
+
+        if (left_padding == 0 && right_padding == 0) {
+            extra_padding_left = 0;
+            extra_padding_right = 0;
+            minimum_size.x += padding;
+        }
+        const CanvasElement &child_element = child->build_widget(minimum_size);
 
         CanvasElement padded_child = child_element;
         const int total_left_padding = left_padding + extra_padding_left;

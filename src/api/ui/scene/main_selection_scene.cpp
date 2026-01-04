@@ -143,7 +143,7 @@ MainSelectionScene::MainSelectionScene() {
     layout.push_back(m_display_widget);
     layout.push_back(selection_widget);
     std::shared_ptr<Column> main_column = std::make_shared<Column>(layout);
-    main_column->main_axis_alignment(ListAlignment::Center);
+    main_column->main_axis_alignment(ListAlignment::None);
 
     m_base_widget = std::make_shared<Border>(main_column, BorderStyle::double_line_border());
 
@@ -282,7 +282,5 @@ std::shared_ptr<BoardWidget> MainSelectionScene::create_board(const Size size,
 
 void MainSelectionScene::update_display_widget() const {
     m_display_widget->set_new_end(wrap_with_alignment(create_board_showcase(m_selected_size, m_selected_difficulty)));
-
-    m_display_widget->set_dirty();
     m_base_widget->set_dirty();
 }

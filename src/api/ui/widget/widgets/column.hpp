@@ -33,6 +33,6 @@ protected:
 private:
     std::vector<std::shared_ptr<Widget> > m_children;
     int m_spacing = 0;
-    ListAlignment m_alignment = ListAlignment::Start;
+    ListAlignment m_alignment = ListAlignment::None;
 };
 

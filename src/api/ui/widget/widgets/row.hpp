@@ -5,6 +5,7 @@
 #include <vector>
 
 enum class ListAlignment : uint8_t {
+    None = 0b00000000, // child gets the full space and does not get padded automatically
     Start = 0b00000010, // 0 left, 2 right
     Center = 0b00000101, // 1 left, 1 right
     End = 0b00001000 // 2 left, 0 right
@@ -38,6 +39,6 @@ protected:
 private:
     std::vector<std::shared_ptr<Widget> > m_children;
     int m_spacing = 0;
-    ListAlignment m_alignment = ListAlignment::Start;
+    ListAlignment m_alignment = ListAlignment::None;
 };
 
