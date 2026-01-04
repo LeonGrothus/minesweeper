@@ -20,6 +20,8 @@ private:
 
     void handle_win_lost();
 
+    void open_pause_menu();
+
     bool m_game_finished = false;
 
     std::shared_ptr<BoardWidget> m_board_widget;
