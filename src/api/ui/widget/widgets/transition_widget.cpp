@@ -7,7 +7,6 @@
 
 #include "empty.hpp"
 #include "api/ui/canvas/canvas_element.hpp"
-#include "api/ui/canvas/terminal_helper.hpp"
 
 TransitionWidget::TransitionWidget(const std::shared_ptr<Widget> &end, const bool fade_in)
     : m_transition_loop([this]() {
@@ -93,7 +92,7 @@ void TransitionWidget::update(const double delta_time) {
     if (m_to_change == 0 || m_char_reveal_time == 0) {
         return;
     }
-    
+
     m_transition_loop.update(delta_time);
 }
 

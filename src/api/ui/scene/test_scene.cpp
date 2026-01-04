@@ -3,11 +3,11 @@
 
 #include <memory>
 
-#include "api/ui/widget/widgets/alignment.hpp"
 #include "api/ui/widget/widgets/custom_drawer.hpp"
-#include "api/ui/widget/widgets/timer.hpp"
-#include "api/ui/widget/widgets/boards/board_2d_widget.hpp"
+#include "api/ui/widget/widgets/empty.hpp"
+#include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/boards/board_widget.hpp"
+#include "api/ui/widget/widgets/border/border.hpp"
 
 class Border;
 
@@ -31,9 +31,10 @@ TestScene::TestScene() {
         BorderStyle::double_line_border());
     DialogueOptions options;
     options.use_transition = true;
+    const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(settings_widget, options);
     StackInfo info;
     info.height_percentage = 0.5;
     info.width_percentage = 0.5;
     info.absolute_size = settings_widget->get_minimum_size();
-    show_dialogue(settings_widget, options, info);
+    show_dialogue(dialogue, info);
 }

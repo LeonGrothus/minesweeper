@@ -1,17 +1,13 @@
 #pragma once
 #include <algorithm>
 
-#include "api/ui/canvas/terminal_helper.hpp"
 #include "api/ui/widget/widget.hpp"
 #include "dialogue.hpp"
 #include <memory>
 #include <vector>
 #include <functional>
 
-#include "api/ui/widget/widgets/empty.hpp"
-#include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/stack.hpp"
-#include "api/ui/widget/widgets/border/border.hpp"
 
 class Scene {
 public:
@@ -103,10 +99,8 @@ public:
         return m_base_widget;
     }
 
-    void show_dialogue(std::shared_ptr<Widget> content, const DialogueOptions &options = DialogueOptions(),
-                       const StackInfo &info = StackInfo()) {
+    void show_dialogue(std::shared_ptr<Dialogue> dialogue, const StackInfo &info = StackInfo()) {
         ensure_stack_initialized();
-        std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(std::move(content), options);
         m_dialogue_stack_widget->push_new_widget(dialogue->get_widget(), info);
         m_dialogue_stack.push_back(std::move(dialogue));
 

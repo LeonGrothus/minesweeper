@@ -49,6 +49,10 @@ MainSelectionScene::MainSelectionScene() {
         DialogueOptions options;
         options.use_transition = true;
         options.update_background = true;
+        const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(settings_widget, options);
+        dialogue->set_on_dismiss([this]() {
+            m_main_menu->unselect();
+        });
         StackInfo info;
         info.height_percentage = 0.5;
         info.width_percentage = 0.5;
