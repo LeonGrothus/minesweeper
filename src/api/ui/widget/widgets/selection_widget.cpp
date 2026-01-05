@@ -39,9 +39,15 @@ std::shared_ptr<Widget> SelectionWidget::get_selected_option() const {
     return nullptr;
 }
 
+SelectionWidgetOptions &SelectionWidget::get_selection_options() {
+    return m_options;
+}
+
 void SelectionWidget::select() {
     m_select_options_func[get_selected_index()]();
-    m_selected = true;
+    if (!m_options.fake_select) {
+        m_selected = true;
+    }
     m_highlighted = true;
 }
 

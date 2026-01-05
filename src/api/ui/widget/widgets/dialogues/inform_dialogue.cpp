@@ -27,6 +27,20 @@ InformDialogue::InformDialogue(std::shared_ptr<Widget> main_widget, const std::u
     m_contructed_widget = std::make_shared<Border>(std::make_shared<Padding>(column, 3, 3, 1, 1), BorderStyle::double_line_border());
 }
 
+void InformDialogue::add_options(const std::u16string &option, const std::function<void()> &callback) {
+    m_selection->add_option(std::make_shared<CustomDrawer>(option), callback);
+
+    SelectionWidgetOptions &options = m_selection->get_selection_options();
+    options.is_vertical = true;
+    options.spacing_options = 0;
+
+    m_is_dirty = true;
+}
+
+void InformDialogue::set_selectable(const bool selectable) const {
+    m_selection->get_selection_options().fake_select = !selectable;
+}
+
 Vector2D InformDialogue::get_minimum_size() const {
     return m_contructed_widget->get_minimum_size();
 }

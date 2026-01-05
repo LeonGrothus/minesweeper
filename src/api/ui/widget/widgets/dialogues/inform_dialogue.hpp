@@ -10,7 +10,12 @@ public:
     explicit InformDialogue(std::shared_ptr<Widget> main_widget, const std::u16string &left_text, const std::u16string &right_text,
                             const std::function<void()> &left_callback, const std::function<void()> &right_callback);
 
+    void add_options(const std::u16string &option, const std::function<void()> &callback);
+
+    void set_selectable(bool selectable) const;
+
     Vector2D get_minimum_size() const override;
+
 
     void keyboard_press(int key) override;
 

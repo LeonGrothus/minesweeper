@@ -14,6 +14,8 @@ struct SelectionWidgetOptions {
     bool blink_highlighted = true;
 
     bool select_on_enter = true;
+    //fake select will run the callback but don't select the widget
+    bool fake_select = false;
     bool update_widget_after_selected = true;
     bool parse_keyboard_events_to_selected = true;
     bool parse_keyboard_events_to_hovered = false;
@@ -39,6 +41,8 @@ public:
     int get_selected_index() const;
 
     std::shared_ptr<Widget> get_selected_option() const;
+
+    SelectionWidgetOptions &get_selection_options();
 
     void select();
 

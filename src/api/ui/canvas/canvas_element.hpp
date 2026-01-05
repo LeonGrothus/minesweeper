@@ -52,6 +52,7 @@ struct Vector2D {
     }
 };
 
+//are set in color_manager
 enum class ColorRole : uint8_t {
     Default = 0,
     Hidden,
