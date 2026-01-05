@@ -21,6 +21,7 @@
 #include "api/ui/widget/widgets/banner_widget.hpp"
 #include "api/ui/widget/widgets/rainbow_switcher.hpp"
 #include "api/ui/widget/widgets/boards/board_showcase_widget.hpp"
+#include "api/ui/widget/widgets/dialogues/credits_dialogue.hpp"
 #include "api/ui/widget/widgets/dialogues/settings_dialogue.hpp"
 
 MainSelectionScene::MainSelectionScene() {
@@ -54,8 +55,24 @@ MainSelectionScene::MainSelectionScene() {
         StackInfo stack_info;
         stack_info.height_percentage = 0.4;
         stack_info.width_percentage = 0.3;
+        stack_info.absolute_size = settings_dialogue_widget->get_minimum_size();
 
         const std::shared_ptr<Dialogue> settings_dialogue = std::make_shared<Dialogue>(settings_dialogue_widget, dialogue_options);
+        show_dialogue(settings_dialogue, stack_info);
+
+        settings_dialogue->set_on_dismiss([this]() {
+            m_main_menu->unselect();
+        });
+    });
+    m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Credits"), [this]() {
+        std::shared_ptr<CreditsDialogue> settings_dialogue_widget = std::make_shared<CreditsDialogue>();
+
+        StackInfo stack_info;
+        stack_info.height_percentage = 0.4;
+        stack_info.width_percentage = 0.3;
+        stack_info.absolute_size = settings_dialogue_widget->get_minimum_size();
+
+        const std::shared_ptr<Dialogue> settings_dialogue = std::make_shared<Dialogue>(settings_dialogue_widget, DialogueOptions());
         show_dialogue(settings_dialogue, stack_info);
 
         settings_dialogue->set_on_dismiss([this]() {

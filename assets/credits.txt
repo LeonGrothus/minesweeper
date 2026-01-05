@@ -1,0 +1,3 @@
+    Created by Leon    
+Minesweeper Game in C++
+  With ncurses library 
