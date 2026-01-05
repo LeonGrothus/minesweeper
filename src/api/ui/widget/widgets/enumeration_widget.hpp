@@ -1,4 +1,5 @@
 #pragma once
+#include <bitset>
 #include <memory>
 
 #include "api/ui/widget/widget.hpp"

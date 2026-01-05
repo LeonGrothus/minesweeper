@@ -16,11 +16,14 @@ Settings &SettingsManager::get_settings_mutable() {
     return m_settings;
 }
 
+//I wanted to serialize the data as JSON, but I didn't want to use external libraries
+//or implement serialization and deserialization myself, so this has to be enough.
+
 void SettingsManager::save_to_file() const {
     std::string data(sizeof(Settings), ' ');
     std::memcpy(data.data(), &m_settings, sizeof(Settings));
     if (!m_file_manager.write_string_content(data)) {
-        show_temporary_message("SAVE NOT WORKING");
+        show_temporary_message("SAVE NOT WORKING", 1000);
     }
 }
 

@@ -15,7 +15,7 @@ CreditsDialogue::CreditsDialogue() {
     reader.read_string_content(content);
 
     const std::shared_ptr<RainbowSwitcher> credits_rainbow = std::make_shared<RainbowSwitcher>(
-        std::make_shared<CustomDrawer>(utf8_to_utf16(content), '\n'), get_all_colors(), true);
+        std::make_shared<CustomDrawer>(utf8_to_utf16(content), '\n'), get_all_colors_except_black(), true);
 
     const std::shared_ptr<Widget> credits_text = std::make_shared<Alignment>(credits_rainbow, MIDDLE_CENTER);
     m_contructed_widget = std::make_shared<Border>(std::make_shared<Padding>(credits_text, 3, 3, 1, 1), BorderStyle::double_line_border());

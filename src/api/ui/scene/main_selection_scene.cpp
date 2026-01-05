@@ -31,7 +31,7 @@ MainSelectionScene::MainSelectionScene() {
     reader.read_string_content(content);
 
     const std::shared_ptr<RainbowSwitcher> banner_rainbow = std::make_shared<RainbowSwitcher>(
-        std::make_shared<BannerWidget>(content), get_all_colors(), true);
+        std::make_shared<BannerWidget>(content), get_all_colors_except_black(), false);
 
     m_aligned_banner_widget = wrap_with_alignment(banner_rainbow);
 

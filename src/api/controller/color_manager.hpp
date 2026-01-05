@@ -12,5 +12,5 @@ void set_terminal_colored();
 
 void set_terminal_monochrome(short role);
 
-std::vector<ColorRole> get_all_colors();
+std::vector<ColorRole> get_all_colors_except_black();
 

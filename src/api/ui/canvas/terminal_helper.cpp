@@ -1,6 +1,5 @@
 #include "terminal_helper.hpp"
 #include "api/ui/canvas/canvas_element.hpp"
-#include <array>
 #include <curses.h>
 #include <string>
 #include <string_view>
@@ -156,7 +155,11 @@ void position_element_on_canvas(const CanvasElement &element, const Position pos
     }
 }
 
-// void render_to_ncurses(const std::u16string &to_render, const Vector2D size) {
+// void render_to_screen_c_out(const std::u16string &to_render) {
+//     std::cout << utf16_to_utf8(to_render) << std::flush;
+// }
+
+// void render_to_ncurses_uncolored(const std::u16string &to_render, const Vector2D size) {
 //     clear();
 //     for (int y = 0; y < size.y; y++) {
 //         const int offset = y * size.x;
@@ -168,7 +171,6 @@ void position_element_on_canvas(const CanvasElement &element, const Position pos
 // }
 
 void render_to_ncurses(const CanvasElement &element, const Vector2D size) {
-    clear();
     const std::u16string &chars = element.get_canvas_element();
     const std::vector<uint8_t> &roles = element.get_color_roles();
     const auto [render_size_x, render_size_y] = element.get_element_size();
@@ -224,6 +226,7 @@ void render_to_ncurses_buffered(const CanvasElement &element, const Vector2D siz
             if (color_active) {
                 attroff(COLOR_PAIR(current_color));
                 color_active = false;
+                current_color = -1;
             }
             continue;
         }

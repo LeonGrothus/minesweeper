@@ -1,7 +1,4 @@
 #pragma once
-#include <optional>
-
-#include "api/helper/looped_execution_wrapper.hpp"
 #include "api/ui/widget/widget.hpp"
 
 class Timer : public Widget {
@@ -44,5 +41,5 @@ private:
 
     double m_blink_time = 1000; //ms
 
-    std::u16string m_description_text = u"";
+    std::u16string m_description_text;
 };

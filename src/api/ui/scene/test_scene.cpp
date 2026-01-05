@@ -3,13 +3,7 @@
 
 #include <memory>
 
-#include "api/ui/widget/widgets/custom_drawer.hpp"
 #include "api/ui/widget/widgets/empty.hpp"
-#include "api/ui/widget/widgets/padding.hpp"
-#include "api/ui/widget/widgets/boards/board_widget.hpp"
-#include "api/ui/widget/widgets/border/border.hpp"
-#include "api/ui/widget/widgets/dialogues/settings_dialogue.hpp"
-#include "api/ui/widget/widgets/settings/list_setting.hpp"
 
 class Border;
 

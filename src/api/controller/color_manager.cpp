@@ -91,3 +91,16 @@ std::vector<ColorRole> get_all_colors() {
         ColorRole::Hidden //white
     };
 }
+
+std::vector<ColorRole> get_all_colors_except_black() {
+    return std::vector<ColorRole>{
+        ColorRole::Default,
+        ColorRole::Mine, //red
+        ColorRole::Flag, //yellow
+        ColorRole::Number2, //green
+        ColorRole::Number1, //cyan
+        ColorRole::Number4, //blue
+        ColorRole::Number5, //magenta
+        ColorRole::Hidden //white
+    };
+}

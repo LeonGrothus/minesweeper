@@ -3,10 +3,12 @@
 #include <ncurses.h>
 
 #include "main_selection_scene.hpp"
+#include "api/controller/color_manager.hpp"
 #include "api/helper/conversion_helper.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
 #include "api/ui/widget/widgets/column.hpp"
 #include "api/ui/widget/widgets/padding.hpp"
+#include "api/ui/widget/widgets/rainbow_switcher.hpp"
 #include "api/ui/widget/widgets/row.hpp"
 #include "api/ui/widget/widgets/timer.hpp"
 #include "api/ui/widget/widgets/border/border.hpp"
@@ -118,14 +120,14 @@ void GameScene::handle_win_lost() {
         pop_dialogue();
     };
 
-    std::u16string dialogue_text;
+    std::shared_ptr<Widget> main_dialogue;
     if (is_game_won) {
-        dialogue_text = u"You Won!\nIt took " + time;
+        main_dialogue = std::make_shared<RainbowSwitcher>(std::make_shared<CustomDrawer>(u"You Won!\nIt took " + time, u'\n'),
+                                                          get_all_colors_except_black(), true);
     } else {
-        dialogue_text = u"You lost after " + time;
+        main_dialogue = std::make_shared<CustomDrawer>(u"You lost after " + time, u'\n');
     }
 
-    std::shared_ptr<Widget> main_dialogue = std::make_shared<CustomDrawer>(dialogue_text, u'\n');
 
     std::shared_ptr<InformDialogue> dialogue_widget = std::make_shared<InformDialogue>(
         main_dialogue, u"Return to Menu", u"View Board", return_to_menu, view_board);

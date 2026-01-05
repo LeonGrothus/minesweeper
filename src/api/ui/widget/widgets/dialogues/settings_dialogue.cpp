@@ -79,7 +79,7 @@ CanvasElement SettingsDialogue::build_canvas_element(const Vector2D &size) {
 
 DialogueOptions SettingsDialogue::getDialogueOptions() {
     DialogueOptions options;
-    options.update_background = false;
+    options.update_background = true;
     return options;
 }
 
