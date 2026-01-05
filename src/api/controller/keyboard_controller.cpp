@@ -2,30 +2,8 @@
 
 #include <clocale>
 #include <ncurses.h>
-#include <cstdlib>
 
-#include "api/ui/canvas/color_manager.hpp"
-#include "api/ui/canvas/terminal_helper.hpp"
-
-KeyboardController::KeyboardController() {
-    setlocale(LC_ALL, "");
-    if (!getenv("TERM")) {
-        setenv("TERM", "xterm-256color", 1);
-    }
-
-    initscr();
-
-    //remove cursor
-    curs_set(0);
-
-    init_terminal_colors();
-
-    cbreak();
-    noecho();
-    keypad(stdscr, TRUE);
-    nodelay(stdscr, TRUE);
-    set_escdelay(25);
-}
+#include "color_manager.hpp"
 
 KeyboardController::~KeyboardController() {
     endwin();

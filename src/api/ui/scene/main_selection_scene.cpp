@@ -17,14 +17,14 @@
 #include "api/ui/widget/widgets/border/border_style.hpp"
 #include "api/game/board/board_2d.hpp"
 #include "../widget/widgets/boards/board_widget.hpp"
-#include "api/ui/canvas/color_manager.hpp"
+#include "../../controller/color_manager.hpp"
 #include "api/ui/widget/widgets/banner_widget.hpp"
 #include "api/ui/widget/widgets/rainbow_switcher.hpp"
 #include "api/ui/widget/widgets/boards/board_showcase_widget.hpp"
 #include "api/ui/widget/widgets/dialogues/settings_dialogue.hpp"
 
 MainSelectionScene::MainSelectionScene() {
-    const FileReader reader("assets/banner.txt");
+    const FileManager reader("assets/banner.txt");
     std::string content;
     reader.read_string_content(content);
 

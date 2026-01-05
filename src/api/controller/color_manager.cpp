@@ -1,9 +1,9 @@
-#include "color_manager.hpp"
+#include "../ui/canvas/color_manager.hpp"
 
 #include <array>
 #include <ncurses.h>
 
-#include "canvas_element.hpp"
+#include "../ui/canvas/canvas_element.hpp"
 
 static std::array<short, static_cast<size_t>(ColorRole::Count)> g_color_pairs{};
 

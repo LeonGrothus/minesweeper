@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <vector>
 
-#include "canvas_element.hpp"
+#include "../ui/canvas/canvas_element.hpp"
 
 short get_color_for_role(uint8_t role);
 

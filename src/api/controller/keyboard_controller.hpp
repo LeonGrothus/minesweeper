@@ -3,11 +3,9 @@
 
 class KeyboardController {
 public:
-	KeyboardController();
+    ~KeyboardController();
 
-	~KeyboardController();
+    int get_key() const;
 
-	int get_key() const;
-
-	std::vector<int> get_buffered() const;
+    std::vector<int> get_buffered() const;
 };

@@ -2,9 +2,9 @@
 
 #include <string>
 
-class FileReader {
+class FileManager {
 public:
-    explicit FileReader(const std::string &filePath);
+    explicit FileManager(const std::string &filePath);
 
     bool file_exists() const;
 

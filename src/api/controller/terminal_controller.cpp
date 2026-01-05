@@ -6,6 +6,7 @@
 #include <curses.h>
 #include <memory>
 
+#include "color_manager.hpp"
 #include "api/ui/scene/transition_scene.hpp"
 
 TerminalController::TerminalController(std::unique_ptr<Scene> default_scene)
@@ -13,6 +14,7 @@ TerminalController::TerminalController(std::unique_ptr<Scene> default_scene)
       m_current_millis(0),
       m_terminal_size(get_terminal_size()),
       m_current_scene(std::move(default_scene)) {
+    init_terminal();
 }
 
 void TerminalController::run() {
@@ -54,6 +56,26 @@ void TerminalController::run() {
 
         usleep(static_cast<int>(FRAME_TIME + 1) * 1000);
     }
+}
+
+void TerminalController::init_terminal() {
+    setlocale(LC_ALL, "");
+    if (!getenv("TERM")) {
+        setenv("TERM", "xterm-256color", 1);
+    }
+
+    initscr();
+
+    //remove cursor
+    curs_set(0);
+
+    init_terminal_colors();
+
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, TRUE);
+    set_escdelay(25);
 }
 
 void TerminalController::draw_scene() const {

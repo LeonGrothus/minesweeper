@@ -18,6 +18,8 @@ public:
     void run();
 
 private:
+    void init_terminal();
+
     void draw_scene() const;
 
     void update_scene(double delta_time) const;

@@ -1,5 +1,6 @@
 #include "settings_dialogue.hpp"
 
+#include "../../../../controller/color_manager.hpp"
 #include "api/ui/widget/reactive_widgets/selection_widget.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
 #include "api/ui/widget/widgets/column.hpp"
@@ -19,9 +20,15 @@ SettingsDialogue::SettingsDialogue() {
     const std::shared_ptr<SelectionWidget> list = std::make_shared<SelectionWidget>(selection_options);
 
     const std::shared_ptr<ListSetting> color_option = std::make_shared<ListSetting>(u"Color Option:");
-    color_option->add_option(ListSettingOption(u"Colorful"));
-    color_option->add_option(ListSettingOption(u"Monochrome"));
-    const std::shared_ptr<BoolSetting> show_millis = std::make_shared<BoolSetting>(u"Time in ms:");
+    color_option->add_option(ListSettingOption(u"Colorful", []() {
+        set_terminal_colored();
+    }));
+    color_option->add_option(ListSettingOption(u"Monochrome", []() {
+        set_terminal_monochrome(1);
+    }));
+    const std::shared_ptr<BoolSetting> show_millis = std::make_shared<BoolSetting>(u"Time in ms:", []() {
+                                                                                   }, []() {
+                                                                                   });
 
     list->add_option(color_option);
     list->add_option(show_millis);

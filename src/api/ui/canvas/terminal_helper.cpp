@@ -5,7 +5,7 @@
 #include <string>
 #include <string_view>
 
-#include "color_manager.hpp"
+#include "../../controller/color_manager.hpp"
 #include "api/helper/conversion_helper.hpp"
 
 #if defined(_WIN32)
