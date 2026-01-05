@@ -4,6 +4,8 @@
 #include "api/ui/scene/scene.hpp"
 #include <memory>
 
+#include "settings_manager.hpp"
+
 
 constexpr static double UPDATE_RATE = 60.0;
 constexpr static double FRAME_TIME = 1000.0 / UPDATE_RATE;
@@ -15,14 +17,18 @@ class TerminalController {
 public:
     explicit TerminalController(std::unique_ptr<Scene> default_scene);
 
+    ~TerminalController();
+
     void run();
 
 private:
-    void init_terminal();
+    static void init_terminal();
 
     void draw_scene() const;
 
     void update_scene(double delta_time) const;
+
+    std::shared_ptr<SettingsManager> m_settings_manager;
 
     bool m_running;
     double m_current_millis;

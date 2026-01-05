@@ -18,6 +18,8 @@ public:
 
     void set_blink_time(double blink_time);
 
+    void set_show_millis(bool show_millis);
+
     Vector2D get_minimum_size() const override;
 
     void keyboard_press(int key) override;
@@ -36,7 +38,7 @@ private:
 
     bool m_blink;
     bool m_show_column = false;
-    bool m_show_millis;
+    bool m_show_millis = false;
 
     bool m_running = true;
 

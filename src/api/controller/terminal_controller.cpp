@@ -15,6 +15,18 @@ TerminalController::TerminalController(std::unique_ptr<Scene> default_scene)
       m_terminal_size(get_terminal_size()),
       m_current_scene(std::move(default_scene)) {
     init_terminal();
+
+    FileManager manager(FILE_LOCATION);
+    m_settings_manager = std::make_shared<SettingsManager>(manager);
+
+    m_current_scene->set_settings_manager(m_settings_manager);
+}
+
+TerminalController::~TerminalController() {
+    if (m_settings_manager) {
+        m_settings_manager->save_to_file();
+    }
+    endwin();
 }
 
 void TerminalController::run() {
@@ -35,6 +47,9 @@ void TerminalController::run() {
 
             if (m_current_scene->is_exit_requested()) {
                 m_running = false;
+                if (m_settings_manager) {
+                    m_settings_manager->save_to_file();
+                }
                 return;
             }
 
@@ -45,6 +60,7 @@ void TerminalController::run() {
                 } else {
                     m_current_scene = std::move(next_scene);
                 }
+                m_current_scene->set_settings_manager(m_settings_manager);
                 m_current_scene->set_dirty();
                 scene_changed = true;
             }

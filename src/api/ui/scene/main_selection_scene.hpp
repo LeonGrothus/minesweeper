@@ -2,7 +2,7 @@
 
 #include "scene.hpp"
 
-#include "api/ui/widget/reactive_widgets/selection_widget.hpp"
+#include "../widget/widgets/selection_widget.hpp"
 #include "api/ui/widget/widgets/visibility.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
 

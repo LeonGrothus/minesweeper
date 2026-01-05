@@ -73,6 +73,10 @@ void GameScene::handle_key(const int key) {
     }
 }
 
+void GameScene::settings_manager_set() {
+    m_timer_widget->set_show_millis(m_settings_manager->get_settings().show_milliseconds);
+}
+
 void GameScene::handle_update(const double delta_time) {
     Scene::handle_update(delta_time);
     update_displayed_values();

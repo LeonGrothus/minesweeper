@@ -1,11 +1,12 @@
 #pragma once
 #include <memory>
 
+#include "api/controller/settings_manager.hpp"
 #include "api/ui/widget/widget.hpp"
 
 class SettingsDialogue : public Widget {
 public:
-    explicit SettingsDialogue();
+    explicit SettingsDialogue(const std::shared_ptr<SettingsManager> &settings_manager);
 
     Vector2D get_minimum_size() const override;
 

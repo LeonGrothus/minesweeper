@@ -35,6 +35,10 @@ void Timer::set_blink_time(const double blink_time) {
     m_blink_time = blink_time;
 }
 
+void Timer::set_show_millis(const bool show_millis) {
+    m_show_millis = show_millis;
+}
+
 Vector2D Timer::get_minimum_size() const {
     int x_size = std::max(digits(m_current_minutes), 2) + 1 + 2;
     if (m_show_millis) {

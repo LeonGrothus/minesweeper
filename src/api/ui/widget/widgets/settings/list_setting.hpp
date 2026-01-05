@@ -38,6 +38,8 @@ public:
 
     int get_index_of_option(const ListSettingOption &option) const;
 
+    void set_current_index(int index);
+
     const ListSettingOption &get_current_option();
 
     void set_description_spacing(int spacing);

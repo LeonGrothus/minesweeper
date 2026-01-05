@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "api/ui/widget/widget.hpp"
-#include "api/ui/widget/reactive_widgets/selection_widget.hpp"
+#include "../selection_widget.hpp"
 
 class InformDialogue : public Widget {
 public:

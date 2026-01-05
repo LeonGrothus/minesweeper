@@ -46,7 +46,7 @@ MainSelectionScene::MainSelectionScene() {
         go_to_stage(Stage::Size);
     });
     m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Settings"), [this]() {
-        std::shared_ptr<SettingsDialogue> settings_dialogue_widget = std::make_shared<SettingsDialogue>();
+        std::shared_ptr<SettingsDialogue> settings_dialogue_widget = std::make_shared<SettingsDialogue>(m_settings_manager);
 
         DialogueOptions dialogue_options;
         dialogue_options.update_background = false;

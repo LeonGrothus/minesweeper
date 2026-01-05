@@ -46,6 +46,10 @@ int ListSetting::get_index_of_option(const ListSettingOption &option) const {
     return -1;
 }
 
+void ListSetting::set_current_index(const int index) {
+    m_current_option = std::clamp(index, 0, static_cast<int>(m_options.size()) - 1);
+}
+
 const ListSettingOption &ListSetting::get_current_option() {
     return m_options[m_current_option];
 }

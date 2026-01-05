@@ -7,6 +7,7 @@
 #include <vector>
 #include <functional>
 
+#include "api/controller/settings_manager.hpp"
 #include "api/ui/widget/widgets/stack.hpp"
 
 class Scene {
@@ -107,6 +108,11 @@ public:
         return m_base_widget;
     }
 
+    void set_settings_manager(const std::shared_ptr<SettingsManager> &settings_manager) {
+        m_settings_manager = settings_manager;
+        settings_manager_set();
+    }
+
     void show_dialogue(std::shared_ptr<Dialogue> dialogue, const StackInfo &info = StackInfo()) {
         ensure_stack_initialized();
         m_dialogue_stack_widget->push_new_widget(dialogue->get_widget(), info);
@@ -134,6 +140,11 @@ protected:
     virtual void handle_update(const double delta_time) {
         m_base_widget->update(delta_time);
     }
+
+    virtual void settings_manager_set() {
+    }
+
+    std::shared_ptr<SettingsManager> m_settings_manager;
 
     std::shared_ptr<Widget> m_base_widget;
     std::unique_ptr<Scene> m_pending_scene;

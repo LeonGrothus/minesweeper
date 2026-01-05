@@ -1,4 +1,5 @@
-#include "../ui/canvas/color_manager.hpp"
+
+#include "color_manager.hpp"
 
 #include <array>
 #include <ncurses.h>

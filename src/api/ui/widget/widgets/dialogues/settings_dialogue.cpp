@@ -1,7 +1,7 @@
 #include "settings_dialogue.hpp"
 
 #include "../../../../controller/color_manager.hpp"
-#include "api/ui/widget/reactive_widgets/selection_widget.hpp"
+#include "../selection_widget.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
 #include "api/ui/widget/widgets/column.hpp"
 #include "api/ui/widget/widgets/custom_drawer.hpp"
@@ -10,7 +10,7 @@
 #include "api/ui/widget/widgets/settings/bool_setting.hpp"
 #include "api/ui/widget/widgets/settings/list_setting.hpp"
 
-SettingsDialogue::SettingsDialogue() {
+SettingsDialogue::SettingsDialogue(const std::shared_ptr<SettingsManager> &settings_manager) {
     const std::shared_ptr<CustomDrawer> settings_text = std::make_shared<CustomDrawer>(u"Settings menu!");
 
     SelectionWidgetOptions selection_options;
@@ -20,15 +20,24 @@ SettingsDialogue::SettingsDialogue() {
     const std::shared_ptr<SelectionWidget> list = std::make_shared<SelectionWidget>(selection_options);
 
     const std::shared_ptr<ListSetting> color_option = std::make_shared<ListSetting>(u"Color Option:");
-    color_option->add_option(ListSettingOption(u"Colorful", []() {
-        set_terminal_colored();
-    }));
-    color_option->add_option(ListSettingOption(u"Monochrome", []() {
+    color_option->add_option(ListSettingOption(u"Monochrome", [settings_manager]() {
         set_terminal_monochrome(1);
+        settings_manager->get_settings_mutable().use_color = false;
     }));
-    const std::shared_ptr<BoolSetting> show_millis = std::make_shared<BoolSetting>(u"Time in ms:", []() {
-                                                                                   }, []() {
-                                                                                   });
+    color_option->add_option(ListSettingOption(u"Colorful", [settings_manager]() {
+        set_terminal_colored();
+        settings_manager->get_settings_mutable().use_color = true;
+    }));
+    const std::shared_ptr<BoolSetting> show_millis =
+            std::make_shared<BoolSetting>(u"Time in ms:",
+                                          [settings_manager]() {
+                                              settings_manager->get_settings_mutable().show_milliseconds = true;
+                                          }, [settings_manager]() {
+                                              settings_manager->get_settings_mutable().show_milliseconds = false;
+                                          });
+
+    color_option->set_current_index(settings_manager->get_settings().use_color);
+    show_millis->set_current_index(settings_manager->get_settings().show_milliseconds);
 
     list->add_option(color_option);
     list->add_option(show_millis);

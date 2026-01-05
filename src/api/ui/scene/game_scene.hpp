@@ -7,13 +7,15 @@
 class Column;
 
 class GameScene : public Scene {
-protected:
-    void handle_key(int key) override;
-
 public:
     void handle_update(double delta_time) override;
 
     explicit GameScene(const std::shared_ptr<BoardWidget> &to_play);
+
+protected:
+    void handle_key(int key) override;
+
+    void settings_manager_set() override;
 
 private:
     void update_displayed_values();
