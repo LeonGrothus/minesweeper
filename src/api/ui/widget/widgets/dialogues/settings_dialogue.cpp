@@ -76,3 +76,20 @@ bool SettingsDialogue::is_dirty() const {
 CanvasElement SettingsDialogue::build_canvas_element(const Vector2D &size) {
     return m_contructed_widget->build_widget(size);
 }
+
+DialogueOptions SettingsDialogue::getDialogueOptions() {
+    DialogueOptions options;
+    options.update_background = false;
+    return options;
+}
+
+StackInfo SettingsDialogue::getStackInfo() {
+    StackInfo stack_info;
+    stack_info.height_percentage = 0.4;
+    stack_info.width_percentage = 0.3;
+    return stack_info;
+}
+
+std::shared_ptr<Dialogue> SettingsDialogue::getDialogue(const std::shared_ptr<SettingsManager> &settings_manager) {
+    return std::make_shared<Dialogue>(std::make_shared<SettingsDialogue>(settings_manager), getDialogueOptions());
+}

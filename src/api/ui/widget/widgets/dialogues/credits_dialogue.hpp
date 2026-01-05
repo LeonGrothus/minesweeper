@@ -1,7 +1,9 @@
 #pragma once
 #include <memory>
 
+#include "api/ui/scene/dialogue.hpp"
 #include "api/ui/widget/widget.hpp"
+#include "api/ui/widget/widgets/stack.hpp"
 
 class CreditsDialogue : public Widget {
 public:
@@ -14,6 +16,12 @@ public:
     void update(double delta_time) override;
 
     bool is_dirty() const override;
+
+    static DialogueOptions getDialogueOptions();
+
+    static StackInfo getStackInfo();
+
+    static std::shared_ptr<Dialogue> getDialogue();
 
 protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;

@@ -53,35 +53,14 @@ MainSelectionScene::MainSelectionScene() {
         std::shared_ptr<SettingsDialogue> settings_dialogue_widget = std::make_shared<SettingsDialogue>(m_settings_manager);
 
         const std::shared_ptr<ListSetting> show_controls = std::make_shared<ListSetting>(u"View Controls");
-        std::function<void()> open_controls_dialogue = [this]() {
-            std::shared_ptr<ControlsDialogue> controls_widget = std::make_shared<ControlsDialogue>();
-
-            DialogueOptions dialogue_options;
-            dialogue_options.update_background = false;
-            const std::shared_ptr<Dialogue> controls_dialogue = std::make_shared<Dialogue>(controls_widget, dialogue_options);
-
-            StackInfo stack_info;
-            stack_info.height_percentage = 0.8;
-            stack_info.width_percentage = 0.8;
-            stack_info.absolute_size = controls_widget->get_minimum_size();
-            stack_info.take_focus = true;
-            show_dialogue(controls_dialogue, stack_info);
-        };
-        show_controls->add_option(ListSettingOption(u" ", [open_controls_dialogue]() {
-            open_controls_dialogue();
+        show_controls->add_option(ListSettingOption(u" ", [this]() {
+            show_dialogue(ControlsDialogue::getDialogue(), ControlsDialogue::getStackInfo());
         }));
         settings_dialogue_widget->add_custom_option(show_controls);
 
-        DialogueOptions dialogue_options;
-        dialogue_options.update_background = false;
-
-        StackInfo stack_info;
-        stack_info.height_percentage = 0.4;
-        stack_info.width_percentage = 0.3;
-        stack_info.absolute_size = settings_dialogue_widget->get_minimum_size();
-
-        const std::shared_ptr<Dialogue> settings_dialogue = std::make_shared<Dialogue>(settings_dialogue_widget, dialogue_options);
-        show_dialogue(settings_dialogue, stack_info);
+        const std::shared_ptr<Dialogue> settings_dialogue = std::make_shared<Dialogue>(
+            settings_dialogue_widget, SettingsDialogue::getDialogueOptions());
+        show_dialogue(settings_dialogue, SettingsDialogue::getStackInfo());
 
         settings_dialogue->set_on_dismiss([this]() {
             m_main_menu->unselect();
@@ -89,14 +68,10 @@ MainSelectionScene::MainSelectionScene() {
     });
     m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Credits"), [this]() {
         std::shared_ptr<CreditsDialogue> settings_dialogue_widget = std::make_shared<CreditsDialogue>();
+        const std::shared_ptr<Dialogue> settings_dialogue = std::make_shared<Dialogue>(
+            settings_dialogue_widget, CreditsDialogue::getDialogueOptions());
 
-        StackInfo stack_info;
-        stack_info.height_percentage = 0.4;
-        stack_info.width_percentage = 0.3;
-        stack_info.absolute_size = settings_dialogue_widget->get_minimum_size();
-
-        const std::shared_ptr<Dialogue> settings_dialogue = std::make_shared<Dialogue>(settings_dialogue_widget, DialogueOptions());
-        show_dialogue(settings_dialogue, stack_info);
+        show_dialogue(settings_dialogue, CreditsDialogue::getStackInfo());
 
         settings_dialogue->set_on_dismiss([this]() {
             m_main_menu->unselect();

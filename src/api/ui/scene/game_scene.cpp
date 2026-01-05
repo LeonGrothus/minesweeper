@@ -130,25 +130,16 @@ void GameScene::handle_win_lost() {
     std::shared_ptr<InformDialogue> dialogue_widget = std::make_shared<InformDialogue>(
         main_dialogue, u"Return to Menu", u"View Board", return_to_menu, view_board);
 
-    DialogueOptions dialogue_options;
-    const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(dialogue_widget, dialogue_options);
+    const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(dialogue_widget, InformDialogue::getDialogueOptions());
     dialogue->set_on_dismiss([this]() {
         m_game_column->push_child(std::make_shared<Alignment>(std::make_shared<CustomDrawer>(u"Press 'enter' to return to the menu!"),
                                                               MIDDLE_CENTER));
         set_dirty();
     });
-
-    StackInfo stack_info;
-    stack_info.height_percentage = 0.3;
-    stack_info.width_percentage = 0.3;
-    stack_info.absolute_size = dialogue_widget->get_minimum_size();
-    stack_info.take_focus = true;
-    show_dialogue(dialogue, stack_info);
+    show_dialogue(dialogue, InformDialogue::getStackInfo());
 }
 
 void GameScene::open_pause_menu() {
-    std::shared_ptr<Widget> main_dialogue = std::make_shared<CustomDrawer>(u"Game Paused!", u'\n');
-
     std::function<void()> return_to_menu = [this]() {
         request_scene_change_with_transition(std::make_unique<MainSelectionScene>());
     };
@@ -158,34 +149,16 @@ void GameScene::open_pause_menu() {
     };
 
     std::function<void()> open_controls_dialogue = [this]() {
-        std::shared_ptr<ControlsDialogue> controls_widget = std::make_shared<ControlsDialogue>();
-
-        DialogueOptions dialogue_options;
-        dialogue_options.update_background = false;
-        const std::shared_ptr<Dialogue> controls_dialogue = std::make_shared<Dialogue>(controls_widget, dialogue_options);
-
-        StackInfo stack_info;
-        stack_info.height_percentage = 0.8;
-        stack_info.width_percentage = 0.8;
-        stack_info.absolute_size = controls_widget->get_minimum_size();
-        stack_info.take_focus = true;
-        show_dialogue(controls_dialogue, stack_info);
+        show_dialogue(ControlsDialogue::getDialogue(), ControlsDialogue::getStackInfo());
     };
 
+    std::shared_ptr<Widget> main_dialogue = std::make_shared<CustomDrawer>(u"Game Paused!", u'\n');
     std::shared_ptr<InformDialogue> pause_widget = std::make_shared<InformDialogue>(
         main_dialogue, u"Controls", u"Return to Menu", open_controls_dialogue, return_to_menu);
 
     pause_widget->add_options(u"Continue", back_to_board);
     pause_widget->set_selectable(false);
 
-    DialogueOptions dialogue_options;
-    dialogue_options.update_background = false;
-    const std::shared_ptr<Dialogue> pause_dialogue = std::make_shared<Dialogue>(pause_widget, dialogue_options);
-
-    StackInfo stack_info;
-    stack_info.height_percentage = 0.3;
-    stack_info.width_percentage = 0.3;
-    stack_info.absolute_size = pause_widget->get_minimum_size();
-    stack_info.take_focus = true;
-    show_dialogue(pause_dialogue, stack_info);
+    const std::shared_ptr<Dialogue> pause_dialogue = std::make_shared<Dialogue>(pause_widget, InformDialogue::getDialogueOptions());
+    show_dialogue(pause_dialogue, InformDialogue::getStackInfo());
 }

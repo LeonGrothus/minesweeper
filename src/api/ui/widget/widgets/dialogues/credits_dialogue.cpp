@@ -40,3 +40,18 @@ bool CreditsDialogue::is_dirty() const {
 CanvasElement CreditsDialogue::build_canvas_element(const Vector2D &size) {
     return m_contructed_widget->build_widget(size);
 }
+
+DialogueOptions CreditsDialogue::getDialogueOptions() {
+    return {};
+}
+
+StackInfo CreditsDialogue::getStackInfo() {
+    StackInfo stack_info;
+    stack_info.height_percentage = 0.4;
+    stack_info.width_percentage = 0.3;
+    return stack_info;
+}
+
+std::shared_ptr<Dialogue> CreditsDialogue::getDialogue() {
+    return std::make_shared<Dialogue>(std::make_shared<CreditsDialogue>(), getDialogueOptions());
+}

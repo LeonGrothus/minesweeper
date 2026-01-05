@@ -60,3 +60,21 @@ bool ControlsDialogue::is_dirty() const {
 CanvasElement ControlsDialogue::build_canvas_element(const Vector2D &size) {
     return m_contructed_widget->build_widget(size);
 }
+
+DialogueOptions ControlsDialogue::getDialogueOptions() {
+    DialogueOptions options;
+    options.update_background = false;
+    return options;
+}
+
+StackInfo ControlsDialogue::getStackInfo() {
+    StackInfo stack_info;
+    stack_info.height_percentage = 0.8;
+    stack_info.width_percentage = 0.8;
+    stack_info.take_focus = true;
+    return stack_info;
+}
+
+std::shared_ptr<Dialogue> ControlsDialogue::getDialogue() {
+    return std::make_shared<Dialogue>(std::make_shared<ControlsDialogue>(), getDialogueOptions());
+}
