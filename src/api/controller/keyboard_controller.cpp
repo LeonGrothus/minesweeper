@@ -1,9 +1,6 @@
 #include "keyboard_controller.hpp"
 
-#include <clocale>
 #include <ncurses.h>
-
-#include "color_manager.hpp"
 
 KeyboardController::~KeyboardController() {
     endwin();

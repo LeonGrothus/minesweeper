@@ -5,7 +5,6 @@
 #include <ncurses.h>
 
 #include "api/controller/terminal_controller.hpp"
-#include "api/ui/widget/widgets/empty.hpp"
 
 
 SelectionWidget::SelectionWidget(
@@ -147,21 +146,29 @@ void SelectionWidget::keyboard_press(const int key) {
     }
     switch (key) {
         case KEY_UP:
+        case 'w':
+        case 'W':
             if (m_options.is_vertical) {
                 move_selection_up();
             }
             break;
         case KEY_RIGHT:
+        case 'd':
+        case 'D':
             if (!m_options.is_vertical) {
                 move_selection_down();
             }
             break;
         case KEY_DOWN:
+        case 's':
+        case 'S':
             if (m_options.is_vertical) {
                 move_selection_down();
             }
             break;
         case KEY_LEFT:
+        case 'a':
+        case 'A':
             if (!m_options.is_vertical) {
                 move_selection_up();
             }

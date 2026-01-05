@@ -1,8 +1,5 @@
 #pragma once
 #include <functional>
-#include <memory>
-
-#include "api/helper/looped_execution_wrapper.hpp"
 #include "api/ui/widget/widget.hpp"
 
 struct ListSettingOption {

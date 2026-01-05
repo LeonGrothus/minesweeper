@@ -4,8 +4,6 @@
 #include <ncurses.h>
 #include <utility>
 
-#include "api/ui/widget/widgets/empty.hpp"
-#include "transition_scene.hpp"
 #include "api/helper/file_reader.hpp"
 #include "api/ui/canvas/terminal_helper.hpp"
 #include "api/ui/scene/game_scene.hpp"

@@ -73,9 +73,13 @@ Vector2D ListSetting::get_minimum_size() const {
 void ListSetting::keyboard_press(const int key) {
     switch (key) {
         case KEY_RIGHT:
+        case 'd':
+        case 'D':
             move_selection_down();
             break;
         case KEY_LEFT:
+        case 'a':
+        case 'A':
             move_selection_up();
             break;
         case 10:

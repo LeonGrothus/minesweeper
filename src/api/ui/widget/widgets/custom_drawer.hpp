@@ -1,5 +1,4 @@
 #pragma once
-#include <optional>
 
 #include "api/ui/widget/widget.hpp"
 

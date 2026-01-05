@@ -1,6 +1,5 @@
 #pragma once
 
-#include <bitset>
 #include <cstdint>
 #include <string>
 #include <vector>
