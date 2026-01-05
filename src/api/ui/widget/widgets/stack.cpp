@@ -93,8 +93,14 @@ int Stack::get_widget_index(const std::shared_ptr<Widget> &widget) const {
 }
 
 void Stack::add_entry(const std::shared_ptr<Widget> &widget, const StackInfo &info) {
+    auto [min_x, min_y] = widget->get_minimum_size();
+    StackInfo new_info = info;
+
+    new_info.absolute_size.x = std::max(new_info.absolute_size.x, min_x);
+    new_info.absolute_size.y = std::max(new_info.absolute_size.y, min_y);
+
     m_stack.push_back(widget);
-    m_stack_info.push_back(info);
+    m_stack_info.push_back(new_info);
 }
 
 void Stack::delete_entry(const int index) {

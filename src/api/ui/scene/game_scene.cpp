@@ -132,7 +132,10 @@ void GameScene::handle_win_lost() {
     std::shared_ptr<InformDialogue> dialogue_widget = std::make_shared<InformDialogue>(
         main_dialogue, u"Return to Menu", u"View Board", return_to_menu, view_board);
 
-    const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(dialogue_widget, InformDialogue::getDialogueOptions());
+    DialogueOptions dialogue_options = InformDialogue::getDialogueOptions();
+    dialogue_options.update_background = true;
+
+    const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(dialogue_widget, dialogue_options);
     dialogue->set_on_dismiss([this]() {
         m_game_column->push_child(std::make_shared<Alignment>(std::make_shared<CustomDrawer>(u"Press 'enter' to return to the menu!"),
                                                               MIDDLE_CENTER));
