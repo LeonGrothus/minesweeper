@@ -123,6 +123,14 @@ CanvasElement SelectionWidget::build_canvas_element(const Vector2D &size) {
 
 
 void SelectionWidget::keyboard_press(const int key) {
+    if (m_select_options.empty()) {
+        return;
+    }
+    if (m_options.parse_keyboard_events_to_hovered) {
+        m_select_options[get_selected_index()]->keyboard_press(key);
+        set_dirty();
+    }
+
     if (m_selected) {
         if (m_options.parse_keyboard_events_to_selected) {
             m_select_options[get_selected_index()]->keyboard_press(key);

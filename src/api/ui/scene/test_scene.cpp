@@ -8,6 +8,8 @@
 #include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/boards/board_widget.hpp"
 #include "api/ui/widget/widgets/border/border.hpp"
+#include "api/ui/widget/widgets/dialogues/settings_dialogue.hpp"
+#include "api/ui/widget/widgets/settings/list_setting.hpp"
 
 class Border;
 
@@ -25,16 +27,4 @@ TestScene::TestScene() {
     // const std::shared_ptr<Alignment> board_widget = std::make_shared<Alignment>(std::make_shared<Timer>(true, true), MIDDLE_CENTER);
 
     m_base_widget = std::make_shared<Empty>();
-
-    const std::shared_ptr<Widget> settings_widget = std::make_shared<Border>(
-        std::make_shared<Padding>(std::make_shared<Empty>(Vector2D{4, 4}, u'#'), 1),
-        BorderStyle::double_line_border());
-    DialogueOptions options;
-    options.use_transition = true;
-    const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(settings_widget, options);
-    StackInfo info;
-    info.height_percentage = 0.5;
-    info.width_percentage = 0.5;
-    info.absolute_size = settings_widget->get_minimum_size();
-    show_dialogue(dialogue, info);
 }

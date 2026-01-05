@@ -16,6 +16,7 @@ struct SelectionWidgetOptions {
     bool select_on_enter = true;
     bool update_widget_after_selected = true;
     bool parse_keyboard_events_to_selected = true;
+    bool parse_keyboard_events_to_hovered = false;
     //when the keys get parsed though if the selection widget still should handle the keyboard events
     bool react_to_keyboard_events_after_selection = false;
 

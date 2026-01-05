@@ -21,6 +21,7 @@
 #include "api/ui/widget/widgets/banner_widget.hpp"
 #include "api/ui/widget/widgets/rainbow_switcher.hpp"
 #include "api/ui/widget/widgets/boards/board_showcase_widget.hpp"
+#include "api/ui/widget/widgets/dialogues/settings_dialogue.hpp"
 
 MainSelectionScene::MainSelectionScene() {
     const FileReader reader("assets/banner.txt");
@@ -45,21 +46,21 @@ MainSelectionScene::MainSelectionScene() {
         go_to_stage(Stage::Size);
     });
     m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Settings"), [this]() {
-        const std::shared_ptr<Widget> settings_widget = std::make_shared<Border>(
-            std::make_shared<Padding>(std::make_shared<Empty>(Vector2D{4, 4}, u'#'), 1),
-            BorderStyle::double_line_border());
-        DialogueOptions options;
-        options.use_transition = true;
-        options.update_background = true;
-        const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(settings_widget, options);
-        dialogue->set_on_dismiss([this]() {
+        std::shared_ptr<SettingsDialogue> settings_dialogue_widget = std::make_shared<SettingsDialogue>();
+
+        DialogueOptions dialogue_options;
+        dialogue_options.update_background = false;
+
+        StackInfo stack_info;
+        stack_info.height_percentage = 0.4;
+        stack_info.width_percentage = 0.3;
+
+        const std::shared_ptr<Dialogue> settings_dialogue = std::make_shared<Dialogue>(settings_dialogue_widget, dialogue_options);
+        show_dialogue(settings_dialogue, stack_info);
+
+        settings_dialogue->set_on_dismiss([this]() {
             m_main_menu->unselect();
         });
-        StackInfo info;
-        info.height_percentage = 0.5;
-        info.width_percentage = 0.5;
-        info.absolute_size = settings_widget->get_minimum_size();
-        show_dialogue(dialogue, info);
     });
     m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Exit"), [this]() {
         request_exit();
