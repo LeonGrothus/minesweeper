@@ -21,8 +21,11 @@
 #include "api/ui/widget/widgets/banner_widget.hpp"
 #include "api/ui/widget/widgets/rainbow_switcher.hpp"
 #include "api/ui/widget/widgets/boards/board_showcase_widget.hpp"
+#include "api/ui/widget/widgets/dialogues/controls_dialogue.hpp"
 #include "api/ui/widget/widgets/dialogues/credits_dialogue.hpp"
 #include "api/ui/widget/widgets/dialogues/settings_dialogue.hpp"
+
+class ControlsDialogue;
 
 MainSelectionScene::MainSelectionScene() {
     const FileManager reader("assets/banner.txt");
@@ -48,6 +51,26 @@ MainSelectionScene::MainSelectionScene() {
     });
     m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Settings"), [this]() {
         std::shared_ptr<SettingsDialogue> settings_dialogue_widget = std::make_shared<SettingsDialogue>(m_settings_manager);
+
+        const std::shared_ptr<ListSetting> show_controls = std::make_shared<ListSetting>(u"View Controls");
+        std::function<void()> open_controls_dialogue = [this]() {
+            std::shared_ptr<ControlsDialogue> controls_widget = std::make_shared<ControlsDialogue>();
+
+            DialogueOptions dialogue_options;
+            dialogue_options.update_background = false;
+            const std::shared_ptr<Dialogue> controls_dialogue = std::make_shared<Dialogue>(controls_widget, dialogue_options);
+
+            StackInfo stack_info;
+            stack_info.height_percentage = 0.8;
+            stack_info.width_percentage = 0.8;
+            stack_info.absolute_size = controls_widget->get_minimum_size();
+            stack_info.take_focus = true;
+            show_dialogue(controls_dialogue, stack_info);
+        };
+        show_controls->add_option(ListSettingOption(u" ", [open_controls_dialogue]() {
+            open_controls_dialogue();
+        }));
+        settings_dialogue_widget->add_custom_option(show_controls);
 
         DialogueOptions dialogue_options;
         dialogue_options.update_background = false;

@@ -17,7 +17,7 @@ SettingsDialogue::SettingsDialogue(const std::shared_ptr<SettingsManager> &setti
     selection_options.blink_highlighted = false;
     selection_options.select_on_enter = false;
     selection_options.parse_keyboard_events_to_hovered = true;
-    const std::shared_ptr<SelectionWidget> list = std::make_shared<SelectionWidget>(selection_options);
+    m_selection_widget = std::make_shared<SelectionWidget>(selection_options);
 
     const std::shared_ptr<ListSetting> color_option = std::make_shared<ListSetting>(u"Color Option:");
     color_option->add_option(ListSettingOption(u"Monochrome", [settings_manager]() {
@@ -39,18 +39,22 @@ SettingsDialogue::SettingsDialogue(const std::shared_ptr<SettingsManager> &setti
     color_option->set_current_index(settings_manager->get_settings().use_color);
     show_millis->set_current_index(settings_manager->get_settings().show_milliseconds);
 
-    list->add_option(color_option);
-    list->add_option(show_millis);
+    m_selection_widget->add_option(color_option);
+    m_selection_widget->add_option(show_millis);
 
     std::vector<std::shared_ptr<Widget> > column_widget{
         std::make_shared<Alignment>(settings_text, MIDDLE_CENTER),
-        std::make_shared<Alignment>(list, MIDDLE_CENTER)
+        std::make_shared<Alignment>(m_selection_widget, MIDDLE_CENTER)
     };
 
     std::shared_ptr<Column> column = std::make_shared<Column>(column_widget);
     column->main_axis_alignment(ListAlignment::Center);
 
     m_contructed_widget = std::make_shared<Border>(std::make_shared<Padding>(column, 3, 3, 1, 1), BorderStyle::double_line_border());
+}
+
+void SettingsDialogue::add_custom_option(const std::shared_ptr<ListSetting> &option) const {
+    m_selection_widget->add_option(option);
 }
 
 Vector2D SettingsDialogue::get_minimum_size() const {

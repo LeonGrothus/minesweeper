@@ -3,10 +3,15 @@
 
 #include "api/controller/settings_manager.hpp"
 #include "api/ui/widget/widget.hpp"
+#include "api/ui/widget/widgets/selection_widget.hpp"
+#include "api/ui/widget/widgets/settings/list_setting.hpp"
+
 
 class SettingsDialogue : public Widget {
 public:
     explicit SettingsDialogue(const std::shared_ptr<SettingsManager> &settings_manager);
+
+    void add_custom_option(const std::shared_ptr<ListSetting> &option) const;
 
     Vector2D get_minimum_size() const override;
 
@@ -20,5 +25,6 @@ protected:
     CanvasElement build_canvas_element(const Vector2D &size) override;
 
 private:
+    std::shared_ptr<SelectionWidget> m_selection_widget;
     std::shared_ptr<Widget> m_contructed_widget;
 };

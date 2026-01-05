@@ -66,7 +66,7 @@ Vector2D ListSetting::get_minimum_size() const {
     const int description_spacing = std::max(m_description_spacing, static_cast<int>(m_description.size()));
     const int option_spacing = get_options_size();
 
-    //+2 due to the < > that will be added
+    //+2 due to the < > that will be added if more than one option is present
     return Vector2D{description_spacing + 2 + option_spacing, 1};
 }
 
@@ -96,7 +96,8 @@ bool ListSetting::is_dirty() const {
 }
 
 CanvasElement ListSetting::build_canvas_element(const Vector2D &size) {
-    if (m_options.empty()) {
+    const int options_count = static_cast<int>(m_options.size());
+    if (options_count == 0) {
         return CanvasElement::empty(size, EMPTY_CHAR);
     }
     const Vector2D minimum_size = get_minimum_size();
@@ -110,7 +111,7 @@ CanvasElement ListSetting::build_canvas_element(const Vector2D &size) {
     const int description_spacing = std::max(m_description_spacing, description_length);
     final_canvas.append(description_spacing - description_length, EMPTY_CHAR);
 
-    final_canvas += u'<';
+    final_canvas += (options_count == 1) ? u' ' : u'<';
     const std::u16string &current_option = m_options[m_current_option].option;
     const int diff_option_size = option_spacing - static_cast<int>(current_option.size());
 
@@ -120,7 +121,7 @@ CanvasElement ListSetting::build_canvas_element(const Vector2D &size) {
     final_canvas.append(current_option);
     final_canvas.append(right_padding);
 
-    final_canvas += u'>';
+    final_canvas += (options_count == 1) ? u' ' : u'>';
     return CanvasElement(final_canvas, minimum_size);
 }
 
