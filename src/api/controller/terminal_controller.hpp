@@ -28,6 +28,8 @@ private:
 
     void update_scene(double delta_time) const;
 
+    void screen_shot() const;
+
     std::shared_ptr<SettingsManager> m_settings_manager;
 
     bool m_running;

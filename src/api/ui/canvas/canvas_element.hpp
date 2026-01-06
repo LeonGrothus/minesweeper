@@ -99,6 +99,8 @@ public:
 
     int get_total_length() const;
 
+    std::u16string to_default_printable_string(char16_t break_char) const;
+
     const std::u16string &get_canvas_element() const;
 
     std::u16string &get_mutable_canvas_element();

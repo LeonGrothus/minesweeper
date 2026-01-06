@@ -7,7 +7,7 @@
 #include "../border/border.hpp"
 #include "../rainbow_switcher.hpp"
 #include "api/helper/conversion_helper.hpp"
-#include "api/helper/file_reader.hpp"
+#include "api/helper/file_manager.hpp"
 #include "api/ui/widget/widgets/Rotation.hpp"
 
 CreditsDialogue::CreditsDialogue() {

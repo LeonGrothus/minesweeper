@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "color_manager.hpp"
+#include "api/helper/conversion_helper.hpp"
 #include "api/ui/scene/transition_scene.hpp"
 
 TerminalController::TerminalController(std::unique_ptr<Scene> default_scene)
@@ -102,7 +103,30 @@ void TerminalController::draw_scene() const {
 
 void TerminalController::update_scene(const double delta_time) const {
     for (const int key: m_keyboard_controller.get_buffered()) {
+        switch (key) {
+            case 'P':
+            case 'p':
+                screen_shot();
+                break;
+            default:
+                break;
+        }
+
         m_current_scene->keyboard_press(key);
     }
     m_current_scene->update(delta_time);
+}
+
+void TerminalController::screen_shot() const {
+    const std::string screenshot_prefix = "screen_shot_";
+    const std::string screenshot_suffix = ".txt";
+    uint8_t screenshot_index = 0;
+    FileManager manager("");
+
+    do {
+        manager = FileManager(screenshot_prefix + std::to_string(screenshot_index) + screenshot_suffix);
+    } while (manager.file_exists() && screenshot_index++ < 255);
+
+    const std::u16string &canvas_string = m_current_scene->build_scene(m_terminal_size).to_default_printable_string(u'\n');
+    manager.write_string_content(utf16_to_utf8(canvas_string));
 }

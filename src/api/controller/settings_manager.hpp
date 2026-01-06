@@ -1,5 +1,5 @@
 #pragma once
-#include "api/helper/file_reader.hpp"
+#include "api/helper/file_manager.hpp"
 
 constexpr static std::string FILE_LOCATION = "mine_config";
 

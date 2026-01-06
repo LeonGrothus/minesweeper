@@ -63,6 +63,18 @@ int CanvasElement::get_total_length() const {
     return m_size.area();
 }
 
+std::u16string CanvasElement::to_default_printable_string(const char16_t break_char) const {
+    std::u16string printable_string;
+    printable_string.reserve(m_size.area() + m_size.y);
+
+    for (int i = 0; i < m_size.y; i++) {
+        std::u16string_view slice(m_canvas_element.data() + i * m_size.x, m_size.x);
+        printable_string.append(slice);
+        printable_string += break_char;
+    }
+    return printable_string;
+}
+
 
 const std::u16string &CanvasElement::get_canvas_element() const {
     return m_canvas_element;
