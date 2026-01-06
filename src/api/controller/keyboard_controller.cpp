@@ -1,6 +1,6 @@
 #include "keyboard_controller.hpp"
 
-#include <ncurses.h>
+#include <curses.h>
 
 KeyboardController::~KeyboardController() {
     endwin();

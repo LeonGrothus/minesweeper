@@ -1,6 +1,6 @@
 #include "game_scene.hpp"
 
-#include <ncurses.h>
+#include <curses.h>
 
 #include "main_selection_scene.hpp"
 #include "api/controller/color_manager.hpp"

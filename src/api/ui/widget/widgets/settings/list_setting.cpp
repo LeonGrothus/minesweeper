@@ -2,7 +2,7 @@
 
 #include <algorithm>
 #include <utility>
-#include <ncurses.h>
+#include <curses.h>
 
 #include "api/controller/terminal_controller.hpp"
 

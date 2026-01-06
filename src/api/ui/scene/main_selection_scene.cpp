@@ -1,7 +1,7 @@
 #include "main_selection_scene.hpp"
 
 #include <memory>
-#include <ncurses.h>
+#include <curses.h>
 #include <utility>
 
 #include "api/helper/file_manager.hpp"

@@ -2,7 +2,7 @@
 #include "../../canvas/canvas_element.hpp"
 
 #include <algorithm>
-#include <ncurses.h>
+#include <curses.h>
 
 #include "api/controller/terminal_controller.hpp"
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "api/helper/file_manager.hpp"
 
-constexpr static std::string FILE_LOCATION = "mine_config";
+static std::string FILE_LOCATION = "mine_config";
 
 struct Settings {
     bool show_milliseconds = false;

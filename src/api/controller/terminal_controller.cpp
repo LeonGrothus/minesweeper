@@ -5,6 +5,11 @@
 
 #include <curses.h>
 #include <memory>
+#include <algorithm>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #include "color_manager.hpp"
 #include "api/helper/conversion_helper.hpp"
@@ -30,11 +35,16 @@ TerminalController::~TerminalController() {
     endwin();
 }
 
+
 void TerminalController::run() {
     while (m_running) {
+#ifdef _WIN32
+        const bool terminal_size_changed = false;
+#elifdef __linux__
         const Vector2D new_terminal_size = get_terminal_size();
         const bool terminal_size_changed = new_terminal_size != m_terminal_size;
         m_terminal_size = new_terminal_size;
+#endif
 
         m_delta_timer.update();
         const double delta_time = m_delta_timer.get_delta_millis();
@@ -70,16 +80,25 @@ void TerminalController::run() {
                 draw_scene();
             }
         }
-
+#ifdef __linux__
         usleep(static_cast<int>(FRAME_TIME + 1) * 1000);
+#elifdef _WIN32
+        //scuffed but not easily changeable
+        const Vector2D new_terminal_size = get_terminal_size();
+        m_terminal_size = new_terminal_size;
+        Sleep(static_cast<int>(FRAME_TIME + 1));
+#endif
     }
 }
 
 void TerminalController::init_terminal() {
     setlocale(LC_ALL, "");
+
+#ifdef __linux__
     if (!getenv("TERM")) {
         setenv("TERM", "xterm-256color", 1);
     }
+#endif
 
     initscr();
 
@@ -101,7 +120,11 @@ void TerminalController::init_terminal() {
 void TerminalController::draw_scene() const {
     const CanvasElement &scene_canvas = m_current_scene->build_scene(m_terminal_size);
 
+#ifdef __linux__
     render_to_ncurses_buffered(scene_canvas, m_terminal_size);
+#elifdef _WIN32
+    render_to_ncurses_debug_only(scene_canvas, m_terminal_size);
+#endif
 }
 
 void TerminalController::update_scene(const double delta_time) const {

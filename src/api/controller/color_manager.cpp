@@ -2,7 +2,7 @@
 #include "color_manager.hpp"
 
 #include <array>
-#include <ncurses.h>
+#include <curses.h>
 
 #include "../ui/canvas/canvas_element.hpp"
 
@@ -22,14 +22,9 @@ void init_terminal_colors() {
     }
 
     start_color();
-
-#ifdef __linux
     use_default_colors();
-    init_pair(1, -1, -1);
-#else
-    init_pair(1, COLOR_WHITE, COLOR_BLACK);
-#endif
 
+    init_pair(1, -1, -1);
     init_pair(2, COLOR_WHITE, -1); //hidden
     init_pair(3, COLOR_RED, -1); //mine
     init_pair(4, COLOR_YELLOW, -1); //flag

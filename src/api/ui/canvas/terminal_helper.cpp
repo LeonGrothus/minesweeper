@@ -1,3 +1,7 @@
+#ifndef PDC_WIDE
+#define PDC_WIDE
+#endif
+
 #include "terminal_helper.hpp"
 #include "api/ui/canvas/canvas_element.hpp"
 #include <curses.h>
@@ -17,20 +21,31 @@
 #endif
 
 Vector2D get_terminal_size() {
+    int width = 80;
+    int height = 25;
+
+#if defined(_WIN32)
+    if (stdscr != nullptr) {
+        resize_term(0, 0);
+        return Vector2D{COLS, LINES};
+    }
+
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    if (hConsole != INVALID_HANDLE_VALUE && GetConsoleScreenBufferInfo(hConsole, &csbi)) {
+        width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    }
+#elif defined(__linux__)
     if (stdscr != nullptr) {
         return Vector2D{COLS, LINES};
     }
-#if defined(_WIN32)
-    CONSOLE_SCREEN_BUFFER_INFO console_info;
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &console_info);
-    width = (int) (console_info.srWindow.Right - console_info.srWindow.Left + 1);
-    height = (int) (console_info.srWindow.Bottom - console_info.srWindow.Top + 1);
-    return Vector2D{width, height};
-#elif defined(__linux__)
     winsize w{};
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    return Vector2D{(w.ws_col - 40), w.ws_row};
+    width = w.ws_col - 40;
+    height = w.ws_row;
 #endif
+    return Vector2D{width, height};
 }
 
 std::u16string repeat_string(const unsigned int k, const std::u16string &s) {
@@ -197,7 +212,7 @@ void render_to_ncurses_debug_only(const CanvasElement &element, const Vector2D s
             const std::string utf8 = utf16_to_utf8(std::u16string(1, chars[idx]));
             mvaddnstr(y, x, utf8.c_str(), static_cast<int>(utf8.size()));
 #elifdef _WIN32
-            //windows use wstring since it is more robust
+            //windows use wstring since uft8 does not work on windows
             const std::wstring ws = utf16_to_wstring(std::u16string(1, chars[idx]));
             mvaddwstr(y, x, ws.c_str());
 #endif
@@ -256,7 +271,7 @@ void render_to_ncurses_buffered(const CanvasElement &element, const Vector2D siz
         const std::string utf8 = utf16_to_utf8(std::u16string(1, chars[i]));
         mvaddnstr(y, x, utf8.c_str(), static_cast<int>(utf8.size()));
 #elif defined(_WIN32)
-        //windows use wstring since it is more robust
+        //windows use wstring since uft8 does not work on windows
         const std::wstring ws = utf16_to_wstring(std::u16string(1, chars[i]));
         mvaddwstr(y, x, ws.c_str());
 #endif
