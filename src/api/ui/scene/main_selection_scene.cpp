@@ -207,7 +207,7 @@ void MainSelectionScene::go_to_stage(const Stage stage) {
 
 void MainSelectionScene::handle_key(const int key) {
     //esc
-    if (key == 27 || key == KEY_LEFT) {
+    if (key == 27 || key == KEY_LEFT || key == 'A' || key == 'a') {
         switch (m_stage) {
             case Stage::Main:
                 break;
@@ -224,7 +224,7 @@ void MainSelectionScene::handle_key(const int key) {
         return;
     }
 
-    if (key == KEY_RIGHT) {
+    if (key == KEY_RIGHT || key == 'D' || key == 'd') {
         active_menu()->select();
         return;
     }
