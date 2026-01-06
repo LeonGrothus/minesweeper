@@ -92,7 +92,10 @@ void TerminalController::init_terminal() {
     noecho();
     keypad(stdscr, TRUE);
     nodelay(stdscr, TRUE);
+
+#ifdef __linux__
     set_escdelay(25);
+#endif
 }
 
 void TerminalController::draw_scene() const {

@@ -34,3 +34,14 @@ bool FileManager::write_string_content(const std::string &content) const {
     outFileStream << content;
     return true;
 }
+
+bool FileManager::write_string_content(const std::wstring &content) const {
+    std::wofstream outFileStream(m_filePath);
+
+    if (!outFileStream.good()) {
+        return false;
+    }
+
+    outFileStream << content;
+    return true;
+}

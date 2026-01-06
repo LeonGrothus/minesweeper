@@ -1,2 +1,6 @@
 **/build/
 **/.cache/
+**/mine_config
+**/.run/
+**/.idea/
+**/.vscode/

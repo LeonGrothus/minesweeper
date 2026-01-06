@@ -129,3 +129,47 @@ std::u16string utf8_to_utf16(const std::string &input) {
 
     return out;
 }
+
+std::wstring utf16_to_wstring(const std::u16string &utf16_string) {
+    std::wstring out;
+    out.reserve(utf16_string.size());
+
+    for (size_t i = 0; i < utf16_string.size(); ++i) {
+        uint32_t code = utf16_string[i];
+
+        // surrogate handling
+        if (0xD800 <= code && code <= 0xDBFF) {
+            // high surrogate
+            if (i + 1 < utf16_string.size()) {
+                if (const uint32_t low = utf16_string[i + 1]; 0xDC00 <= low && low <= 0xDFFF) {
+                    code = (((code - 0xD800) << 10) | (low - 0xDC00)) + 0x10000;
+                    ++i;
+                } else {
+                    code = 0xFFFD; // unpaired high surrogate
+                }
+            } else {
+                code = 0xFFFD; // high surrogate at end
+            }
+        } else if (0xDC00 <= code && code <= 0xDFFF) {
+            code = 0xFFFD; // unpaired low surrogate
+        }
+
+        // Platform-specific handling: wchar_t is 32-bit on Linux, 16-bit on Windows
+        if constexpr (sizeof(wchar_t) == 4) {
+            // Linux/Unix: 32-bit wchar_t, output as UTF-32
+            out.push_back(static_cast<wchar_t>(code));
+        } else {
+            // Windows: 16-bit wchar_t, output as UTF-16
+            if (code <= 0xFFFF) {
+                out.push_back(static_cast<wchar_t>(code));
+            } else {
+                // Re-encode as surrogate pair for UTF-16
+                code -= 0x10000;
+                out.push_back(static_cast<wchar_t>(0xD800 + (code >> 10)));
+                out.push_back(static_cast<wchar_t>(0xDC00 + (code & 0x3FF)));
+            }
+        }
+    }
+
+    return out;
+}

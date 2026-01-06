@@ -12,6 +12,8 @@ public:
 
     bool write_string_content(const std::string &content) const;
 
+    bool write_string_content(const std::wstring &content) const;
+
 private:
     std::string m_filePath;
 };

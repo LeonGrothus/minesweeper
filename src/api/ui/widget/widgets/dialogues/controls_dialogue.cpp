@@ -22,7 +22,8 @@ ControlsDialogue::ControlsDialogue() {
                                                                                ColorRole::Mine), MIDDLE_CENTER), 0, 0, 2, 0);
 
     const std::shared_ptr<Widget> controls_menu = std::make_shared<Alignment>(
-        std::make_shared<CustomDrawer>(u"Menus: WASD/Arrows to move, Enter to select, Esc to exit."), MIDDLE_CENTER);
+        std::make_shared<CustomDrawer>(u"Menus: WASD/Arrows to move, Enter to select, Esc to exit.\n P for Screenshot", '\n'),
+        MIDDLE_CENTER);
 
     const std::shared_ptr<Widget> controls_game = std::make_shared<Alignment>(
         std::make_shared<CustomDrawer>(u"Game: WASD/Arrows to move, Enter to uncover, F to flag/unflag."), MIDDLE_CENTER);

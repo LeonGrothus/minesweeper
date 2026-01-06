@@ -192,8 +192,15 @@ void render_to_ncurses_debug_only(const CanvasElement &element, const Vector2D s
                 color_active = true;
             }
 
+#ifdef __linux__
+            //linux use utf8
             const std::string utf8 = utf16_to_utf8(std::u16string(1, chars[idx]));
             mvaddnstr(y, x, utf8.c_str(), static_cast<int>(utf8.size()));
+#elifdef _WIN32
+            //windows use wstring since it is more robust
+            const std::wstring ws = utf16_to_wstring(std::u16string(1, chars[idx]));
+            mvaddwstr(y, x, ws.c_str());
+#endif
         }
     }
 
@@ -244,8 +251,15 @@ void render_to_ncurses_buffered(const CanvasElement &element, const Vector2D siz
             color_active = true;
         }
 
+#if defined(__linux__)
+        //linux use utf8
         const std::string utf8 = utf16_to_utf8(std::u16string(1, chars[i]));
         mvaddnstr(y, x, utf8.c_str(), static_cast<int>(utf8.size()));
+#elif defined(_WIN32)
+        //windows use wstring since it is more robust
+        const std::wstring ws = utf16_to_wstring(std::u16string(1, chars[i]));
+        mvaddwstr(y, x, ws.c_str());
+#endif
     }
 
     if (color_active) {

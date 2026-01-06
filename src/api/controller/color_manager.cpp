@@ -15,15 +15,21 @@ short get_color_for_role(const uint8_t role) {
     return g_color_pairs[static_cast<size_t>(ColorRole::Default)];
 }
 
+
 void init_terminal_colors() {
     if (!has_colors()) {
         return;
     }
 
     start_color();
-    use_default_colors();
 
-    init_pair(1, -1, -1); //default terminal color, probably white
+#ifdef __linux
+    use_default_colors();
+    init_pair(1, -1, -1);
+#else
+    init_pair(1, COLOR_WHITE, COLOR_BLACK);
+#endif
+
     init_pair(2, COLOR_WHITE, -1); //hidden
     init_pair(3, COLOR_RED, -1); //mine
     init_pair(4, COLOR_YELLOW, -1); //flag
