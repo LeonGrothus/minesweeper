@@ -42,6 +42,10 @@ struct Vector2D {
         return Vector2D(x - other.x, y - other.y);
     }
 
+    Vector2D operator/(const int i) const {
+        return Vector2D{x / i, y / i};
+    }
+
     Vector2D operator %(const Vector2D &other) const {
         return Vector2D(x % other.x, y % other.y);
     }

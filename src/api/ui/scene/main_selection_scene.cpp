@@ -18,6 +18,7 @@
 #include "../../controller/color_manager.hpp"
 #include "api/ui/widget/widgets/banner_widget.hpp"
 #include "api/ui/widget/widgets/rainbow_switcher.hpp"
+#include "api/ui/widget/widgets/Rotation.hpp"
 #include "api/ui/widget/widgets/boards/board_showcase_widget.hpp"
 #include "api/ui/widget/widgets/dialogues/controls_dialogue.hpp"
 #include "api/ui/widget/widgets/dialogues/credits_dialogue.hpp"
@@ -30,8 +31,10 @@ MainSelectionScene::MainSelectionScene() {
     std::string content;
     reader.read_string_content(content);
 
-    const std::shared_ptr<RainbowSwitcher> banner_rainbow = std::make_shared<RainbowSwitcher>(
-        std::make_shared<BannerWidget>(content), get_all_colors_except_black(), false);
+    const std::shared_ptr<Rotation> banner_rainbow = std::make_shared<Rotation>(std::make_shared<RainbowSwitcher>(
+                                                                                    std::make_shared<BannerWidget>(content),
+                                                                                    get_all_colors_except_black(), false), -3, 3);
+
 
     m_aligned_banner_widget = wrap_with_alignment(banner_rainbow);
 

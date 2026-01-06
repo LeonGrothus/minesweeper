@@ -170,7 +170,8 @@ void position_element_on_canvas(const CanvasElement &element, const Position pos
 //     refresh();
 // }
 
-void render_to_ncurses(const CanvasElement &element, const Vector2D size) {
+void render_to_ncurses_debug_only(const CanvasElement &element, const Vector2D size) {
+    clear();
     const std::u16string &chars = element.get_canvas_element();
     const std::vector<uint8_t> &roles = element.get_color_roles();
     const auto [render_size_x, render_size_y] = element.get_element_size();

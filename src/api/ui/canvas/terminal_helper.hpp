@@ -34,7 +34,7 @@ CanvasElement position_canvas_element(const CanvasElement &element, Position pos
 
 void position_element_on_canvas(const CanvasElement &element, Position pos, CanvasElement &canvas);
 
-void render_to_ncurses(const CanvasElement &element, Vector2D size);
+void render_to_ncurses_debug_only(const CanvasElement &element, Vector2D size);
 
 void render_to_ncurses_buffered(const CanvasElement &element, Vector2D size);
 
