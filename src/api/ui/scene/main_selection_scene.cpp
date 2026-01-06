@@ -27,12 +27,8 @@
 class ControlsDialogue;
 
 MainSelectionScene::MainSelectionScene() {
-    const FileManager reader("assets/banner.txt");
-    std::string content;
-    reader.read_string_content(content);
-
     const std::shared_ptr<Rotation> banner_rainbow = std::make_shared<Rotation>(std::make_shared<RainbowSwitcher>(
-                                                                                    std::make_shared<BannerWidget>(content),
+                                                                                    std::make_shared<BannerWidget>("assets/banner.txt"),
                                                                                     get_all_colors_except_black(), false), -3, 3);
 
 

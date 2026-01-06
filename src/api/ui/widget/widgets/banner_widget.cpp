@@ -2,10 +2,20 @@
 
 #include <utility>
 
+#include "api/helper/file_manager.hpp"
+
 BannerWidget::BannerWidget(CanvasElement banner) : m_banner(std::move(banner)) {
 }
 
-BannerWidget::BannerWidget(const std::string &banner) : m_banner(banner) {
+BannerWidget::BannerWidget(const std::string &file_path) : m_banner(u"") {
+    const FileManager manager(file_path);
+    std::string content;
+    if (!manager.file_exists() || !manager.read_string_content(content)) {
+        show_temporary_message("FAILED TO LOAD ASSET", 1000);
+        return;
+    }
+
+    m_banner = CanvasElement(content);
 }
 
 CanvasElement BannerWidget::build_canvas_element(const Vector2D &size) {

@@ -8,15 +8,12 @@
 #include "../rainbow_switcher.hpp"
 #include "api/helper/conversion_helper.hpp"
 #include "api/helper/file_manager.hpp"
+#include "api/ui/widget/widgets/banner_widget.hpp"
 #include "api/ui/widget/widgets/Rotation.hpp"
 
 CreditsDialogue::CreditsDialogue() {
-    const FileManager reader("assets/credits.txt");
-    std::string content;
-    reader.read_string_content(content);
-
     const std::shared_ptr<RainbowSwitcher> credits_rainbow = std::make_shared<RainbowSwitcher>(
-        std::make_shared<CustomDrawer>(utf8_to_utf16(content), '\n'), get_all_colors_except_black(), true);
+        std::make_shared<BannerWidget>("assets/credits.txt"), get_all_colors_except_black(), true);
 
     const std::shared_ptr<Rotation> rotation_text = std::make_shared<Rotation>(credits_rainbow, -6, 6);
     rotation_text->set_loop_time(10000);

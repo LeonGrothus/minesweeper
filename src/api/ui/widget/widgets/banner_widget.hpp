@@ -6,7 +6,7 @@ class BannerWidget final : public Widget {
 public:
     explicit BannerWidget(CanvasElement banner);
 
-    explicit BannerWidget(const std::string &banner);
+    explicit BannerWidget(const std::string &file_path);
 
     void set_color_role(ColorRole role);
 
