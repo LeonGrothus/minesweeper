@@ -5,7 +5,11 @@ class Timer : public Widget {
 public:
     explicit Timer(bool blink = true, bool show_millis = false);
 
-    void set_description_text(const std::u16string &text);
+    void set_description_text(const std::u16string& text);
+
+    int get_time_in_millis() const;
+
+    void set_time_from_millis(int millis);
 
     void reset();
 
@@ -24,7 +28,7 @@ public:
     bool is_dirty() const override;
 
 protected:
-    CanvasElement build_canvas_element(const Vector2D &size) override;
+    CanvasElement build_canvas_element(const Vector2D& size) override;
 
 private:
     double m_current_millis = 0;

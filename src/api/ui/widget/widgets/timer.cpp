@@ -6,12 +6,20 @@
 #include "api/helper/math_helper.hpp"
 #include "api/ui/canvas/terminal_helper.hpp"
 
-Timer::Timer(const bool blink, const bool show_millis) : m_blink(blink), m_show_millis(show_millis) {
-}
+Timer::Timer(const bool blink, const bool show_millis) : m_blink(blink), m_show_millis(show_millis) {}
 
-void Timer::set_description_text(const std::u16string &text) {
+void Timer::set_description_text(const std::u16string& text) {
     m_description_text = text;
     set_dirty();
+}
+
+int Timer::get_time_in_millis() const {
+    return static_cast<int>(m_current_millis) + m_current_seconds * 1000 + m_current_minutes * 60 * 1000;
+}
+
+void Timer::set_time_from_millis(const int millis) {
+    m_current_millis = millis;
+    update(0);
 }
 
 void Timer::reset() {
@@ -83,7 +91,7 @@ bool Timer::is_dirty() const {
     return m_is_dirty;
 }
 
-CanvasElement Timer::build_canvas_element(const Vector2D &size) {
+CanvasElement Timer::build_canvas_element(const Vector2D& size) {
     const Vector2D minimum_size = get_minimum_size();
     std::u16string full_canvas;
     full_canvas.reserve(minimum_size.area());
