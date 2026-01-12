@@ -15,17 +15,24 @@
 #include "api/helper/conversion_helper.hpp"
 #include "api/ui/scene/transition_scene.hpp"
 
-TerminalController::TerminalController(std::unique_ptr<Scene> default_scene)
+TerminalController::TerminalController(const std::shared_ptr<KeyboardController>& controller,
+                                       std::unique_ptr<Scene> default_scene)
     : m_running(true),
       m_current_millis(0),
       m_terminal_size(get_terminal_size()),
+      m_keyboard_controller(controller),
       m_current_scene(std::move(default_scene)) {
     init_terminal();
 
     FileManager manager(FILE_LOCATION);
     m_settings_manager = std::make_shared<SettingsManager>(manager);
 
+    FileManager score_board_file("score_board.bin");
+    m_score_board_manager = std::make_shared<ScoreBoardManager>(score_board_file);
+
     m_current_scene->set_settings_manager(m_settings_manager);
+    m_current_scene->set_keyboard_controller(m_keyboard_controller);
+    m_current_scene->set_score_board_manager(m_score_board_manager);
 }
 
 TerminalController::~TerminalController() {
@@ -72,6 +79,8 @@ void TerminalController::run() {
                     m_current_scene = std::move(next_scene);
                 }
                 m_current_scene->set_settings_manager(m_settings_manager);
+                m_current_scene->set_keyboard_controller(m_keyboard_controller);
+                m_current_scene->set_score_board_manager(m_score_board_manager);
                 m_current_scene->set_dirty();
                 scene_changed = true;
             }
@@ -118,7 +127,7 @@ void TerminalController::init_terminal() {
 }
 
 void TerminalController::draw_scene() const {
-    const CanvasElement &scene_canvas = m_current_scene->build_scene(m_terminal_size);
+    const CanvasElement& scene_canvas = m_current_scene->build_scene(m_terminal_size);
 
 #ifdef __linux__
     render_to_ncurses_buffered(scene_canvas, m_terminal_size);
@@ -128,19 +137,23 @@ void TerminalController::draw_scene() const {
 }
 
 void TerminalController::update_scene(const double delta_time) const {
-    for (const int key: m_keyboard_controller.get_buffered()) {
+    m_current_scene->update(delta_time);
+
+    for (const int key : m_keyboard_controller->get_buffered()) {
+        if (m_keyboard_controller->is_text_input_active()) {
+            continue;
+        }
         switch (key) {
-            case 'P':
-            case 'p':
-                screen_shot();
-                break;
-            default:
-                break;
+        case 'P':
+        case 'p':
+            screen_shot();
+            break;
+        default:
+            break;
         }
 
         m_current_scene->keyboard_press(key);
     }
-    m_current_scene->update(delta_time);
 }
 
 void TerminalController::screen_shot() const {
@@ -153,6 +166,7 @@ void TerminalController::screen_shot() const {
         manager = FileManager(screenshot_prefix + std::to_string(screenshot_index) + screenshot_suffix);
     } while (manager.file_exists() && screenshot_index++ < 255);
 
-    const std::u16string &canvas_string = m_current_scene->build_scene(m_terminal_size).to_default_printable_string(u'\n');
+    const std::u16string& canvas_string = m_current_scene->build_scene(m_terminal_size).
+                                                           to_default_printable_string(u'\n');
     manager.write_string_content(utf16_to_utf8(canvas_string));
 }

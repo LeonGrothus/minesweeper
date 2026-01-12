@@ -5,10 +5,13 @@
 #include "dialogue.hpp"
 #include <memory>
 #include <vector>
-#include <functional>
 
 #include "api/controller/settings_manager.hpp"
+#include "api/ui/widget/widgets/empty.hpp"
 #include "api/ui/widget/widgets/stack.hpp"
+
+class KeyboardController;
+class ScoreBoardManager;
 
 class Scene {
 public:
@@ -44,7 +47,7 @@ public:
         if (m_base_widget) {
             m_base_widget->set_dirty();
         }
-        for (const std::shared_ptr<Dialogue> &dialogue: m_dialogue_stack) {
+        for (const std::shared_ptr<Dialogue>& dialogue : m_dialogue_stack) {
             dialogue->get_widget()->set_dirty();
         }
     }
@@ -53,14 +56,15 @@ public:
         if (m_base_widget->is_dirty()) {
             return true;
         }
-        return std::ranges::any_of(m_dialogue_stack.begin(), m_dialogue_stack.end(), [](const std::shared_ptr<Dialogue> &dialogue) {
-            return dialogue->get_widget()->is_dirty();
-        });
+        return std::ranges::any_of(m_dialogue_stack.begin(), m_dialogue_stack.end(),
+                                   [](const std::shared_ptr<Dialogue>& dialogue) {
+                                       return dialogue->get_widget()->is_dirty();
+                                   });
     }
 
     void keyboard_press(const int key) {
         if (!m_dialogue_stack.empty()) {
-            const std::shared_ptr<Dialogue> &dialogue = m_dialogue_stack.back();
+            const std::shared_ptr<Dialogue>& dialogue = m_dialogue_stack.back();
             if (key == 27 && dialogue->get_options().dismissible) {
                 pop_dialogue();
                 return;
@@ -72,11 +76,11 @@ public:
     }
 
     void update(const double delta_time) {
-        std::vector<std::shared_ptr<Dialogue> > to_remove;
+        std::vector<std::shared_ptr<Dialogue>> to_remove;
 
         bool further_update = true;
         for (int i = static_cast<int>(m_dialogue_stack.size()) - 1; i >= 0; i--) {
-            const std::shared_ptr<Dialogue> &dialogue = m_dialogue_stack[i];
+            const std::shared_ptr<Dialogue>& dialogue = m_dialogue_stack[i];
 
             if (dialogue->is_close_transition_finished()) {
                 dialogue->trigger_dismiss();
@@ -99,21 +103,32 @@ public:
         }
     }
 
-    virtual const CanvasElement &build_scene(const Vector2D &size) {
+    virtual const CanvasElement& build_scene(const Vector2D& size) {
         ensure_stack_initialized();
         return m_dialogue_stack_widget->build_widget(size);
     }
 
-    const std::shared_ptr<Widget> &get_base_widget() {
+    const std::shared_ptr<Widget>& get_base_widget() {
         return m_base_widget;
     }
 
-    void set_settings_manager(const std::shared_ptr<SettingsManager> &settings_manager) {
+    void set_settings_manager(const std::shared_ptr<SettingsManager>& settings_manager) {
         m_settings_manager = settings_manager;
         settings_manager_set();
     }
 
-    void show_dialogue(std::shared_ptr<Dialogue> dialogue, const StackInfo &info = StackInfo()) {
+    void set_keyboard_controller(const std::shared_ptr<KeyboardController>& controller) {
+        m_keyboard_controller = controller;
+        if (m_base_widget) {
+            m_base_widget->set_keyboard_controller(controller);
+        }
+    }
+
+    void set_score_board_manager(const std::shared_ptr<ScoreBoardManager>& manager) {
+        m_score_board_manager = manager;
+    }
+
+    void show_dialogue(std::shared_ptr<Dialogue> dialogue, const StackInfo& info = StackInfo()) {
         ensure_stack_initialized();
         m_dialogue_stack_widget->push_new_widget(dialogue->get_widget(), info);
         m_dialogue_stack.push_back(std::move(dialogue));
@@ -141,18 +156,19 @@ protected:
         m_base_widget->update(delta_time);
     }
 
-    virtual void settings_manager_set() {
-    }
+    virtual void settings_manager_set() {}
 
     std::shared_ptr<SettingsManager> m_settings_manager;
+    std::shared_ptr<KeyboardController> m_keyboard_controller;
+    std::shared_ptr<ScoreBoardManager> m_score_board_manager;
 
-    std::shared_ptr<Widget> m_base_widget;
+    std::shared_ptr<Widget> m_base_widget = std::make_shared<Empty>();
     std::unique_ptr<Scene> m_pending_scene;
     bool m_use_transition = false;
     bool m_exit_requested = false;
 
 private:
-    std::vector<std::shared_ptr<Dialogue> > m_dialogue_stack;
+    std::vector<std::shared_ptr<Dialogue>> m_dialogue_stack;
     std::shared_ptr<Stack> m_dialogue_stack_widget;
 
     void ensure_stack_initialized() {
