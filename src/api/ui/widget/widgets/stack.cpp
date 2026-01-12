@@ -44,7 +44,7 @@ Vector2D Stack::get_minimum_size() const {
     return size;
 }
 
-void Stack::keyboard_press(int key) {
+void Stack::keyboard_press(const int key) {
     for (int i = static_cast<int>(m_stack.size()) - 1; i >= 0; i--) {
         m_stack.at(i)->keyboard_press(key);
         if (m_stack_info.at(i).take_focus) {

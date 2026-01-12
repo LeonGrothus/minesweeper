@@ -23,12 +23,6 @@ Vector2D CustomDrawer::get_minimum_size() const {
     return m_custom_canvas_element.get_element_size();
 }
 
-void CustomDrawer::keyboard_press(int key) {
-}
-
-void CustomDrawer::update(double delta_time) {
-}
-
 bool CustomDrawer::is_dirty() const {
     return m_is_dirty;
 }

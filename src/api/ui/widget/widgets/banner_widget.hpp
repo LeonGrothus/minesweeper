@@ -10,11 +10,7 @@ public:
 
     void set_color_role(ColorRole role);
 
-    void update(double delta_time) override;
-
     Vector2D get_minimum_size() const override;
-
-    void keyboard_press(int key) override;
 
     bool is_dirty() const override;
 

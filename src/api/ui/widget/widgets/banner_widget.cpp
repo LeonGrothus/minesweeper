@@ -29,14 +29,8 @@ void BannerWidget::set_color_role(ColorRole role) {
     set_dirty();
 }
 
-void BannerWidget::update(double delta_time) {
-}
-
 Vector2D BannerWidget::get_minimum_size() const {
     return m_banner.get_element_size();
-}
-
-void BannerWidget::keyboard_press(int key) {
 }
 
 bool BannerWidget::is_dirty() const {

@@ -47,9 +47,6 @@ Vector2D Timer::get_minimum_size() const {
     return Vector2D{x_size + static_cast<int>(m_description_text.length()), 1};
 }
 
-void Timer::keyboard_press(int key) {
-}
-
 void Timer::update(const double delta_time) {
     if (!m_running) {
         return;

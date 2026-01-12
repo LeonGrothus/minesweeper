@@ -36,9 +36,13 @@ public:
 
     virtual Vector2D get_minimum_size() const = 0;
 
-    virtual void keyboard_press(int key) = 0;
+    virtual void keyboard_press(int key) {
 
-    virtual void update(double delta_time) = 0;
+    }
+
+    virtual void update(double delta_time) {
+
+    }
 
     virtual bool is_dirty() const = 0;
 
