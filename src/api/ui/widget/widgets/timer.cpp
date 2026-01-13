@@ -4,7 +4,6 @@
 
 #include "api/helper/conversion_helper.hpp"
 #include "api/helper/math_helper.hpp"
-#include "api/ui/canvas/terminal_helper.hpp"
 
 Timer::Timer(const bool blink, const bool show_millis) : m_blink(blink), m_show_millis(show_millis) {}
 

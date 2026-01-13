@@ -1,10 +1,5 @@
 #include "test_scene.hpp"
 
-
-#include <memory>
-
-#include "api/ui/widget/widgets/text_input.hpp"
-
 class Border;
 
 TestScene::TestScene() {

@@ -18,8 +18,8 @@
 #include "api/ui/widget/widgets/dialogues/input_dialogue.hpp"
 #include "api/ui/widget/widgets/dialogues/simple_dialogue.hpp"
 
-GameScene::GameScene(const std::shared_ptr<BoardWidget>& to_play, int size_key, int difficulty_key)
-    : m_board_widget(to_play), m_size_key(size_key), m_difficulty_key(difficulty_key) {
+GameScene::GameScene(const std::shared_ptr<BoardWidget>& to_play, const int size_key, const int difficulty_key)
+    : m_size_key(size_key), m_difficulty_key(difficulty_key), m_board_widget(to_play) {
     m_total_flagged_builder = [](const int placed_flags, const int total_mine_count) {
         const std::u16string flag_count = utf8_to_utf16(std::to_string(placed_flags));
         const std::u16string mine_count = utf8_to_utf16(std::to_string(total_mine_count));

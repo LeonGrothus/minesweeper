@@ -14,11 +14,15 @@ Visibility::Visibility(std::shared_ptr<Widget> child, const bool visible, const 
 }
 
 void Visibility::set_visible(const bool visible) {
-    if (m_visible == visible) return;
+    if (m_visible == visible) {
+        return;
+    }
     m_visible = visible;
     m_is_dirty = true;
 
-    if (!m_transition) return;
+    if (!m_transition) {
+        return;
+    }
 
     if (visible) {
         m_transition_widget->set_new_end(m_child);
@@ -31,7 +35,7 @@ bool Visibility::is_visible() const {
     return m_visible;
 }
 
-CanvasElement Visibility::build_canvas_element(const Vector2D &size) {
+CanvasElement Visibility::build_canvas_element(const Vector2D& size) {
     if (m_transition) {
         return m_transition_widget->build_widget(size);
     }

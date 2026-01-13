@@ -4,7 +4,6 @@
 #include <curses.h>
 #include <utility>
 
-#include "api/helper/file_manager.hpp"
 #include "api/ui/canvas/terminal_helper.hpp"
 #include "api/ui/scene/game_scene.hpp"
 #include "api/ui/widget/widgets/row.hpp"

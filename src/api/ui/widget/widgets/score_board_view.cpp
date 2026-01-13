@@ -46,7 +46,7 @@ ScoreBoardView::ScoreBoardView(const std::array<ScoreBoardEntry, SCORE_BOARD_NUM
 
         const std::shared_ptr<Widget> name_widget = std::make_shared<CustomDrawer>(name_text);
 
-        std::shared_ptr<Timer> time_widget = std::make_shared<Timer>(false, true);;
+        std::shared_ptr<Timer> time_widget = std::make_shared<Timer>(false, true);
         if (score_time > 0) {
             time_widget->set_time_from_millis(score_time);
         }

@@ -2,7 +2,6 @@
 #include "api/controller/terminal_controller.hpp"
 #include "api/controller/keyboard_controller.hpp"
 #include "api/ui/scene/main_selection_scene.hpp"
-#include "api/ui/scene/test_scene.hpp"
 
 
 int main(int argc, char* argv[]) {

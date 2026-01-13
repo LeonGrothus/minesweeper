@@ -65,10 +65,12 @@ CanvasElement position_canvas_element(const CanvasElement &element, const Positi
     const int element_width = element.get_width();
     const int element_height = element.get_height();
 
-    if (element.get_element_size() > canvas_size)
+    if (element.get_element_size() > canvas_size) {
         return CanvasElement::empty(canvas_size, L' ');
-    if (element.get_element_size() == canvas_size)
+    }
+    if (element.get_element_size() == canvas_size) {
         return element;
+    }
 
     const int repeat_left = (position) & 0b11;
     const int repeat_right = (position >> 2) & 0b11;

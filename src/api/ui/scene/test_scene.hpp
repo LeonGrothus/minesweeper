@@ -1,7 +1,6 @@
 #pragma once
 
 #include "scene.hpp"
-#include <memory>
 
 class KeyboardController;
 
