@@ -41,12 +41,12 @@ std::shared_ptr<Widget> make_controls_content() {
     };
 
     std::shared_ptr<Column> column = std::make_shared<Column>(column_list);
-    column->main_axis_alignment(ListAlignment::Center);
+    column->main_axis_alignment(ListAlignment::Start);
 
     return column;
 }
 
-ControlsDialogue::ControlsDialogue() : SimpleDialogue(make_controls_content()) {}
+ControlsDialogue::ControlsDialogue() : SimpleDialogue(make_controls_content(), false) {}
 
 DialogueOptions ControlsDialogue::get_dialogue_options() {
     DialogueOptions options;

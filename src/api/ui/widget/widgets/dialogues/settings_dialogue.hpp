@@ -13,9 +13,9 @@ class Dialogue;
 
 class SettingsDialogue : public Widget {
 public:
-    explicit SettingsDialogue(const std::shared_ptr<SettingsManager> &settings_manager);
+    explicit SettingsDialogue(const std::shared_ptr<SettingsManager>& settings_manager);
 
-    void add_custom_option(const std::shared_ptr<ListSetting> &option) const;
+    void add_custom_option(const std::shared_ptr<ListSetting>& option) const;
 
     Vector2D get_minimum_size() const override;
 
@@ -25,14 +25,14 @@ public:
 
     bool is_dirty() const override;
 
-    static DialogueOptions getDialogueOptions();
+    static DialogueOptions get_dialogue_options();
 
-    static StackInfo getStackInfo();
+    static StackInfo get_stack_info();
 
-    static std::shared_ptr<Dialogue> getDialogue(const std::shared_ptr<SettingsManager> &settings_manager);
+    static std::shared_ptr<Dialogue> get_dialogue(const std::shared_ptr<SettingsManager>& settings_manager);
 
 protected:
-    CanvasElement build_canvas_element(const Vector2D &size) override;
+    CanvasElement build_canvas_element(const Vector2D& size) override;
 
 private:
     std::shared_ptr<SelectionWidget> m_selection_widget;

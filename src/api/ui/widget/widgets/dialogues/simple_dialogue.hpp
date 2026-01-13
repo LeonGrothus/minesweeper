@@ -9,7 +9,7 @@
 
 class SimpleDialogue : public Widget {
 public:
-    explicit SimpleDialogue(const std::shared_ptr<Widget>& to_display);
+    explicit SimpleDialogue(const std::shared_ptr<Widget>& to_display, bool warp_with_align_border = true);
 
     Vector2D get_minimum_size() const override;
 

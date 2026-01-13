@@ -8,9 +8,10 @@
 #include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/border/border.hpp"
 
-InformDialogue::InformDialogue(std::shared_ptr<Widget> main_widget, const std::u16string &left_text, const std::u16string &right_text,
-                               const std::function<void()> &left_callback,
-                               const std::function<void()> &right_callback) {
+InformDialogue::InformDialogue(std::shared_ptr<Widget> main_widget, const std::u16string& left_text,
+                               const std::u16string& right_text,
+                               const std::function<void()>& left_callback,
+                               const std::function<void()>& right_callback) {
     SelectionWidgetOptions options;
     options.is_vertical = false;
     options.spacing_options = 3;
@@ -19,18 +20,20 @@ InformDialogue::InformDialogue(std::shared_ptr<Widget> main_widget, const std::u
     m_selection->add_option(std::make_shared<CustomDrawer>(right_text), right_callback);
     m_selection->add_option(std::make_shared<CustomDrawer>(left_text), left_callback);
 
-    std::vector<std::shared_ptr<Widget> > column_list{
-        std::make_shared<Alignment>(std::move(main_widget), BOTTOM_CENTER), std::make_shared<Alignment>(m_selection, BOTTOM_CENTER)
+    std::vector<std::shared_ptr<Widget>> column_list{
+        std::make_shared<Alignment>(std::move(main_widget), BOTTOM_CENTER),
+        std::make_shared<Alignment>(m_selection, BOTTOM_CENTER)
     };
     std::shared_ptr<Column> column = std::make_shared<Column>(column_list);
     column->main_axis_alignment(ListAlignment::Center);
-    m_contructed_widget = std::make_shared<Border>(std::make_shared<Padding>(column, 3, 3, 1, 1), BorderStyle::double_line_border());
+    m_contructed_widget = std::make_shared<Border>(std::make_shared<Padding>(column, 3, 3, 1, 1),
+                                                   BorderStyle::double_line_border());
 }
 
-void InformDialogue::add_options(const std::u16string &option, const std::function<void()> &callback) {
+void InformDialogue::add_options(const std::u16string& option, const std::function<void()>& callback) {
     m_selection->add_option(std::make_shared<CustomDrawer>(option), callback);
 
-    SelectionWidgetOptions &options = m_selection->get_selection_options();
+    SelectionWidgetOptions& options = m_selection->get_selection_options();
     options.is_vertical = true;
     options.spacing_options = 0;
 
@@ -39,6 +42,10 @@ void InformDialogue::add_options(const std::u16string &option, const std::functi
 
 void InformDialogue::set_selectable(const bool selectable) const {
     m_selection->get_selection_options().fake_select = !selectable;
+}
+
+void InformDialogue::unselect() const {
+    m_selection->unselect();
 }
 
 Vector2D InformDialogue::get_minimum_size() const {
@@ -57,17 +64,17 @@ bool InformDialogue::is_dirty() const {
     return m_is_dirty || m_contructed_widget->is_dirty();
 }
 
-CanvasElement InformDialogue::build_canvas_element(const Vector2D &size) {
+CanvasElement InformDialogue::build_canvas_element(const Vector2D& size) {
     return m_contructed_widget->build_widget(size);
 }
 
-DialogueOptions InformDialogue::getDialogueOptions() {
+DialogueOptions InformDialogue::get_dialogue_options() {
     DialogueOptions options;
     options.update_background = false;
     return options;
 }
 
-StackInfo InformDialogue::getStackInfo() {
+StackInfo InformDialogue::get_stack_info() {
     StackInfo stack_info;
     stack_info.height_percentage = 0.3;
     stack_info.width_percentage = 0.3;
@@ -75,6 +82,6 @@ StackInfo InformDialogue::getStackInfo() {
     return stack_info;
 }
 
-std::shared_ptr<Dialogue> InformDialogue::getDialogue(const std::shared_ptr<InformDialogue> &widget) {
-    return std::make_shared<Dialogue>(widget, getDialogueOptions());
+std::shared_ptr<Dialogue> InformDialogue::get_dialogue(const std::shared_ptr<InformDialogue>& widget) {
+    return std::make_shared<Dialogue>(widget, get_dialogue_options());
 }

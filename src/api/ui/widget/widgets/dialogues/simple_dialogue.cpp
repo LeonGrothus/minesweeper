@@ -6,7 +6,12 @@
 #include "api/ui/widget/widgets/padding.hpp"
 #include "api/ui/widget/widgets/border/border.hpp"
 
-SimpleDialogue::SimpleDialogue(const std::shared_ptr<Widget>& to_display) {
+SimpleDialogue::SimpleDialogue(const std::shared_ptr<Widget>& to_display, const bool warp_with_align_border) {
+    if (!warp_with_align_border) {
+        m_contructed_widget = to_display;
+        return;
+    }
+
     const std::shared_ptr<Widget> aligned_display = std::make_shared<Alignment>(to_display, MIDDLE_CENTER);
 
     m_contructed_widget = std::make_shared<Border>(std::make_shared<Padding>(aligned_display, 3, 3, 1, 1),
