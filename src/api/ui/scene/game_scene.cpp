@@ -154,6 +154,10 @@ void GameScene::handle_win_lost() {
         std::shared_ptr<Dialogue> already_dialogue = SimpleDialogue::get_dialogue(
             std::make_shared<CustomDrawer>(u"You already saved to scoreboard!"));
 
+        already_dialogue->set_on_dismiss([dialogue_widget]() {
+            dialogue_widget->unselect();
+        });
+
         dialogue_widget->add_options(u"Save to Scoreboard", [this, input_dialogue, input_widget, already_dialogue]() {
             if (!m_score_already_saved) {
                 show_dialogue(input_dialogue, InputDialogue::get_stack_info());
