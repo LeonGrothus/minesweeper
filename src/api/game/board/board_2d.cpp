@@ -4,7 +4,7 @@
 #include <cassert>
 #include <unordered_set>
 
-#include "api/helper/random_helper.hpp"
+#include "api/helper/utils.hpp"
 
 Board2D::Board2D(const Vector2D size, const int mines, const bool force_mines) : m_grid(Grid2D<Cell>(size)),
                                                                                  m_mine_count(mines),

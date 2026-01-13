@@ -1,7 +1,7 @@
 #include "rainbow_switcher.hpp"
 
 #include <random>
-#include "api/helper/random_helper.hpp"
+#include "api/helper/utils.hpp"
 
 RainbowSwitcher::RainbowSwitcher(const std::shared_ptr<Widget> &child, std::vector<ColorRole> roles_to_loop,
                                  const bool index_random) : m_child(child), m_index_random(index_random),

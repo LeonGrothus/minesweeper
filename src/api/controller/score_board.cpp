@@ -5,6 +5,8 @@
 #include <filesystem>
 #include <utility>
 
+#include "api/helper/file_manager.hpp"
+#include "api/helper/utils.hpp"
 #include "api/ui/canvas/terminal_helper.hpp"
 
 ScoreBoardManager::ScoreBoardManager(std::string path_to_dir) : m_path_to_dir(std::move(path_to_dir)) {
@@ -37,19 +39,12 @@ void ScoreBoardManager::add_entry(const int size_key, const int difficulty_key, 
         }
     }
 
-    if (insert_pos < arr.size()) {
-        if (count >= arr.size()) {
-            std::rotate(arr.begin() + insert_pos, arr.begin() + insert_pos + 1, arr.end());
-        } else {
-            std::rotate(arr.begin() + insert_pos, arr.begin() + insert_pos, arr.begin() + count + 1);
-        }
-        arr[insert_pos] = entry;
-    }
+    insert_and_drop_last(arr, insert_pos, entry);
 }
 
 void ScoreBoardManager::load_from_files() {
     std::filesystem::create_directories(m_path_to_dir);
-    
+
     for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(m_path_to_dir)) {
         const std::string& key = entry.path().filename().string();
 
