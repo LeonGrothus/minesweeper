@@ -1,10 +1,13 @@
 #include "board_2d.hpp"
 
+#include <algorithm>
 #include <cassert>
+#include <unordered_set>
 
 #include "api/helper/random_helper.hpp"
 
-Board2D::Board2D(const Vector2D size, const int mines, const bool force_mines) : m_grid(Grid2D<Cell>(size)), m_mine_count(mines),
+Board2D::Board2D(const Vector2D size, const int mines, const bool force_mines) : m_grid(Grid2D<Cell>(size)),
+                                                                                 m_mine_count(mines),
                                                                                  m_flagged_count(0),
                                                                                  m_is_lost(false), m_is_won(false),
                                                                                  m_safe_cells_remaining(size.area() - mines) {
@@ -25,20 +28,20 @@ Board2D::Board2D(const Vector2D size, const float mines_percentage, const bool f
     }
 }
 
-void Board2D::first_move(const Vector2D &pos) {
+void Board2D::first_move(const Vector2D& pos) {
     place_mines(m_mine_count, pos);
     calculate_all_adjacent_mines();
     reveal_next(pos);
 }
 
-std::vector<Vector2D> Board2D::reveal_next(const Vector2D &pos) {
+std::vector<Vector2D> Board2D::reveal_next(const Vector2D& pos) {
     std::vector<Vector2D> revealed_positions;
 
     if (!m_grid.in_bounds(pos)) {
         return revealed_positions;
     }
 
-    Cell &cell = m_grid.get_at_pos(pos);
+    Cell& cell = m_grid.get_at_pos(pos);
     if (cell.is_flagged() || cell.is_revealed()) {
         return revealed_positions;
     }
@@ -63,7 +66,7 @@ std::vector<Vector2D> Board2D::reveal_next(const Vector2D &pos) {
 
     if (cell.get_adjacent_mines() == 0) {
         m_reveal_frontier.clear();
-        for (std::tuple<Vector2D, Cell> &entry: m_grid.get_all_adjacent(pos)) {
+        for (std::tuple<Vector2D, Cell>& entry : m_grid.get_all_adjacent(pos)) {
             const Vector2D entry_pos = std::get<0>(entry);
             push_if_unrevealed_and_unflagged(entry_pos);
         }
@@ -80,7 +83,7 @@ std::vector<Vector2D> Board2D::reveal_step(const int max_count) {
         Vector2D pos = m_reveal_frontier.front();
         m_reveal_frontier.pop_front();
 
-        Cell &cell = m_grid.get_at_pos(pos);
+        Cell& cell = m_grid.get_at_pos(pos);
         if (cell.is_revealed() || cell.is_flagged()) {
             continue;
         }
@@ -103,7 +106,7 @@ std::vector<Vector2D> Board2D::reveal_step(const int max_count) {
         }
 
         if (cell.get_adjacent_mines() == 0) {
-            for (std::tuple<Vector2D, Cell> &entry: m_grid.get_all_adjacent(pos)) {
+            for (std::tuple<Vector2D, Cell>& entry : m_grid.get_all_adjacent(pos)) {
                 if (const Vector2D entry_pos = std::get<0>(entry);
                     !m_grid.get_at_pos(entry_pos).is_revealed() && !m_grid.get_at_pos(entry_pos).is_flagged()) {
                     m_reveal_frontier.push_back(entry_pos);
@@ -127,17 +130,17 @@ std::vector<Vector2D> Board2D::reveal_all() {
     return all;
 }
 
-void Board2D::push_if_unrevealed_and_unflagged(const Vector2D &pos) {
+void Board2D::push_if_unrevealed_and_unflagged(const Vector2D& pos) {
     if (!m_grid.in_bounds(pos)) {
         return;
     }
-    if (const Cell &cell = m_grid.get_at_pos(pos); !cell.is_revealed() && !cell.is_flagged()) {
+    if (const Cell& cell = m_grid.get_at_pos(pos); !cell.is_revealed() && !cell.is_flagged()) {
         m_reveal_frontier.push_back(pos);
     }
 }
 
-void Board2D::toggle_flag(const Vector2D &pos) {
-    Cell &cell = m_grid.get_at_pos(pos);
+void Board2D::toggle_flag(const Vector2D& pos) {
+    Cell& cell = m_grid.get_at_pos(pos);
     const bool was_flagged = cell.is_flagged();
     cell.toggle_flag();
 
@@ -149,48 +152,39 @@ void Board2D::toggle_flag(const Vector2D &pos) {
     }
 }
 
-const Cell &Board2D::get_cell(const Vector2D &pos) {
+const Cell& Board2D::get_cell(const Vector2D& pos) {
     return m_grid.get_at_pos(pos);
 }
 
-void Board2D::place_mines(const int count, const Vector2D &start_pos) {
+void Board2D::place_mines(const int count, const Vector2D& start_pos) {
     const int start_index = m_grid.get_index(start_pos);
     place_mines(count, start_index);
 }
 
 void Board2D::place_mines(const int count, const int start_index) {
-    int to_place = count;
-    std::vector<int> placed_mines;
+    std::vector<int> placeable_mines;
 
-    const std::vector<std::tuple<Vector2D, Cell> > keep_clear = m_grid.get_all_adjacent(m_grid.get_index_position(start_index));
-    bool break_loop = false;
+    //O(1) lookup, faster than vector
+    std::unordered_set<int> excluded_indices;
+    excluded_indices.insert(start_index);
 
-    placed_mines.reserve(m_grid.get_grid_size().area());
-    for (int i = 0; i < m_grid.get_grid_size().area(); i++) {
-        //block surrounding chars as well
-        for (const std::tuple<Vector2D, Cell> &item: keep_clear) {
-            if (i == m_grid.get_index(std::get<0>(item))) {
-                break_loop = true;
-                break;
-            }
-        }
-        if (break_loop) {
-            break_loop = false;
-            continue;
-        }
-        if (i == start_index) {
-            continue;
-        }
-        placed_mines.push_back(i);
+    for (const std::tuple<Vector2D, Cell>& item : m_grid.get_all_adjacent(m_grid.get_index_position(start_index))) {
+        excluded_indices.insert(m_grid.get_index(std::get<0>(item)));
     }
 
-    std::mt19937 &rng = get_rng();
+    placeable_mines.reserve(m_grid.get_grid_size().area() - excluded_indices.size());
+    for (int i = 0; i < m_grid.get_grid_size().area(); i++) {
+        if (!excluded_indices.contains(i)) {
+            placeable_mines.push_back(i);
+        }
+    }
 
-    while (to_place-- > 0 || placed_mines.empty()) {
-        std::uniform_int_distribution<int> gen(0, static_cast<int>(placed_mines.size()) - 1);
-        const int r = gen(rng);
-        const int removed = placed_mines.at(r);
-        placed_mines.erase(placed_mines.begin() + r);
+    std::mt19937& rng = get_rng();
+    std::ranges::shuffle(placeable_mines.begin(), placeable_mines.end(), rng);
+
+    for (int i = 0; i < count && !placeable_mines.empty(); i++) {
+        const int removed = placeable_mines.back();
+        placeable_mines.pop_back();
         m_grid.get_at_index(removed).set_mine();
     }
 }
@@ -204,9 +198,9 @@ void Board2D::check_win() {
 void Board2D::calculate_all_adjacent_mines() {
     for (int i = 0; i < m_grid.get_grid_size().area(); i++) {
         Vector2D pos = m_grid.get_index_position(i);
-        Cell &cell = m_grid.get_at_index(i);
+        Cell& cell = m_grid.get_at_index(i);
         int mine_count = 0;
-        for (std::tuple<Vector2D, Cell> &entry: m_grid.get_all_adjacent(pos)) {
+        for (std::tuple<Vector2D, Cell>& entry : m_grid.get_all_adjacent(pos)) {
             if (std::get<1>(entry).has_mine()) {
                 mine_count++;
             }
@@ -215,7 +209,7 @@ void Board2D::calculate_all_adjacent_mines() {
     }
 }
 
-int Board2D::count_adjacent_mines(const Vector2D &pos) {
+int Board2D::count_adjacent_mines(const Vector2D& pos) {
     return m_grid.get_at_pos(pos).get_adjacent_mines();
 }
 
@@ -245,8 +239,9 @@ Vector2D Board2D::get_grid_size() const {
 
 std::vector<Vector2D> Board2D::get_all_mine_positions() const {
     std::vector<Vector2D> mine_positions;
+    mine_positions.reserve(m_mine_count);
     for (int i = 0; i < m_grid.get_grid_size().area(); i++) {
-        if (const Cell &cell = m_grid.get_at_index(i); cell.has_mine()) {
+        if (const Cell& cell = m_grid.get_at_index(i); cell.has_mine()) {
             mine_positions.push_back(m_grid.get_index_position(i));
         }
     }
