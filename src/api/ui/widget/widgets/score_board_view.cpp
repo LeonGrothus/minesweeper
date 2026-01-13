@@ -17,7 +17,9 @@ ScoreBoardView::ScoreBoardView(const std::array<ScoreBoardEntry, SCORE_BOARD_NUM
     std::vector<std::shared_ptr<Widget>> score_rows;
 
     for (int i = 0; i < SCORE_BOARD_NUMBER; i++) {
-        const auto& [score_name, score_time] = score_board_entries[i];
+        const ScoreBoardEntry& score_board_entry = score_board_entries[i];
+        std::string score_name = score_board_entry.get_name();
+        const int32_t score_time = score_board_entry.time_in_ms;
 
         ColorRole rank_color;
         switch (i) {

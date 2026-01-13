@@ -27,8 +27,7 @@ TerminalController::TerminalController(const std::shared_ptr<KeyboardController>
     FileManager manager(FILE_LOCATION);
     m_settings_manager = std::make_shared<SettingsManager>(manager);
 
-    FileManager score_board_file("score_board.bin");
-    m_score_board_manager = std::make_shared<ScoreBoardManager>(score_board_file);
+    m_score_board_manager = std::make_shared<ScoreBoardManager>("score_board/");
 
     m_current_scene->set_settings_manager(m_settings_manager);
     m_current_scene->set_keyboard_controller(m_keyboard_controller);
@@ -36,9 +35,8 @@ TerminalController::TerminalController(const std::shared_ptr<KeyboardController>
 }
 
 TerminalController::~TerminalController() {
-    if (m_settings_manager) {
-        m_settings_manager->save_to_file();
-    }
+    m_settings_manager->save_to_file();
+    m_score_board_manager->save_to_files();
     endwin();
 }
 
@@ -65,9 +63,8 @@ void TerminalController::run() {
 
             if (m_current_scene->is_exit_requested()) {
                 m_running = false;
-                if (m_settings_manager) {
-                    m_settings_manager->save_to_file();
-                }
+                m_settings_manager->save_to_file();
+                m_score_board_manager->save_to_files();
                 return;
             }
 
