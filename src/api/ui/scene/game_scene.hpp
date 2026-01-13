@@ -10,7 +10,7 @@ class GameScene : public Scene {
 public:
     void handle_update(double delta_time) override;
 
-    explicit GameScene(const std::shared_ptr<BoardWidget> &to_play);
+    explicit GameScene(const std::shared_ptr<BoardWidget>& to_play, int size_key, int difficulty_key);
 
 protected:
     void handle_key(int key) override;
@@ -25,6 +25,8 @@ private:
     void open_pause_menu();
 
     bool m_game_finished = false;
+    int m_size_key = 0;
+    int m_difficulty_key = 0;
 
     std::shared_ptr<BoardWidget> m_board_widget;
     std::shared_ptr<Timer> m_timer_widget;
@@ -38,4 +40,6 @@ private:
 
     std::function<std::u16string(int, int)> m_total_flagged_builder;
     std::function<std::u16string(int)> m_total_moves_builder;
+
+    bool m_score_already_saved = false;
 };

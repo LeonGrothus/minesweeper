@@ -1,6 +1,9 @@
 #pragma once
 #include "../canvas/canvas_element.hpp"
 #include "api/ui/canvas/terminal_helper.hpp"
+#include <memory>
+
+class KeyboardController;
 
 enum Flex {
     NO_FLEX = 0,
@@ -11,7 +14,7 @@ class Widget {
 public:
     virtual ~Widget() = 0;
 
-    const CanvasElement &build_widget(const Vector2D &size) {
+    const CanvasElement& build_widget(const Vector2D& size) {
         if (size < get_minimum_size()) {
             show_temporary_message("INCREASE SCREEN SIZE", 200);
             if (m_cached_canvas.get_element_size() != size) {
@@ -36,13 +39,9 @@ public:
 
     virtual Vector2D get_minimum_size() const = 0;
 
-    virtual void keyboard_press(int key) {
+    virtual void keyboard_press(int key) {}
 
-    }
-
-    virtual void update(double delta_time) {
-
-    }
+    virtual void update(double delta_time) {}
 
     virtual bool is_dirty() const = 0;
 
@@ -50,11 +49,16 @@ public:
         m_is_dirty = true;
     }
 
+    virtual void set_keyboard_controller(const std::shared_ptr<KeyboardController>& controller) {
+        m_keyboard_controller = controller;
+    }
+
     int m_flex = DEFAULT_FLEX;
 
 protected:
-    virtual CanvasElement build_canvas_element(const Vector2D &size) = 0;
+    virtual CanvasElement build_canvas_element(const Vector2D& size) = 0;
 
+    std::shared_ptr<KeyboardController> m_keyboard_controller;
     bool m_is_dirty = true;
     CanvasElement m_cached_canvas{CanvasElement("")};
 };

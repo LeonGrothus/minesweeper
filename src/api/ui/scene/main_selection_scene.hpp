@@ -63,6 +63,8 @@ private:
 
     void update_display_widget() const;
 
+    void open_scoreboard();
+
     static std::shared_ptr<Widget> create_board_showcase(Size size, Difficulty difficulty);
 
     static std::shared_ptr<BoardWidget> create_board(Size size, Difficulty difficulty);
@@ -71,5 +73,5 @@ private:
 
     static float get_mine_percentage(Difficulty difficulty);
 
-    static std::shared_ptr<Alignment> wrap_with_alignment(const std::shared_ptr<Widget> &widget);
+    static std::shared_ptr<Alignment> wrap_with_alignment(const std::shared_ptr<Widget>& widget);
 };

@@ -4,6 +4,7 @@
 
 #include "main_selection_scene.hpp"
 #include "api/controller/color_manager.hpp"
+#include "api/controller/score_board.hpp"
 #include "api/helper/conversion_helper.hpp"
 #include "api/ui/widget/widgets/alignment.hpp"
 #include "api/ui/widget/widgets/column.hpp"
@@ -14,8 +15,11 @@
 #include "api/ui/widget/widgets/border/border.hpp"
 #include "api/ui/widget/widgets/dialogues/controls_dialogue.hpp"
 #include "api/ui/widget/widgets/dialogues/inform_dialogue.hpp"
+#include "api/ui/widget/widgets/dialogues/input_dialogue.hpp"
+#include "api/ui/widget/widgets/dialogues/simple_dialogue.hpp"
 
-GameScene::GameScene(const std::shared_ptr<BoardWidget> &to_play) : m_board_widget(to_play) {
+GameScene::GameScene(const std::shared_ptr<BoardWidget>& to_play, int size_key, int difficulty_key)
+    : m_board_widget(to_play), m_size_key(size_key), m_difficulty_key(difficulty_key) {
     m_total_flagged_builder = [](const int placed_flags, const int total_mine_count) {
         const std::u16string flag_count = utf8_to_utf16(std::to_string(placed_flags));
         const std::u16string mine_count = utf8_to_utf16(std::to_string(total_mine_count));
@@ -26,7 +30,7 @@ GameScene::GameScene(const std::shared_ptr<BoardWidget> &to_play) : m_board_widg
         return u"Total Moves: " + moves_count;
     };
 
-    std::vector<std::shared_ptr<Widget> > row_content;
+    std::vector<std::shared_ptr<Widget>> row_content;
 
     m_flagged_counter_widget = std::make_shared<CustomDrawer>(u"");
     m_played_moves_widget = std::make_shared<CustomDrawer>(u"");
@@ -38,7 +42,7 @@ GameScene::GameScene(const std::shared_ptr<BoardWidget> &to_play) : m_board_widg
     row_content.push_back(m_played_moves_widget);
     row_content.push_back(m_timer_widget);
 
-    std::vector<std::shared_ptr<Widget> > column_content;
+    std::vector<std::shared_ptr<Widget>> column_content;
 
     const std::shared_ptr<Row> display_row = std::make_shared<Row>(row_content);
     display_row->main_axis_alignment(ListAlignment::Center);
@@ -60,19 +64,19 @@ GameScene::GameScene(const std::shared_ptr<BoardWidget> &to_play) : m_board_widg
 void GameScene::handle_key(const int key) {
     Scene::handle_key(key);
     switch (key) {
-        case 10:
-        case 13:
-        case KEY_ENTER:
-            if (m_game_finished) {
-                request_scene_change_with_transition(std::make_unique<MainSelectionScene>());
-            }
-            break;
-        //esc key
-        case 27:
-            open_pause_menu();
-            break;
-        default:
-            break;
+    case 10:
+    case 13:
+    case KEY_ENTER:
+        if (m_game_finished) {
+            request_scene_change_with_transition(std::make_unique<MainSelectionScene>());
+        }
+        break;
+    //esc key
+    case 27:
+        open_pause_menu();
+        break;
+    default:
+        break;
     }
 }
 
@@ -122,8 +126,9 @@ void GameScene::handle_win_lost() {
 
     std::shared_ptr<Widget> main_dialogue;
     if (is_game_won) {
-        main_dialogue = std::make_shared<RainbowSwitcher>(std::make_shared<CustomDrawer>(u"You Won!\nIt took " + time, u'\n'),
-                                                          get_all_colors_except_black(), true);
+        main_dialogue = std::make_shared<RainbowSwitcher>(
+            std::make_shared<CustomDrawer>(u"You Won!\nIt took " + time, u'\n'),
+            get_all_colors_except_black(), true);
     } else {
         main_dialogue = std::make_shared<CustomDrawer>(u"You lost after " + time, u'\n');
     }
@@ -132,16 +137,45 @@ void GameScene::handle_win_lost() {
     std::shared_ptr<InformDialogue> dialogue_widget = std::make_shared<InformDialogue>(
         main_dialogue, u"Return to Menu", u"View Board", return_to_menu, view_board);
 
-    DialogueOptions dialogue_options = InformDialogue::getDialogueOptions();
+    if (is_game_won) {
+        const std::shared_ptr<InputDialogue> input_widget = std::make_shared<InputDialogue>(
+            m_keyboard_controller,
+            [this](const std::string& text) {
+                const ScoreBoardEntry score_board_entry{text, m_timer_widget->get_time_in_millis()};
+                m_score_board_manager->add_entry(m_size_key, m_difficulty_key, score_board_entry);
+                pop_dialogue();
+            }, u"Name: ", MAX_NAME_LENGTH);
+        const std::shared_ptr<Dialogue> input_dialogue = InputDialogue::get_dialogue(input_widget);
+
+        input_dialogue->set_on_dismiss([dialogue_widget]() {
+            dialogue_widget->unselect();
+        });
+
+        std::shared_ptr<Dialogue> already_dialogue = SimpleDialogue::get_dialogue(
+            std::make_shared<CustomDrawer>(u"You already saved to scoreboard!"));
+
+        dialogue_widget->add_options(u"Save to Scoreboard", [this, input_dialogue, input_widget, already_dialogue]() {
+            if (!m_score_already_saved) {
+                show_dialogue(input_dialogue, InputDialogue::get_stack_info());
+                input_widget->activate_dialogue();
+                m_score_already_saved = true;
+            } else {
+                show_dialogue(already_dialogue, SimpleDialogue::get_stack_info());
+            }
+        });
+    }
+
+    DialogueOptions dialogue_options = InformDialogue::get_dialogue_options();
     dialogue_options.update_background = true;
 
     const std::shared_ptr<Dialogue> dialogue = std::make_shared<Dialogue>(dialogue_widget, dialogue_options);
     dialogue->set_on_dismiss([this]() {
-        m_game_column->push_child(std::make_shared<Alignment>(std::make_shared<CustomDrawer>(u"Press 'enter' to return to the menu!"),
-                                                              MIDDLE_CENTER));
+        m_game_column->push_child(std::make_shared<Alignment>(
+            std::make_shared<CustomDrawer>(u"Press 'enter' to return to the menu!"),
+            MIDDLE_CENTER));
         set_dirty();
     });
-    show_dialogue(dialogue, InformDialogue::getStackInfo());
+    show_dialogue(dialogue, InformDialogue::get_stack_info());
 }
 
 void GameScene::open_pause_menu() {
@@ -154,7 +188,7 @@ void GameScene::open_pause_menu() {
     };
 
     std::function<void()> open_controls_dialogue = [this]() {
-        show_dialogue(ControlsDialogue::getDialogue(), ControlsDialogue::getStackInfo());
+        show_dialogue(ControlsDialogue::get_dialogue(), ControlsDialogue::get_stack_info());
     };
 
     std::shared_ptr<Widget> main_dialogue = std::make_shared<CustomDrawer>(u"Game Paused!", u'\n');
@@ -164,6 +198,7 @@ void GameScene::open_pause_menu() {
     pause_widget->add_options(u"Continue", back_to_board);
     pause_widget->set_selectable(false);
 
-    const std::shared_ptr<Dialogue> pause_dialogue = std::make_shared<Dialogue>(pause_widget, InformDialogue::getDialogueOptions());
-    show_dialogue(pause_dialogue, InformDialogue::getStackInfo());
+    const std::shared_ptr<Dialogue> pause_dialogue = std::make_shared<Dialogue>(
+        pause_widget, InformDialogue::get_dialogue_options());
+    show_dialogue(pause_dialogue, InformDialogue::get_stack_info());
 }

@@ -22,14 +22,15 @@
 #include "api/ui/widget/widgets/boards/board_showcase_widget.hpp"
 #include "api/ui/widget/widgets/dialogues/controls_dialogue.hpp"
 #include "api/ui/widget/widgets/dialogues/credits_dialogue.hpp"
+#include "api/ui/widget/widgets/dialogues/score_board_dialogue.hpp"
 #include "api/ui/widget/widgets/dialogues/settings_dialogue.hpp"
 
 class ControlsDialogue;
 
 MainSelectionScene::MainSelectionScene() {
     const std::shared_ptr<Rotation> banner_rainbow = std::make_shared<Rotation>(std::make_shared<RainbowSwitcher>(
-                                                                                    std::make_shared<BannerWidget>("assets/banner.txt"),
-                                                                                    get_all_colors_except_black(), false), -3, 3);
+            std::make_shared<BannerWidget>("assets/banner.txt"),
+            get_all_colors_except_black(), false), -3, 3);
 
 
     m_aligned_banner_widget = wrap_with_alignment(banner_rainbow);
@@ -47,17 +48,18 @@ MainSelectionScene::MainSelectionScene() {
         go_to_stage(Stage::Size);
     });
     m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Settings"), [this]() {
-        std::shared_ptr<SettingsDialogue> settings_dialogue_widget = std::make_shared<SettingsDialogue>(m_settings_manager);
+        std::shared_ptr<SettingsDialogue> settings_dialogue_widget = std::make_shared<SettingsDialogue>(
+            m_settings_manager);
 
         const std::shared_ptr<ListSetting> show_controls = std::make_shared<ListSetting>(u"View Controls");
         show_controls->add_option(ListSettingOption(u" ", [this]() {
-            show_dialogue(ControlsDialogue::getDialogue(), ControlsDialogue::getStackInfo());
+            show_dialogue(ControlsDialogue::get_dialogue(), ControlsDialogue::get_stack_info());
         }));
         settings_dialogue_widget->add_custom_option(show_controls);
 
         const std::shared_ptr<Dialogue> settings_dialogue = std::make_shared<Dialogue>(
-            settings_dialogue_widget, SettingsDialogue::getDialogueOptions());
-        show_dialogue(settings_dialogue, SettingsDialogue::getStackInfo());
+            settings_dialogue_widget, SettingsDialogue::get_dialogue_options());
+        show_dialogue(settings_dialogue, SettingsDialogue::get_stack_info());
 
         settings_dialogue->set_on_dismiss([this]() {
             m_main_menu->unselect();
@@ -66,9 +68,9 @@ MainSelectionScene::MainSelectionScene() {
     m_main_menu->add_option(std::make_shared<CustomDrawer>(u"Credits"), [this]() {
         std::shared_ptr<CreditsDialogue> settings_dialogue_widget = std::make_shared<CreditsDialogue>();
         const std::shared_ptr<Dialogue> settings_dialogue = std::make_shared<Dialogue>(
-            settings_dialogue_widget, CreditsDialogue::getDialogueOptions());
+            settings_dialogue_widget, CreditsDialogue::get_dialogue_options());
 
-        show_dialogue(settings_dialogue, CreditsDialogue::getStackInfo());
+        show_dialogue(settings_dialogue, CreditsDialogue::get_stack_info());
 
         settings_dialogue->set_on_dismiss([this]() {
             m_main_menu->unselect();
@@ -117,9 +119,15 @@ MainSelectionScene::MainSelectionScene() {
 
     m_confirm_menu->add_option(std::make_shared<CustomDrawer>(u"Play"), [this]() {
         std::shared_ptr<BoardWidget> board = create_board(m_selected_size, m_selected_difficulty);
-        std::unique_ptr<Scene> game_scene = std::make_unique<GameScene>(board);
+        std::unique_ptr<Scene> game_scene = std::make_unique<GameScene>(board,
+                                                                        static_cast<int>(m_selected_size),
+                                                                        static_cast<int>(m_selected_difficulty));
 
         request_scene_change_with_transition(std::move(game_scene));
+    });
+
+    m_confirm_menu->add_option(std::make_shared<CustomDrawer>(u"Scoreboard"), [this]() {
+        open_scoreboard();
     });
 
 
@@ -129,16 +137,19 @@ MainSelectionScene::MainSelectionScene() {
     std::shared_ptr<Padding> m_conf_menu_padded = std::make_shared<Padding>(m_confirm_menu, 2, 2, 1, 1);
 
     const std::shared_ptr<Border> m_main_menu_border = std::make_shared<Border>(m_main_menu_padded,
-                                                                                BorderStyle::single_thick_border());
-    std::shared_ptr<Border> m_size_menu_border = std::make_shared<Border>(m_size_menu_padded, BorderStyle::single_thick_border());
-    std::shared_ptr<Border> m_diff_menu_border = std::make_shared<Border>(m_diff_menu_padded, BorderStyle::single_thick_border());
-    std::shared_ptr<Border> m_conf_menu_border = std::make_shared<Border>(m_conf_menu_padded, BorderStyle::single_thick_border());
+        BorderStyle::single_thick_border());
+    std::shared_ptr<Border> m_size_menu_border = std::make_shared<Border>(
+        m_size_menu_padded, BorderStyle::single_thick_border());
+    std::shared_ptr<Border> m_diff_menu_border = std::make_shared<Border>(
+        m_diff_menu_padded, BorderStyle::single_thick_border());
+    std::shared_ptr<Border> m_conf_menu_border = std::make_shared<Border>(
+        m_conf_menu_padded, BorderStyle::single_thick_border());
 
     m_size_visible = std::make_shared<Visibility>(m_size_menu_border, false);
     m_difficulty_visible = std::make_shared<Visibility>(m_diff_menu_border, false);
     m_confirm_visible = std::make_shared<Visibility>(m_conf_menu_border, false);
 
-    std::vector<std::shared_ptr<Widget> > children;
+    std::vector<std::shared_ptr<Widget>> children;
 
     children.push_back(m_main_menu_border);
     children.push_back(m_size_visible);
@@ -152,7 +163,7 @@ MainSelectionScene::MainSelectionScene() {
     const std::shared_ptr<Widget> selection_widget = std::make_shared<Alignment>(padded_row, BOTTOM_LEFT);
     selection_widget->m_flex = NO_FLEX;
 
-    std::vector<std::shared_ptr<Widget> > layout;
+    std::vector<std::shared_ptr<Widget>> layout;
     layout.push_back(m_display_widget);
     layout.push_back(selection_widget);
     std::shared_ptr<Column> main_column = std::make_shared<Column>(layout);
@@ -165,14 +176,14 @@ MainSelectionScene::MainSelectionScene() {
 
 std::shared_ptr<SelectionWidget> MainSelectionScene::active_menu() const {
     switch (m_stage) {
-        case Stage::Main:
-            return m_main_menu;
-        case Stage::Size:
-            return m_size_menu;
-        case Stage::Difficulty:
-            return m_difficulty_menu;
-        case Stage::Confirm:
-            return m_confirm_menu;
+    case Stage::Main:
+        return m_main_menu;
+    case Stage::Size:
+        return m_size_menu;
+    case Stage::Difficulty:
+        return m_difficulty_menu;
+    case Stage::Confirm:
+        return m_confirm_menu;
     }
     return m_main_menu;
 }
@@ -209,17 +220,17 @@ void MainSelectionScene::handle_key(const int key) {
     //esc
     if (key == 27 || key == KEY_LEFT || key == 'A' || key == 'a') {
         switch (m_stage) {
-            case Stage::Main:
-                break;
-            case Stage::Size:
-                go_to_stage(Stage::Main);
-                break;
-            case Stage::Difficulty:
-                go_to_stage(Stage::Size);
-                break;
-            case Stage::Confirm:
-                go_to_stage(Stage::Difficulty);
-                break;
+        case Stage::Main:
+            break;
+        case Stage::Size:
+            go_to_stage(Stage::Main);
+            break;
+        case Stage::Difficulty:
+            go_to_stage(Stage::Size);
+            break;
+        case Stage::Confirm:
+            go_to_stage(Stage::Difficulty);
+            break;
         }
         return;
     }
@@ -242,33 +253,33 @@ void MainSelectionScene::handle_update(const double delta_time) {
 
 Vector2D MainSelectionScene::get_board_size(const Size size) {
     switch (size) {
-        case Size::Small:
-            return Vector2D{8, 8};
-        case Size::Medium:
-            return Vector2D{16, 16};
-        case Size::Large:
-            return Vector2D{32, 24};
+    case Size::Small:
+        return Vector2D{8, 8};
+    case Size::Medium:
+        return Vector2D{16, 16};
+    case Size::Large:
+        return Vector2D{32, 24};
     }
     return Vector2D{8, 8};
 }
 
 float MainSelectionScene::get_mine_percentage(const Difficulty difficulty) {
     switch (difficulty) {
-        case Difficulty::NoDifficulty:
-            return 0;
-        case Difficulty::VeryEasy:
-            return 0.05;
-        case Difficulty::Easy:
-            return 0.2;
-        case Difficulty::Medium:
-            return 0.4;
-        case Difficulty::Hard:
-            return 0.6;
+    case Difficulty::NoDifficulty:
+        return 0;
+    case Difficulty::VeryEasy:
+        return 0.05;
+    case Difficulty::Easy:
+        return 0.2;
+    case Difficulty::Medium:
+        return 0.4;
+    case Difficulty::Hard:
+        return 0.6;
     }
     return 0;
 }
 
-std::shared_ptr<Alignment> MainSelectionScene::wrap_with_alignment(const std::shared_ptr<Widget> &widget) {
+std::shared_ptr<Alignment> MainSelectionScene::wrap_with_alignment(const std::shared_ptr<Widget>& widget) {
     return std::make_shared<Alignment>(widget, MIDDLE_CENTER);
 }
 
@@ -296,4 +307,20 @@ std::shared_ptr<BoardWidget> MainSelectionScene::create_board(const Size size,
 void MainSelectionScene::update_display_widget() const {
     m_display_widget->set_new_end(wrap_with_alignment(create_board_showcase(m_selected_size, m_selected_difficulty)));
     m_base_widget->set_dirty();
+}
+
+void MainSelectionScene::open_scoreboard() {
+    std::array<ScoreBoardEntry, SCORE_BOARD_NUMBER>& entries = m_score_board_manager->entries(
+        static_cast<int>(m_selected_size), static_cast<int>(m_selected_difficulty));
+    const std::shared_ptr<ScoreBoardDialogue> score_board_dialogue_widget = std::make_shared<
+        ScoreBoardDialogue>(entries);
+
+    const std::shared_ptr<Dialogue> score_board_dialogue =
+        ScoreBoardDialogue::get_dialogue(score_board_dialogue_widget);
+
+    score_board_dialogue->set_on_dismiss([this]() {
+        m_confirm_menu->unselect();
+    });
+
+    show_dialogue(score_board_dialogue, ScoreBoardDialogue::get_stack_info());
 }
